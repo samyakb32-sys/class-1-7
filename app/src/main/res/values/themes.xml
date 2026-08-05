@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <style name="Theme.LearningApp" parent="android:Theme.Material.Light.NoActionBar">
+        <item name="android:statusBarColor">#5B4FE8</item>
+        <item name="android:windowBackground">#F5F4FC</item>
+    </style>
+</resources>

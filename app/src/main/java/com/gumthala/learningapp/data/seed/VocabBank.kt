@@ -1,0 +1,110 @@
+package com.gumthala.learningapp.data.seed
+
+/** A word available in all three languages, tagged with the class tier it first appears at. */
+data class VocabWord(val en: String, val mr: String, val hi: String, val emoji: String, val tier: Int)
+
+data class OppositePair(val enA: String, val mrA: String, val hiA: String, val enB: String, val mrB: String, val hiB: String, val tier: Int)
+
+/** Curated, difficulty-tiered vocabulary used to generate picture-naming / translation / opposites quiz questions. */
+object VocabBank {
+
+    val words: List<VocabWord> = listOf(
+        VocabWord("Sun", "सूर्य", "सूरज", "☀️", 1),
+        VocabWord("Moon", "चंद्र", "चाँद", "🌙", 1),
+        VocabWord("Star", "तारा", "तारा", "⭐", 1),
+        VocabWord("Water", "पाणी", "पानी", "💧", 1),
+        VocabWord("Tree", "झाड", "पेड़", "🌳", 1),
+        VocabWord("Flower", "फूल", "फूल", "🌸", 1),
+        VocabWord("Dog", "कुत्रा", "कुत्ता", "🐕", 1),
+        VocabWord("Cat", "मांजर", "बिल्ली", "🐈", 1),
+        VocabWord("Cow", "गाय", "गाय", "🐄", 1),
+        VocabWord("Bird", "पक्षी", "पक्षी", "🐦", 1),
+        VocabWord("Fish", "मासा", "मछली", "🐟", 1),
+        VocabWord("Apple", "सफरचंद", "सेब", "🍎", 1),
+        VocabWord("Banana", "केळे", "केला", "🍌", 1),
+        VocabWord("Mango", "आंबा", "आम", "🥭", 1),
+        VocabWord("Milk", "दूध", "दूध", "🥛", 1),
+        VocabWord("Book", "पुस्तक", "किताब", "📖", 1),
+        VocabWord("Pencil", "पेन्सिल", "पेंसिल", "✏️", 1),
+        VocabWord("School", "शाळा", "स्कूल", "🏫", 1),
+        VocabWord("House", "घर", "घर", "🏠", 1),
+        VocabWord("Ball", "चेंडू", "गेंद", "⚽", 1),
+        VocabWord("Rain", "पाऊस", "बारिश", "🌧️", 2),
+        VocabWord("Mountain", "डोंगर", "पहाड़", "⛰️", 2),
+        VocabWord("River", "नदी", "नदी", "🏞️", 2),
+        VocabWord("Farmer", "शेतकरी", "किसान", "🧑‍🌾", 2),
+        VocabWord("Doctor", "डॉक्टर", "डॉक्टर", "🩺", 2),
+        VocabWord("Teacher", "शिक्षक", "शिक्षक", "🍎", 2),
+        VocabWord("Umbrella", "छत्री", "छाता", "☂️", 2),
+        VocabWord("Bicycle", "सायकल", "साइकिल", "🚲", 2),
+        VocabWord("Elephant", "हत्ती", "हाथी", "🐘", 2),
+        VocabWord("Butterfly", "फुलपाखरू", "तितली", "🦋", 2),
+        VocabWord("Kitchen", "स्वयंपाकघर", "रसोई", "🍳", 2),
+        VocabWord("Garden", "बाग", "बगीचा", "🌷", 2),
+        VocabWord("Village", "गाव", "गाँव", "🏘️", 2),
+        VocabWord("Festival", "सण", "त्योहार", "🎉", 3),
+        VocabWord("Friendship", "मैत्री", "दोस्ती", "🤝", 3),
+        VocabWord("Forest", "जंगल", "जंगल", "🌲", 3),
+        VocabWord("Market", "बाजार", "बाज़ार", "🛒", 3),
+        VocabWord("Season", "ऋतू", "ऋतु", "🍂", 3),
+        VocabWord("Ocean", "महासागर", "महासागर", "🌊", 3),
+        VocabWord("Journey", "प्रवास", "यात्रा", "🧳", 3),
+        VocabWord("Kindness", "दयाळूपणा", "दयालुता", "💛", 3),
+        VocabWord("Honesty", "प्रामाणिकपणा", "ईमानदारी", "🤲", 3),
+        VocabWord("Farmer's field", "शेत", "खेत", "🌾", 3),
+        VocabWord("Library", "ग्रंथालय", "पुस्तकालय", "📚", 4),
+        VocabWord("Environment", "पर्यावरण", "पर्यावरण", "🌍", 4),
+        VocabWord("Independence", "स्वातंत्र्य", "स्वतंत्रता", "🇮🇳", 4),
+        VocabWord("Discipline", "शिस्त", "अनुशासन", "📏", 4),
+        VocabWord("Courage", "धैर्य", "साहस", "🦁", 4),
+        VocabWord("Health", "आरोग्य", "स्वास्थ्य", "🩹", 4),
+        VocabWord("Agriculture", "शेती", "कृषि", "🚜", 4),
+        VocabWord("Culture", "संस्कृती", "संस्कृति", "🎭", 4),
+        VocabWord("Responsibility", "जबाबदारी", "ज़िम्मेदारी", "🧭", 5),
+        VocabWord("Cooperation", "सहकार्य", "सहयोग", "🤝", 5),
+        VocabWord("Imagination", "कल्पनाशक्ती", "कल्पनाशीलता", "💭", 5),
+        VocabWord("Curiosity", "जिज्ञासा", "जिज्ञासा", "🔍", 5),
+        VocabWord("Perseverance", "चिकाटी", "दृढ़ता", "💪", 5),
+        VocabWord("Heritage", "वारसा", "विरासत", "🏛️", 5),
+        VocabWord("Innovation", "नवोपक्रम", "नवाचार", "💡", 6),
+        VocabWord("Democracy", "लोकशाही", "लोकतंत्र", "🗳️", 6),
+        VocabWord("Sustainability", "शाश्वतता", "सततता", "♻️", 6),
+        VocabWord("Diversity", "विविधता", "विविधता", "🌐", 6),
+        VocabWord("Ambition", "महत्त्वाकांक्षा", "महत्वाकांक्षा", "🎯", 6),
+        VocabWord("Empathy", "सहानुभूती", "सहानुभूति", "💞", 7),
+        VocabWord("Resilience", "लवचिकता", "लचीलापन", "🌱", 7),
+        VocabWord("Integrity", "सचोटी", "सत्यनिष्ठा", "🛡️", 7),
+        VocabWord("Achievement", "कामगिरी", "उपलब्धि", "🏆", 7),
+        VocabWord("Opportunity", "संधी", "अवसर", "🚪", 7)
+    )
+
+    val opposites: List<OppositePair> = listOf(
+        OppositePair("Big", "मोठे", "बड़ा", "Small", "लहान", "छोटा", 1),
+        OppositePair("Hot", "गरम", "गरम", "Cold", "थंड", "ठंडा", 1),
+        OppositePair("Day", "दिवस", "दिन", "Night", "रात्र", "रात", 1),
+        OppositePair("Up", "वर", "ऊपर", "Down", "खाली", "नीचे", 1),
+        OppositePair("Happy", "आनंदी", "खुश", "Sad", "दुःखी", "उदास", 1),
+        OppositePair("Fast", "वेगवान", "तेज़", "Slow", "मंद", "धीमा", 2),
+        OppositePair("Open", "उघडे", "खुला", "Close", "बंद", "बंद", 2),
+        OppositePair("Full", "पूर्ण", "भरा", "Empty", "रिकामे", "खाली", 2),
+        OppositePair("Old", "जुने", "पुराना", "New", "नवीन", "नया", 2),
+        OppositePair("Heavy", "जड", "भारी", "Light", "हलके", "हल्का", 2),
+        OppositePair("Strong", "बलवान", "मजबूत", "Weak", "अशक्त", "कमज़ोर", 3),
+        OppositePair("Rich", "श्रीमंत", "अमीर", "Poor", "गरीब", "गरीब", 3),
+        OppositePair("Brave", "शूर", "बहादुर", "Coward", "भित्रा", "कायर", 3),
+        OppositePair("True", "खरे", "सच", "False", "खोटे", "झूठ", 3),
+        OppositePair("Kind", "दयाळू", "दयालु", "Cruel", "क्रूर", "क्रूर", 4),
+        OppositePair("Simple", "साधे", "सरल", "Difficult", "अवघड", "कठिन", 4),
+        OppositePair("Ancient", "प्राचीन", "प्राचीन", "Modern", "आधुनिक", "आधुनिक", 4),
+        OppositePair("Include", "समाविष्ट करणे", "शामिल करना", "Exclude", "वगळणे", "बाहर रखना", 5),
+        OppositePair("Increase", "वाढ", "वृद्धि", "Decrease", "घट", "कमी", 5),
+        OppositePair("Victory", "विजय", "जीत", "Defeat", "पराभव", "हार", 5),
+        OppositePair("Abundant", "विपुल", "प्रचुर", "Scarce", "दुर्मिळ", "दुर्लभ", 6),
+        OppositePair("Genuine", "अस्सल", "असली", "Fake", "बनावट", "नकली", 6),
+        OppositePair("Optimistic", "आशावादी", "आशावादी", "Pessimistic", "निराशावादी", "निराशावादी", 7),
+        OppositePair("Voluntary", "ऐच्छिक", "स्वैच्छिक", "Compulsory", "सक्तीचे", "अनिवार्य", 7)
+    )
+
+    fun wordsUpToTier(tier: Int): List<VocabWord> = words.filter { it.tier <= tier }
+    fun oppositesUpToTier(tier: Int): List<OppositePair> = opposites.filter { it.tier <= tier }
+}

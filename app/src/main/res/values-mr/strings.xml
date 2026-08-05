@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="app_name">इयत्ता १ ते ७ शिक्षण अभ्यासक्रम</string>
+
+    <string name="role_student">विद्यार्थी</string>
+    <string name="role_staff">शिक्षक / प्रशासक</string>
+    <string name="help_support_email">educationfreedigital@gmail.com</string>
+
+    <string name="lang_english">इंग्रजी</string>
+    <string name="lang_marathi">मराठी</string>
+    <string name="lang_hindi">हिंदी</string>
+
+    <string name="subject_maths">गणित</string>
+    <string name="subject_english">इंग्रजी</string>
+    <string name="subject_marathi">मराठी</string>
+    <string name="subject_hindi">हिंदी</string>
+</resources>
