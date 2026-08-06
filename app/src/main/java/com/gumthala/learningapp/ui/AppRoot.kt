@@ -7,10 +7,8 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
-import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.navigation.compose.NavHost
@@ -25,7 +23,6 @@ import com.gumthala.learningapp.ui.auth.AuthViewModel
 import com.gumthala.learningapp.ui.auth.RoleSelectScreen
 import com.gumthala.learningapp.ui.auth.StaffLoginScreen
 import com.gumthala.learningapp.ui.auth.StudentLoginScreen
-import com.gumthala.learningapp.ui.common.HelpSupportScreen
 import com.gumthala.learningapp.ui.student.StudentNavGraph
 import com.gumthala.learningapp.ui.student.StudentSession
 import com.gumthala.learningapp.ui.teacher.TeacherHomeScreen
@@ -61,16 +58,11 @@ fun AppRoot() {
                     }
                     Role.ADMIN -> {
                         val scope = rememberCoroutineScope()
-                        var showHelp by remember { mutableStateOf(false) }
-                        if (showHelp) {
-                            HelpSupportScreen(onBack = { showHelp = false })
-                        } else {
-                            AdminHomeScreen(
-                                adminName = userSession.displayName,
-                                onOpenHelp = { showHelp = true },
-                                onLogout = { scope.launch { container.sessionManager.logout() } }
-                            )
-                        }
+                        AdminHomeScreen(
+                            adminId = userSession.userId,
+                            adminName = userSession.displayName,
+                            onLogout = { scope.launch { container.sessionManager.logout() } }
+                        )
                     }
                 }
             }

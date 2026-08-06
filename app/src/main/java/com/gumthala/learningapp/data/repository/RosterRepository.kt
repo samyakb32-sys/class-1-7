@@ -12,4 +12,5 @@ class RosterRepository(
     fun observeStudentsRegisteredBy(teacherId: String) = studentDao.observeByRegisteredBy(teacherId)
     fun observeAllStudents() = studentDao.observeAll()
     fun observeAllTeachers() = teacherDao.observeAll()
+    fun observeTeacher(teacherId: String) = teacherDao.observeById(teacherId)
 }

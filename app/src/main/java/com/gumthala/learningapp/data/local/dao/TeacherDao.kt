@@ -20,6 +20,9 @@ interface TeacherDao {
     @Query("SELECT * FROM teachers WHERE email = :email LIMIT 1")
     suspend fun findByEmail(email: String): TeacherEntity?
 
+    @Query("SELECT * FROM teachers WHERE id = :id LIMIT 1")
+    fun observeById(id: String): Flow<TeacherEntity?>
+
     @Query("SELECT * FROM teachers ORDER BY name ASC")
     fun observeAll(): Flow<List<TeacherEntity>>
 
