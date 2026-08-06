@@ -108,8 +108,14 @@ object MathQuestionGenerator {
         while (a == b) b = random.nextInt(1, maxValue)
         val askGreater = random.nextBoolean()
         val correct = if (askGreater) maxOf(a, b) else minOf(a, b)
-        val options = listOf(correct, if (correct == a) b else a).shuffled(random).map { it.toString() }
-        val correctIndex = options.indexOf(correct.toString())
+        val other = if (correct == a) b else a
+        val distractors = mutableSetOf(other)
+        while (distractors.size < 3) {
+            val candidate = correct + random.nextInt(-5, 6)
+            if (candidate >= 0 && candidate != correct) distractors.add(candidate)
+        }
+        val options = (listOf(correct) + distractors.take(3)).map { it.toString() }
+        val correctIndex = 0
         return GeneratedQuestion(
             textEn = if (askGreater) "Which number is greater: $a or $b?" else "Which number is smaller: $a or $b?",
             textMr = if (askGreater) "कोणती संख्या मोठी आहे: $a की $b?" else "कोणती संख्या लहान आहे: $a की $b?",
