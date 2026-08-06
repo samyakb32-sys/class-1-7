@@ -146,16 +146,13 @@ object MathQuestionGenerator {
     }
 
     fun fractionShaded(random: Random): GeneratedQuestion {
-        val total = listOf(2, 3, 4, 5).random(random)
+        // total must leave at least 3 other numerators besides the shaded one, or distractor
+        // generation below can't find 3 distinct wrong fractions (e.g. total=2 only has "1/2").
+        val total = listOf(5, 6, 7, 8).random(random)
         val shaded = random.nextInt(1, total)
         val picture = "🟩".repeat(shaded) + "⬜".repeat(total - shaded)
         val correctLabel = "$shaded/$total"
-        val distractors = mutableSetOf<String>()
-        while (distractors.size < 3) {
-            val ds = random.nextInt(1, total)
-            val label = "$ds/$total"
-            if (label != correctLabel) distractors.add(label)
-        }
+        val distractors = (1 until total).filter { it != shaded }.shuffled(random).take(3).map { "$it/$total" }
         val options = (listOf(correctLabel) + distractors)
         return GeneratedQuestion(
             textEn = "What fraction of the shape is shaded? $picture",
