@@ -40,15 +40,22 @@ Home, Subjects, Lesson, Quiz, Practice, Progress, Profile. These were rebuilt in
 match it closely (`ui/student/**`, tokens in `ui/theme/`).
 
 The following screens have **no mockup yet** and were built as plain, unstyled Material3
-placeholders (clearly commented `TEMPORARY` in code) purely so the app is runnable —
-please share mockups for these and they'll be redone to match:
+placeholders (clearly commented `TEMPORARY`/"placeholder pending a mockup" in code) purely so
+the app is fully usable end-to-end — please share mockups for these and they'll be redone to
+match:
 
 - Role select / Student login / Teacher & Admin login (`ui/auth/`)
-- Teacher dashboard (`ui/teacher/TeacherHomeScreen.kt`)
-- Admin dashboard (`ui/admin/AdminHomeScreen.kt`)
-- Leaderboard, Achievements, Help & Support, Language settings, Teaching Slides
-  (Teaching Slides isn't built yet at all — data model exists in `SlideDeckEntity`/
-  `SlideEntity` and default decks are seeded, but there's no viewer screen)
+- Teacher dashboard (`ui/teacher/TeacherHomeScreen.kt`) and Admin dashboard
+  (`ui/admin/AdminHomeScreen.kt`)
+- Student/Teacher registration (`ui/roster/`) — without this the student login flow was
+  unreachable (nobody could ever be registered to log in as), so it was built even though
+  unstyled, rather than left missing
+- Teaching Slides: deck browser + arrow-navigation viewer + "add a custom deck" for teachers
+  (`ui/slides/`) — custom decks are entered in one language only for now (same text copied into
+  all three language fields) until a real translation-authoring flow is designed
+- Teacher/Admin quiz question authoring (`ui/content/`): pick class → subject → chapter → add or
+  edit a trilingual MCQ
+- Leaderboard, Achievements, Help & Support, Language settings
 
 ## Testing
 
@@ -93,5 +100,6 @@ minimum spread so the same *class* of bug can't recur for a caller not yet imagi
 - Practice screen's 5 non-"Multiple Choice" modes (Drag & Drop, Match the Pair, Fill in the
   Blanks, Image Questions, Voice Questions) are shown per the mockup but not implemented —
   they show a "coming soon" toast.
-- Teaching Slides viewer UI (arrow navigation through a deck) isn't built yet.
 - No password-change / forgot-password flow yet beyond the Help & Support contact email.
+- Admin can't yet delete/deactivate a student or teacher, or edit a teacher's assigned classes
+  after registration — only create is wired up.
