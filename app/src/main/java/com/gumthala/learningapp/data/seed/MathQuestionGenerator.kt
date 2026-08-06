@@ -10,9 +10,13 @@ import kotlin.random.Random
 object MathQuestionGenerator {
 
     private fun numericOptions(correct: Int, random: Random, spread: Int = 5): Pair<List<Int>, Int> {
+        // A window this narrow can have fewer than 3 non-negative values around `correct` other
+        // than `correct` itself (e.g. spread=1, correct=1 only has {0,2} to draw from), which
+        // would make the loop below spin forever. 3 guarantees at least 6 candidates always.
+        val effectiveSpread = maxOf(spread, 3)
         val distractors = mutableSetOf<Int>()
         while (distractors.size < 3) {
-            val candidate = correct + random.nextInt(-spread, spread + 1)
+            val candidate = correct + random.nextInt(-effectiveSpread, effectiveSpread + 1)
             if (candidate != correct && candidate >= 0) distractors.add(candidate)
         }
         val options = (listOf(correct) + distractors)
