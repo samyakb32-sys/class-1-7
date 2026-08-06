@@ -50,6 +50,30 @@ please share mockups for these and they'll be redone to match:
   (Teaching Slides isn't built yet at all — data model exists in `SlideDeckEntity`/
   `SlideEntity` and default decks are seeded, but there's no viewer screen)
 
+## Testing
+
+`app/src/test/java/com/gumthala/learningapp/` has a JUnit 5 unit test suite covering the
+quiz engine, password hashing, and every content generator (`data/seed/`) — run it with:
+
+```
+./gradlew testDebugUnitTest
+```
+
+For each Maths question template it independently re-derives the correct answer from the
+generated question text (regex-parses the numbers back out and recomputes) rather than trusting
+the generator's own claimed answer, and every generator is run hundreds of times with different
+seeds to shake out edge cases. This isn't just aspirational — this exact suite (run against the
+same source files in a standalone Kotlin/JVM harness, since this sandbox can't run the Android
+build; see **Setup** below) caught two real bugs before they shipped:
+
+- `comparison()` only ever produced 2 options instead of 4 like every other question type.
+- `fractionShaded()` could infinite-loop when it picked a denominator of 2, since "1/2" is the
+  only representable fraction at that denominator and no distinct wrong answer could ever be
+  found.
+
+Both are fixed; `numericOptions()` (the shared distractor-generation helper) also now enforces a
+minimum spread so the same *class* of bug can't recur for a caller not yet imagined.
+
 ## Setup
 
 1. **Firebase (optional)**: `app/google-services.json` is a placeholder. Replace it with your
@@ -58,9 +82,11 @@ please share mockups for these and they'll be redone to match:
 2. **First Admin login**: bootstrapped on first launch — `admin@classapp.local` /
    `Admin@123`. Change it immediately (no "change password" UI yet — update directly via the
    `admins` table or add that screen).
-3. Build: `./gradlew assembleDebug` (requires the Android SDK; this container didn't have one
-   available to verify the build compiles end-to-end — please run a build locally / in CI
-   before relying on it).
+3. Build: `./gradlew assembleDebug` (requires the Android SDK; this container's network policy
+   blocks `dl.google.com`, so the Android SDK/AGP/Compose toolchain couldn't be fetched here to
+   verify the full build end-to-end — please build locally or in CI, where Google's servers
+   aren't blocked, before relying on it). The pure-Kotlin business logic (quiz engine, content
+   generators, password hashing) *was* verified — see **Testing** above.
 
 ## Known gaps
 
