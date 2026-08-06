@@ -1,42 +1,70 @@
 package com.gumthala.learningapp.ui.nav
 
 import androidx.compose.foundation.background
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.navigationBarsPadding
+import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.statusBarsPadding
+import androidx.compose.material3.CircularProgressIndicator
+import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.unit.dp
+import androidx.hilt.navigation.compose.hiltViewModel
 import com.gumthala.learningapp.ui.components.AppTabBar
+import com.gumthala.learningapp.ui.components.PrimaryFullButton
 import com.gumthala.learningapp.ui.screens.HomeScreen
 import com.gumthala.learningapp.ui.screens.LessonScreen
 import com.gumthala.learningapp.ui.screens.PracticeScreen
 import com.gumthala.learningapp.ui.screens.ProfileScreen
 import com.gumthala.learningapp.ui.screens.ProgressScreen
 import com.gumthala.learningapp.ui.screens.QuizScreen
+import com.gumthala.learningapp.ui.screens.SubjectCardUi
 import com.gumthala.learningapp.ui.screens.SubjectsScreen
+import com.gumthala.learningapp.ui.theme.AppColors
+import com.gumthala.learningapp.ui.theme.TextSize
+import com.gumthala.learningapp.ui.theme.display
+import com.gumthala.learningapp.ui.viewmodel.QuizScreenState
+import com.gumthala.learningapp.ui.viewmodel.QuizViewModel
+import com.gumthala.learningapp.ui.viewmodel.StudentViewModel
 
 /** Pushed screens that sit on top of a tab. */
 private sealed interface Overlay {
     data object None : Overlay
+    data object Chapters : Overlay
     data object Lesson : Overlay
-    data object Quiz : Overlay
+    data class Quiz(val chapterId: String) : Overlay
 }
 
 /**
- * Wires the seven mockup screens together. The mockup shows Lesson under the
- * "Learn" tab and Quiz under "Practice", so they are modelled as pushed screens
- * over those tabs rather than tabs of their own.
+ * Wires the student screens together. Subjects → chapter list → Quiz is now a
+ * real loop backed by [StudentViewModel] / [QuizViewModel] over Room — pick a
+ * subject, pick a chapter, answer real questions, see the attempt persisted.
+ *
+ * Lesson stays on demo data: chapters only store a title/blurb, not a teaching
+ * body, so there's nothing real for LessonScreen's paragraph/example fields to
+ * bind to yet — that needs a content-model addition, not just wiring. Home
+ * likewise stays on demo data; see README "Mockup vs spec" for why (XP/Coins/
+ * Streak/weekly-bar fields have no backing columns).
  */
 @Composable
-fun AppNavHost(modifier: Modifier = Modifier) {
+fun AppNavHost(userId: String, classLevel: Int, modifier: Modifier = Modifier) {
     var tab by remember { mutableStateOf(TopLevelDestination.HOME) }
     var overlay by remember { mutableStateOf<Overlay>(Overlay.None) }
+
+    val studentViewModel: StudentViewModel = hiltViewModel<StudentViewModel, StudentViewModel.Factory>(
+        key = "student:$userId:$classLevel"
+    ) { factory -> factory.create(userId, classLevel) }
 
     Column(
         modifier = modifier
@@ -46,30 +74,50 @@ fun AppNavHost(modifier: Modifier = Modifier) {
             .navigationBarsPadding()
     ) {
         Column(Modifier.weight(1f)) {
-            when (overlay) {
+            when (val current = overlay) {
                 Overlay.Lesson -> LessonScreen(
-                    onBack = { overlay = Overlay.None },
-                    onNext = { tab = TopLevelDestination.PRACTICE; overlay = Overlay.Quiz }
+                    onBack = { overlay = Overlay.Chapters },
+                    onNext = { overlay = Overlay.None; tab = TopLevelDestination.PRACTICE }
                 )
 
-                Overlay.Quiz -> QuizScreen()
+                Overlay.Chapters -> {
+                    val chaptersState by studentViewModel.chaptersState.collectAsState()
+                    SubjectsScreen(
+                        subjects = chaptersState.chapters,
+                        onBack = { overlay = Overlay.None },
+                        onSubjectClick = { chapter: SubjectCardUi -> overlay = Overlay.Quiz(chapter.id) }
+                    )
+                }
+
+                is Overlay.Quiz -> QuizHost(
+                    chapterId = current.chapterId,
+                    userId = userId,
+                    onDone = { overlay = Overlay.None; tab = TopLevelDestination.LEARN }
+                )
 
                 Overlay.None -> when (tab) {
                     TopLevelDestination.HOME -> HomeScreen(
                         onSeeAllSubjects = { tab = TopLevelDestination.LEARN },
                         onFeaturedClick = { tab = TopLevelDestination.LEARN },
-                        onStartChallenge = { tab = TopLevelDestination.PRACTICE; overlay = Overlay.Quiz },
-                        onContinueLearning = { tab = TopLevelDestination.LEARN; overlay = Overlay.Lesson }
+                        onStartChallenge = { tab = TopLevelDestination.LEARN },
+                        onContinueLearning = { tab = TopLevelDestination.LEARN }
                     )
 
-                    TopLevelDestination.LEARN -> SubjectsScreen(
-                        onBack = { tab = TopLevelDestination.HOME },
-                        onSubjectClick = { overlay = Overlay.Lesson }
-                    )
+                    TopLevelDestination.LEARN -> {
+                        val subjectsState by studentViewModel.subjectsState.collectAsState()
+                        SubjectsScreen(
+                            subjects = subjectsState.subjects,
+                            onBack = { tab = TopLevelDestination.HOME },
+                            onSubjectClick = { subject: SubjectCardUi ->
+                                studentViewModel.selectSubject(subject.id)
+                                overlay = Overlay.Chapters
+                            }
+                        )
+                    }
 
                     TopLevelDestination.PRACTICE -> PracticeScreen(
                         onBack = { tab = TopLevelDestination.HOME },
-                        onModeClick = { overlay = Overlay.Quiz }
+                        onModeClick = { tab = TopLevelDestination.LEARN }
                     )
 
                     TopLevelDestination.PROGRESS -> ProgressScreen()
@@ -86,5 +134,68 @@ fun AppNavHost(modifier: Modifier = Modifier) {
                 overlay = Overlay.None
             }
         )
+    }
+}
+
+/**
+ * Drives the existing (unmodified) [QuizScreen] with a real [QuizViewModel].
+ * Handles all three states the ViewModel can be in: still loading questions,
+ * no questions exist for this chapter yet, or answering. On finish, shows an
+ * inline result (no Candy Burst animation yet — that's a separate build step)
+ * with a real star count and a way back out.
+ */
+@Composable
+private fun QuizHost(chapterId: String, userId: String, onDone: () -> Unit) {
+    val viewModel: QuizViewModel = hiltViewModel<QuizViewModel, QuizViewModel.Factory>(
+        key = "quiz:$chapterId:$userId"
+    ) { factory -> factory.create(chapterId, userId) }
+    val state by viewModel.screenState.collectAsState()
+
+    when (val s = state) {
+        QuizScreenState.Loading -> Box(Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
+            CircularProgressIndicator()
+        }
+
+        QuizScreenState.Empty -> Box(Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
+            Column(horizontalAlignment = Alignment.CenterHorizontally) {
+                Text(
+                    "No questions in this chapter yet.",
+                    style = display(TextSize.Label, FontWeight.Bold),
+                    color = AppColors.Muted
+                )
+                PrimaryFullButton(
+                    text = "Back",
+                    onClick = onDone,
+                    modifier = Modifier.padding(top = 16.dp)
+                )
+            }
+        }
+
+        is QuizScreenState.InProgress -> QuizScreen(
+            state = s.ui,
+            onSelectOption = viewModel::selectOption,
+            onNext = viewModel::next
+        )
+
+        is QuizScreenState.Finished -> Box(Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
+            Column(horizontalAlignment = Alignment.CenterHorizontally) {
+                Text(
+                    "⭐".repeat(s.outcome.starsEarned).ifEmpty { "Keep practicing!" },
+                    style = display(TextSize.Header, FontWeight.ExtraBold),
+                    color = AppColors.Ink
+                )
+                Text(
+                    "${s.outcome.correctCount} / ${s.outcome.totalCount} correct",
+                    style = display(TextSize.Label, FontWeight.Bold),
+                    color = AppColors.Muted,
+                    modifier = Modifier.padding(top = 6.dp)
+                )
+                PrimaryFullButton(
+                    text = "Back to Chapters",
+                    onClick = onDone,
+                    modifier = Modifier.padding(top = 20.dp)
+                )
+            }
+        }
     }
 }

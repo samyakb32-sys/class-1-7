@@ -88,7 +88,10 @@ fun RootNavHost(modifier: Modifier = Modifier) {
                 )
             }
 
-            authState.signedInAs == SignedInRole.STUDENT -> AppNavHost()
+            authState.signedInAs == SignedInRole.STUDENT -> AppNavHost(
+                userId = authState.signedInUserId.orEmpty(),
+                classLevel = authState.signedInClassLevel ?: 1
+            )
 
             authState.signedInAs == SignedInRole.TEACHER -> TeacherShell(
                 displayName = authState.signedInName.orEmpty(),

@@ -22,7 +22,8 @@ data class AuthUiState(
     val errorMessage: String? = null,
     val signedInAs: SignedInRole? = null,
     val signedInUserId: String? = null,
-    val signedInName: String? = null
+    val signedInName: String? = null,
+    val signedInClassLevel: Int? = null
 )
 
 /**
@@ -54,7 +55,8 @@ class AuthViewModel @Inject constructor(
                         UserRole.STUDENT -> SignedInRole.STUDENT
                     },
                     signedInUserId = session.userId,
-                    signedInName = session.displayName
+                    signedInName = session.displayName,
+                    signedInClassLevel = session.classLevel
                 )
             } else {
                 AuthUiState(isLoadingSession = false)
@@ -71,7 +73,8 @@ class AuthViewModel @Inject constructor(
                     isLoadingSession = false,
                     signedInAs = SignedInRole.STUDENT,
                     signedInUserId = result.user.id,
-                    signedInName = result.user.fullName
+                    signedInName = result.user.fullName,
+                    signedInClassLevel = result.user.classLevel
                 )
                 AuthResult.StudentNotRegistered -> _state.value = _state.value.copy(
                     isSubmitting = false,
