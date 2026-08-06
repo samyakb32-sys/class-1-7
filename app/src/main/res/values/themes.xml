@@ -1,0 +1,5 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!-- Placeholder. Real colors/typography come from the HTML mockup once supplied. -->
+    <style name="Theme.LearningApp" parent="android:Theme.Material.Light.NoActionBar" />
+</resources>

@@ -1,0 +1,4 @@
+-keepattributes *Annotation*, InnerClasses
+-keep,includedescriptorclasses class com.gumthala.learningapp.**$$serializer { *; }
+-keepclassmembers class com.gumthala.learningapp.** { *** Companion; }
+-keepclasseswithmembers class com.gumthala.learningapp.** { kotlinx.serialization.KSerializer serializer(...); }

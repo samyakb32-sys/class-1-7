@@ -1,0 +1,80 @@
+{
+  "version": 1,
+  "subject": {
+    "code": "maths",
+    "name": { "en": "Maths", "mr": "गणित", "hi": "गणित" },
+    "iconKey": "abacus",
+    "colorHex": "#FF7A45",
+    "orderIndex": 0
+  },
+  "classes": [
+    {
+      "classLevel": 1,
+      "chapters": [
+        {
+          "id": "maths_c1_ch1",
+          "title": { "en": "Counting Trail", "mr": "मोजणीची वाट", "hi": "गिनती की राह" },
+          "blurb": {
+            "en": "Follow the trail and count what you spot along the way.",
+            "mr": "वाटेवर चालत जा आणि दिसेल ते मोजत जा.",
+            "hi": "राह पर चलो और जो दिखे उसे गिनते जाओ."
+          },
+          "iconKey": "footprints",
+          "questions": [
+            {
+              "id": "maths_c1_ch1_q1",
+              "prompt": {
+                "en": "Six mangoes hang on the branch. Two drop into the basket. How many still hang?",
+                "mr": "फांदीवर सहा आंबे आहेत. दोन टोपलीत पडले. फांदीवर किती उरले?",
+                "hi": "डाली पर छह आम हैं. दो टोकरी में गिर गए. डाली पर कितने बचे?"
+              },
+              "imageRef": "images/maths/mangoes_branch.webp",
+              "hint": {
+                "en": "Take away the two that fell.",
+                "mr": "पडलेले दोन वजा कर.",
+                "hi": "गिरे हुए दो घटा दो."
+              },
+              "difficulty": 3,
+              "options": [
+                { "text": { "en": "4", "mr": "४", "hi": "४" }, "correct": true },
+                { "text": { "en": "2", "mr": "२", "hi": "२" } },
+                { "text": { "en": "8", "mr": "८", "hi": "८" } },
+                { "text": { "en": "6", "mr": "६", "hi": "६" } }
+              ]
+            },
+            {
+              "id": "maths_c1_ch1_q2",
+              "prompt": {
+                "en": "Which group has more: 3 owls or 5 fireflies?",
+                "mr": "कोणता गट मोठा: ३ घुबडे की ५ काजवे?",
+                "hi": "कौन सा समूह बड़ा है: ३ उल्लू या ५ जुगनू?"
+              },
+              "imageRef": "images/maths/owls_fireflies.webp",
+              "difficulty": 3,
+              "options": [
+                { "text": { "en": "5 fireflies", "mr": "५ काजवे", "hi": "५ जुगनू" }, "correct": true },
+                { "text": { "en": "3 owls", "mr": "३ घुबडे", "hi": "३ उल्लू" } },
+                { "text": { "en": "Both same", "mr": "दोन्ही समान", "hi": "दोनों बराबर" } }
+              ]
+            },
+            {
+              "id": "maths_c1_ch1_q3",
+              "prompt": {
+                "en": "Count in twos: 2, 4, 6, ___",
+                "mr": "दोनाने मोज: २, ४, ६, ___",
+                "hi": "दो-दो करके गिनो: २, ४, ६, ___"
+              },
+              "difficulty": 4,
+              "options": [
+                { "text": { "en": "8", "mr": "८", "hi": "८" }, "correct": true },
+                { "text": { "en": "7", "mr": "७", "hi": "७" } },
+                { "text": { "en": "10", "mr": "१०", "hi": "१०" } },
+                { "text": { "en": "9", "mr": "९", "hi": "९" } }
+              ]
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}
