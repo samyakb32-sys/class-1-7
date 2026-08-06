@@ -1,0 +1,19 @@
+<vector xmlns:android="http://schemas.android.com/apk/res/android"
+    android:width="108dp"
+    android:height="108dp"
+    android:viewportWidth="108"
+    android:viewportHeight="108">
+    <!-- Placeholder mascot mark: an owl silhouette on the app's purple field. Replace with the final mascot artwork once designed. -->
+    <path
+        android:fillColor="#F5A623"
+        android:pathData="M54,30 C42,30 33,39 33,51 C33,60 38,67 45,70 L45,78 L63,78 L63,70 C70,67 75,60 75,51 C75,39 66,30 54,30 Z" />
+    <path
+        android:fillColor="#1E1B3A"
+        android:pathData="M46,50 m-4,0 a4,4 0 1,0 8,0 a4,4 0 1,0 -8,0" />
+    <path
+        android:fillColor="#1E1B3A"
+        android:pathData="M62,50 m-4,0 a4,4 0 1,0 8,0 a4,4 0 1,0 -8,0" />
+    <path
+        android:fillColor="#FFFFFF"
+        android:pathData="M54,58 L50,64 L58,64 Z" />
+</vector>
