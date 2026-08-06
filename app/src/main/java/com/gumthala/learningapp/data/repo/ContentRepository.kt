@@ -24,6 +24,8 @@ class ContentRepository @Inject constructor(
     fun observeChapters(subjectId: String, classLevel: Int) =
         contentDao.observeChapters(subjectId, classLevel)
 
+    fun observeTotalQuestionCount() = contentDao.observeTotalQuestionCount()
+
     fun observeChapterProgress(userId: String, subjectId: String, classLevel: Int) =
         contentDao.observeChapterProgress(userId, subjectId, classLevel)
 

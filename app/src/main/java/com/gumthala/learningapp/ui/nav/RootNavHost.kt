@@ -21,21 +21,22 @@ import com.gumthala.learningapp.ui.components.AdminTabs
 import com.gumthala.learningapp.ui.screens.ProfileScreen
 import com.gumthala.learningapp.ui.screens.ProfileUiState
 import com.gumthala.learningapp.ui.screens.admin.AdminDashboardScreen
-import com.gumthala.learningapp.ui.screens.admin.AdminOverview
 import com.gumthala.learningapp.ui.screens.admin.ManageStudentsScreen
-import com.gumthala.learningapp.ui.screens.admin.ManagedStudentRow
 import com.gumthala.learningapp.ui.screens.auth.AppRole
 import com.gumthala.learningapp.ui.screens.auth.RoleSelectScreen
 import com.gumthala.learningapp.ui.screens.auth.StaffLoginInput
 import com.gumthala.learningapp.ui.screens.auth.StaffLoginScreen
 import com.gumthala.learningapp.ui.screens.auth.StudentLoginInput
 import com.gumthala.learningapp.ui.screens.auth.StudentLoginScreen
+import com.gumthala.learningapp.ui.screens.roster.RegisterStudentScreen
+import com.gumthala.learningapp.ui.screens.roster.RegisterTeacherScreen
 import com.gumthala.learningapp.ui.screens.teacher.TeacherDashboardScreen
-import com.gumthala.learningapp.ui.screens.teacher.TeacherOverview
 import com.gumthala.learningapp.ui.screens.teacher.TeachingSlide
 import com.gumthala.learningapp.ui.screens.teacher.TeachingSlidesScreen
+import com.gumthala.learningapp.ui.viewmodel.AdminViewModel
 import com.gumthala.learningapp.ui.viewmodel.AuthViewModel
 import com.gumthala.learningapp.ui.viewmodel.SignedInRole
+import com.gumthala.learningapp.ui.viewmodel.TeacherViewModel
 
 /** Where the app is in the login flow, before any role-specific shell takes over. */
 private sealed interface AuthStep {
@@ -94,11 +95,13 @@ fun RootNavHost(modifier: Modifier = Modifier) {
             )
 
             authState.signedInAs == SignedInRole.TEACHER -> TeacherShell(
+                teacherUserId = authState.signedInUserId.orEmpty(),
                 displayName = authState.signedInName.orEmpty(),
                 onLogout = { authViewModel.logout(); authStep = AuthStep.RoleSelect }
             )
 
             authState.signedInAs == SignedInRole.ADMIN -> AdminShell(
+                adminUserId = authState.signedInUserId.orEmpty(),
                 displayName = authState.signedInName.orEmpty(),
                 onLogout = { authViewModel.logout(); authStep = AuthStep.RoleSelect }
             )
@@ -109,12 +112,22 @@ fun RootNavHost(modifier: Modifier = Modifier) {
 private sealed interface TeacherOverlay {
     data object None : TeacherOverlay
     data object Slides : TeacherOverlay
+    data object RegisterStudent : TeacherOverlay
 }
 
 @Composable
-private fun TeacherShell(displayName: String, onLogout: () -> Unit) {
+private fun TeacherShell(teacherUserId: String, displayName: String, onLogout: () -> Unit) {
     var tab by remember { mutableStateOf(TeacherTabs.HOME) }
     var overlay by remember { mutableStateOf<TeacherOverlay>(TeacherOverlay.None) }
+
+    val viewModel: TeacherViewModel = hiltViewModel<TeacherViewModel, TeacherViewModel.Factory>(
+        key = "teacher:$teacherUserId"
+    ) { factory -> factory.create(teacherUserId) }
+
+    val overview by viewModel.overview.collectAsState()
+    val students by viewModel.students.collectAsState()
+    val assignedClasses by viewModel.assignedClasses.collectAsState()
+    val registerState by viewModel.registerState.collectAsState()
 
     Column(modifier = Modifier.fillMaxSize()) {
         Column(Modifier.weight(1f)) {
@@ -126,26 +139,32 @@ private fun TeacherShell(displayName: String, onLogout: () -> Unit) {
                     onBack = { overlay = TeacherOverlay.None },
                     onPrevious = {},
                     onNext = {},
-                    onAddSlide = { /* teacher-authored slide — not wired */ }
+                    onAddSlide = { /* teacher-authored slide — not wired, see SlideRepository */ }
+                )
+
+                TeacherOverlay.RegisterStudent -> RegisterStudentScreen(
+                    allowedClassLevels = assignedClasses.ifEmpty { listOf(1) },
+                    onSubmit = { input -> viewModel.registerStudent(input) },
+                    submitError = registerState.error,
+                    successMessage = registerState.success,
+                    isSubmitting = registerState.isSubmitting
                 )
 
                 TeacherOverlay.None -> when (tab) {
                     TeacherTabs.HOME -> TeacherDashboardScreen(
-                        overview = DemoData.teacherOverview.copy(
-                            teacherName = displayName.ifBlank { DemoData.teacherOverview.teacherName }
-                        ),
-                        onRegisterStudent = { },
-                        onAddEditQuestions = { },
+                        overview = overview.copy(teacherName = displayName.ifBlank { "Teacher" }),
+                        onRegisterStudent = { viewModel.consumeRegisterResult(); overlay = TeacherOverlay.RegisterStudent },
+                        onAddEditQuestions = { /* Stage 2 continues: question editor not wired to teacher dashboard yet */ },
                         onTeachingSlides = { overlay = TeacherOverlay.Slides },
                         onStudentProgress = { tab = TeacherTabs.STUDENTS }
                     )
 
                     TeacherTabs.STUDENTS -> ManageStudentsScreen(
-                        students = DemoData.teacherStudents,
+                        students = students,
                         onBack = { tab = TeacherTabs.HOME },
                         onSearch = { },
                         onStudentClick = { },
-                        onAddStudent = { }
+                        onAddStudent = { viewModel.consumeRegisterResult(); overlay = TeacherOverlay.RegisterStudent }
                     )
 
                     TeacherTabs.SLIDES -> TeachingSlidesScreen(
@@ -159,9 +178,7 @@ private fun TeacherShell(displayName: String, onLogout: () -> Unit) {
                     )
 
                     else -> ProfileScreen(
-                        state = DemoData.teacherProfile.copy(
-                            name = displayName.ifBlank { DemoData.teacherProfile.name }
-                        ),
+                        state = DemoData.teacherProfile.copy(name = displayName.ifBlank { "Teacher" }),
                         onLogout = onLogout
                     )
                 }
@@ -173,47 +190,73 @@ private fun TeacherShell(displayName: String, onLogout: () -> Unit) {
     }
 }
 
+private sealed interface AdminOverlay {
+    data object None : AdminOverlay
+    data object RegisterStudent : AdminOverlay
+    data object RegisterTeacher : AdminOverlay
+}
+
 @Composable
-private fun AdminShell(displayName: String, onLogout: () -> Unit) {
+private fun AdminShell(adminUserId: String, displayName: String, onLogout: () -> Unit) {
     var tab by remember { mutableStateOf(AdminTabs.HOME) }
+    var overlay by remember { mutableStateOf<AdminOverlay>(AdminOverlay.None) }
+
+    val viewModel: AdminViewModel = hiltViewModel<AdminViewModel, AdminViewModel.Factory>(
+        key = "admin:$adminUserId"
+    ) { factory -> factory.create(adminUserId) }
+
+    val overview by viewModel.overview.collectAsState()
+    val students by viewModel.students.collectAsState()
+    val registerStudentState by viewModel.registerStudentState.collectAsState()
+    val registerTeacherState by viewModel.registerTeacherState.collectAsState()
 
     Column(modifier = Modifier.fillMaxSize()) {
         Column(Modifier.weight(1f)) {
-            when (tab) {
-                AdminTabs.HOME -> AdminDashboardScreen(
-                    overview = DemoData.adminOverview.copy(
-                        adminName = displayName.ifBlank { DemoData.adminOverview.adminName }
-                    ),
-                    onManageStudents = { tab = AdminTabs.PEOPLE },
-                    onManageTeachers = { tab = AdminTabs.PEOPLE },
-                    onManageContent = { tab = AdminTabs.CONTENT },
-                    onHelpAndSupport = { }
+            when (overlay) {
+                AdminOverlay.RegisterStudent -> RegisterStudentScreen(
+                    onSubmit = { input -> viewModel.registerStudent(input) },
+                    submitError = registerStudentState.error,
+                    successMessage = registerStudentState.success,
+                    isSubmitting = registerStudentState.isSubmitting
                 )
 
-                AdminTabs.PEOPLE -> ManageStudentsScreen(
-                    students = DemoData.adminStudents,
-                    onBack = { tab = AdminTabs.HOME },
-                    onSearch = { },
-                    onStudentClick = { },
-                    onAddStudent = { }
+                AdminOverlay.RegisterTeacher -> RegisterTeacherScreen(
+                    onSubmit = { input -> viewModel.registerTeacher(input) },
+                    submitError = registerTeacherState.error,
+                    successMessage = registerTeacherState.success,
+                    isSubmitting = registerTeacherState.isSubmitting
                 )
 
-                AdminTabs.CONTENT -> AdminDashboardScreen(
-                    overview = DemoData.adminOverview.copy(
-                        adminName = displayName.ifBlank { DemoData.adminOverview.adminName }
-                    ),
-                    onManageStudents = { tab = AdminTabs.PEOPLE },
-                    onManageTeachers = { tab = AdminTabs.PEOPLE },
-                    onManageContent = { },
-                    onHelpAndSupport = { }
-                )
+                AdminOverlay.None -> when (tab) {
+                    AdminTabs.HOME -> AdminDashboardScreen(
+                        overview = overview.copy(adminName = displayName.ifBlank { "Admin" }),
+                        onManageStudents = { tab = AdminTabs.PEOPLE },
+                        onManageTeachers = { viewModel.consumeRegisterTeacherResult(); overlay = AdminOverlay.RegisterTeacher },
+                        onManageContent = { tab = AdminTabs.CONTENT },
+                        onHelpAndSupport = { }
+                    )
 
-                else -> ProfileScreen(
-                    state = DemoData.adminProfile.copy(
-                        name = displayName.ifBlank { DemoData.adminProfile.name }
-                    ),
-                    onLogout = onLogout
-                )
+                    AdminTabs.PEOPLE -> ManageStudentsScreen(
+                        students = students,
+                        onBack = { tab = AdminTabs.HOME },
+                        onSearch = { },
+                        onStudentClick = { },
+                        onAddStudent = { viewModel.consumeRegisterStudentResult(); overlay = AdminOverlay.RegisterStudent }
+                    )
+
+                    AdminTabs.CONTENT -> AdminDashboardScreen(
+                        overview = overview.copy(adminName = displayName.ifBlank { "Admin" }),
+                        onManageStudents = { tab = AdminTabs.PEOPLE },
+                        onManageTeachers = { overlay = AdminOverlay.RegisterTeacher },
+                        onManageContent = { /* Stage 2 continues: question editor not wired here yet */ },
+                        onHelpAndSupport = { }
+                    )
+
+                    else -> ProfileScreen(
+                        state = DemoData.adminProfile.copy(name = displayName.ifBlank { "Admin" }),
+                        onLogout = onLogout
+                    )
+                }
             }
         }
         RoleTabBar(items = AdminTabs.items, selectedIndex = tab, onSelect = { tab = it })
@@ -221,26 +264,12 @@ private fun AdminShell(displayName: String, onLogout: () -> Unit) {
 }
 
 /**
- * Placeholder content standing in for repository reads. Every one of these
- * numbers should come from AuthRepository / QuizRepository / SlideRepository
- * once the screens are wired — see README "What still needs doing".
+ * What's left on demo data after Stage 2: Teaching Slides (needs SlideRepository
+ * wiring — SlideRepository exists but isn't connected here yet) and both Profile
+ * screens' stats/menu (avatar, XP, achievements — cosmetic, no backing data model).
  */
 private object DemoData {
-    val teacherOverview = TeacherOverview("Mrs. Patil", myStudentCount = 32, avgProgressPct = 81)
-    val adminOverview = AdminOverview("Principal", studentCount = 184, teacherCount = 12, avgProgressPct = 78, questionCount = 340)
-
-    val teacherProfile = ProfileUiState(avatarEmoji = "👩‍🏫", name = "Mrs. Patil", subtitle = "Teacher · Classes 4–6")
-    val adminProfile = ProfileUiState(avatarEmoji = "🛡️", name = "Principal", subtitle = "Admin")
-
-    val teacherStudents = listOf(
-        ManagedStudentRow("s1", "👧", "Aarohi Sharma", "Class 5 · Mrs. Patil", 85),
-        ManagedStudentRow("s2", "👧", "Isha Kulkarni", "Class 6 · Mrs. Patil", 91),
-        ManagedStudentRow("s3", "👧", "Sanika Jadhav", "Class 5 · Mrs. Patil", 88)
-    )
-    val adminStudents = teacherStudents + listOf(
-        ManagedStudentRow("s4", "👦", "Rohan Deshmukh", "Class 4 · Mr. Kale", 72),
-        ManagedStudentRow("s5", "👦", "Vedant More", "Class 3 · Mr. Kale", 64)
-    )
-
+    val teacherProfile = ProfileUiState(avatarEmoji = "👩‍🏫", name = "Teacher", subtitle = "Teacher")
+    val adminProfile = ProfileUiState(avatarEmoji = "🛡️", name = "Admin", subtitle = "Admin")
     val alphabetSlides = ('A'..'Z').map { letter -> TeachingSlide(letter.toString(), "$letter for …") }
 }

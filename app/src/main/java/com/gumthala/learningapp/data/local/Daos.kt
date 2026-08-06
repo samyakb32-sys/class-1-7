@@ -109,6 +109,9 @@ interface ContentDao {
     @Query("SELECT COUNT(*) FROM questions WHERE chapterId = :chapterId AND isActive = 1")
     suspend fun questionCount(chapterId: String): Int
 
+    @Query("SELECT COUNT(*) FROM questions WHERE isActive = 1")
+    fun observeTotalQuestionCount(): Flow<Int>
+
     @Query("SELECT * FROM questions WHERE authorUserId = :teacherId ORDER BY updatedAt DESC")
     fun observeQuestionsByAuthor(teacherId: String): Flow<List<QuestionEntity>>
 
