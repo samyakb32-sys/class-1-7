@@ -46,9 +46,7 @@ class TeacherViewModel @AssistedInject constructor(
         fun create(teacherUserId: String): TeacherViewModel
     }
 
-    private val teacherFlow = kotlinx.coroutines.flow.flow {
-        emit(authRepository.user(teacherUserId))
-    }
+    private val teacherFlow = authRepository.observeUser(teacherUserId)
 
     val assignedClasses: StateFlow<List<Int>> = teacherFlow
         .map { it?.assignedClassLevels().orEmpty() }

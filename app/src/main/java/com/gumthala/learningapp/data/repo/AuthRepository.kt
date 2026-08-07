@@ -150,6 +150,7 @@ class AuthRepository @Inject constructor(
     fun observeStudentsInClass(classLevel: Int) = userDao.observeStudentsInClass(classLevel)
     fun observeByRole(role: UserRole) = userDao.observeByRole(role)
     suspend fun user(id: String) = userDao.findById(id)
+    fun observeUser(id: String) = userDao.observeById(id)
 }
 
 fun UserEntity.assignedClassLevels(): List<Int> =
