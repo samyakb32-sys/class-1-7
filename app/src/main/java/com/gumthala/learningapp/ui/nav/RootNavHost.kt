@@ -14,6 +14,7 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import com.gumthala.learningapp.ui.screens.SubjectCardUi
 import androidx.hilt.navigation.compose.hiltViewModel
 import com.gumthala.learningapp.ui.components.RoleTabBar
 import com.gumthala.learningapp.ui.components.TeacherTabs
@@ -28,14 +29,18 @@ import com.gumthala.learningapp.ui.screens.auth.StaffLoginInput
 import com.gumthala.learningapp.ui.screens.auth.StaffLoginScreen
 import com.gumthala.learningapp.ui.screens.auth.StudentLoginInput
 import com.gumthala.learningapp.ui.screens.auth.StudentLoginScreen
+import com.gumthala.learningapp.ui.screens.roster.PickClassScreen
+import com.gumthala.learningapp.ui.screens.roster.QuestionEditorScreen
 import com.gumthala.learningapp.ui.screens.roster.RegisterStudentScreen
 import com.gumthala.learningapp.ui.screens.roster.RegisterTeacherScreen
+import com.gumthala.learningapp.ui.screens.SubjectsScreen
 import com.gumthala.learningapp.ui.screens.teacher.TeacherDashboardScreen
-import com.gumthala.learningapp.ui.screens.teacher.TeachingSlide
 import com.gumthala.learningapp.ui.screens.teacher.TeachingSlidesScreen
 import com.gumthala.learningapp.ui.viewmodel.AdminViewModel
 import com.gumthala.learningapp.ui.viewmodel.AuthViewModel
+import com.gumthala.learningapp.ui.viewmodel.QuestionEditorViewModel
 import com.gumthala.learningapp.ui.viewmodel.SignedInRole
+import com.gumthala.learningapp.ui.viewmodel.SlideViewModel
 import com.gumthala.learningapp.ui.viewmodel.TeacherViewModel
 
 /** Where the app is in the login flow, before any role-specific shell takes over. */
@@ -111,8 +116,13 @@ fun RootNavHost(modifier: Modifier = Modifier) {
 
 private sealed interface TeacherOverlay {
     data object None : TeacherOverlay
-    data object Slides : TeacherOverlay
+    data object SlideDecks : TeacherOverlay
+    data object SlideViewer : TeacherOverlay
     data object RegisterStudent : TeacherOverlay
+    data object QuestionSubjects : TeacherOverlay
+    data class QuestionClass(val subject: SubjectCardUi) : TeacherOverlay
+    data class QuestionChapters(val subject: SubjectCardUi, val classLevel: Int) : TeacherOverlay
+    data class QuestionForm(val chapter: SubjectCardUi) : TeacherOverlay
 }
 
 @Composable
@@ -123,23 +133,44 @@ private fun TeacherShell(teacherUserId: String, displayName: String, onLogout: (
     val viewModel: TeacherViewModel = hiltViewModel<TeacherViewModel, TeacherViewModel.Factory>(
         key = "teacher:$teacherUserId"
     ) { factory -> factory.create(teacherUserId) }
+    val slideViewModel: SlideViewModel = hiltViewModel<SlideViewModel, SlideViewModel.Factory>(
+        key = "slides:$teacherUserId"
+    ) { factory -> factory.create(teacherUserId) }
+
+    val questionViewModel: QuestionEditorViewModel = hiltViewModel<QuestionEditorViewModel, QuestionEditorViewModel.Factory>(
+        key = "questions:$teacherUserId"
+    ) { factory -> factory.create(teacherUserId) }
 
     val overview by viewModel.overview.collectAsState()
     val students by viewModel.students.collectAsState()
     val assignedClasses by viewModel.assignedClasses.collectAsState()
     val registerState by viewModel.registerState.collectAsState()
+    val deckList by slideViewModel.deckListState.collectAsState()
+    val viewerState by slideViewModel.viewerState.collectAsState()
+    val questionSubjects by questionViewModel.subjects.collectAsState()
+    val questionChapters by questionViewModel.chapters.collectAsState()
+    val saveQuestionState by questionViewModel.saveState.collectAsState()
 
     Column(modifier = Modifier.fillMaxSize()) {
         Column(Modifier.weight(1f)) {
             when (overlay) {
-                TeacherOverlay.Slides -> TeachingSlidesScreen(
-                    deckTitle = "Alphabet A–Z",
-                    slides = DemoData.alphabetSlides,
-                    currentIndex = 12,
+                TeacherOverlay.SlideDecks -> SubjectsScreen(
+                    subjects = deckList.decks,
                     onBack = { overlay = TeacherOverlay.None },
-                    onPrevious = {},
-                    onNext = {},
-                    onAddSlide = { /* teacher-authored slide — not wired, see SlideRepository */ }
+                    onSubjectClick = { deck ->
+                        slideViewModel.openDeck(deck.id)
+                        overlay = TeacherOverlay.SlideViewer
+                    }
+                )
+
+                TeacherOverlay.SlideViewer -> TeachingSlidesScreen(
+                    deckTitle = viewerState.title,
+                    slides = viewerState.slides,
+                    currentIndex = viewerState.currentIndex,
+                    onBack = { overlay = TeacherOverlay.SlideDecks },
+                    onPrevious = slideViewModel::previous,
+                    onNext = slideViewModel::next,
+                    onAddSlide = { /* teacher-authored slide — SlideRepository.saveCustomDeck is ready, no form yet */ }
                 )
 
                 TeacherOverlay.RegisterStudent -> RegisterStudentScreen(
@@ -150,12 +181,54 @@ private fun TeacherShell(teacherUserId: String, displayName: String, onLogout: (
                     isSubmitting = registerState.isSubmitting
                 )
 
+                TeacherOverlay.QuestionSubjects -> SubjectsScreen(
+                    subjects = questionSubjects,
+                    onBack = { overlay = TeacherOverlay.None },
+                    onSubjectClick = { subject -> overlay = TeacherOverlay.QuestionClass(subject) }
+                )
+
+                is TeacherOverlay.QuestionClass -> {
+                    val step = overlay as TeacherOverlay.QuestionClass
+                    PickClassScreen(
+                        title = step.subject.title,
+                        allowedClassLevels = assignedClasses.ifEmpty { listOf(1) },
+                        onBack = { overlay = TeacherOverlay.QuestionSubjects },
+                        onPick = { level ->
+                            questionViewModel.selectSubjectAndClass(step.subject.id, level)
+                            overlay = TeacherOverlay.QuestionChapters(step.subject, level)
+                        }
+                    )
+                }
+
+                is TeacherOverlay.QuestionChapters -> {
+                    val step = overlay as TeacherOverlay.QuestionChapters
+                    SubjectsScreen(
+                        subjects = questionChapters,
+                        onBack = { overlay = TeacherOverlay.QuestionClass(step.subject) },
+                        onSubjectClick = { chapter ->
+                            questionViewModel.consumeSaveResult()
+                            overlay = TeacherOverlay.QuestionForm(chapter)
+                        }
+                    )
+                }
+
+                is TeacherOverlay.QuestionForm -> {
+                    val step = overlay as TeacherOverlay.QuestionForm
+                    QuestionEditorScreen(
+                        chapterTitle = step.chapter.title,
+                        onSubmit = { input -> questionViewModel.saveQuestion(step.chapter.id, input) },
+                        submitError = saveQuestionState.error,
+                        successMessage = saveQuestionState.success,
+                        isSubmitting = saveQuestionState.isSubmitting
+                    )
+                }
+
                 TeacherOverlay.None -> when (tab) {
                     TeacherTabs.HOME -> TeacherDashboardScreen(
                         overview = overview.copy(teacherName = displayName.ifBlank { "Teacher" }),
                         onRegisterStudent = { viewModel.consumeRegisterResult(); overlay = TeacherOverlay.RegisterStudent },
-                        onAddEditQuestions = { /* Stage 2 continues: question editor not wired to teacher dashboard yet */ },
-                        onTeachingSlides = { overlay = TeacherOverlay.Slides },
+                        onAddEditQuestions = { overlay = TeacherOverlay.QuestionSubjects },
+                        onTeachingSlides = { overlay = TeacherOverlay.SlideDecks },
                         onStudentProgress = { tab = TeacherTabs.STUDENTS }
                     )
 
@@ -167,14 +240,13 @@ private fun TeacherShell(teacherUserId: String, displayName: String, onLogout: (
                         onAddStudent = { viewModel.consumeRegisterResult(); overlay = TeacherOverlay.RegisterStudent }
                     )
 
-                    TeacherTabs.SLIDES -> TeachingSlidesScreen(
-                        deckTitle = "Alphabet A–Z",
-                        slides = DemoData.alphabetSlides,
-                        currentIndex = 12,
+                    TeacherTabs.SLIDES -> SubjectsScreen(
+                        subjects = deckList.decks,
                         onBack = { tab = TeacherTabs.HOME },
-                        onPrevious = {},
-                        onNext = {},
-                        onAddSlide = { }
+                        onSubjectClick = { deck ->
+                            slideViewModel.openDeck(deck.id)
+                            overlay = TeacherOverlay.SlideViewer
+                        }
                     )
 
                     else -> ProfileScreen(
@@ -194,6 +266,10 @@ private sealed interface AdminOverlay {
     data object None : AdminOverlay
     data object RegisterStudent : AdminOverlay
     data object RegisterTeacher : AdminOverlay
+    data object QuestionSubjects : AdminOverlay
+    data class QuestionClass(val subject: SubjectCardUi) : AdminOverlay
+    data class QuestionChapters(val subject: SubjectCardUi, val classLevel: Int) : AdminOverlay
+    data class QuestionForm(val chapter: SubjectCardUi) : AdminOverlay
 }
 
 @Composable
@@ -205,10 +281,17 @@ private fun AdminShell(adminUserId: String, displayName: String, onLogout: () ->
         key = "admin:$adminUserId"
     ) { factory -> factory.create(adminUserId) }
 
+    val questionViewModel: QuestionEditorViewModel = hiltViewModel<QuestionEditorViewModel, QuestionEditorViewModel.Factory>(
+        key = "questions:$adminUserId"
+    ) { factory -> factory.create(adminUserId) }
+
     val overview by viewModel.overview.collectAsState()
     val students by viewModel.students.collectAsState()
     val registerStudentState by viewModel.registerStudentState.collectAsState()
     val registerTeacherState by viewModel.registerTeacherState.collectAsState()
+    val questionSubjects by questionViewModel.subjects.collectAsState()
+    val questionChapters by questionViewModel.chapters.collectAsState()
+    val saveQuestionState by questionViewModel.saveState.collectAsState()
 
     Column(modifier = Modifier.fillMaxSize()) {
         Column(Modifier.weight(1f)) {
@@ -226,6 +309,48 @@ private fun AdminShell(adminUserId: String, displayName: String, onLogout: () ->
                     successMessage = registerTeacherState.success,
                     isSubmitting = registerTeacherState.isSubmitting
                 )
+
+                AdminOverlay.QuestionSubjects -> SubjectsScreen(
+                    subjects = questionSubjects,
+                    onBack = { overlay = AdminOverlay.None },
+                    onSubjectClick = { subject -> overlay = AdminOverlay.QuestionClass(subject) }
+                )
+
+                is AdminOverlay.QuestionClass -> {
+                    val step = overlay as AdminOverlay.QuestionClass
+                    PickClassScreen(
+                        title = step.subject.title,
+                        allowedClassLevels = com.gumthala.learningapp.core.ClassLevels.ALL,
+                        onBack = { overlay = AdminOverlay.QuestionSubjects },
+                        onPick = { level ->
+                            questionViewModel.selectSubjectAndClass(step.subject.id, level)
+                            overlay = AdminOverlay.QuestionChapters(step.subject, level)
+                        }
+                    )
+                }
+
+                is AdminOverlay.QuestionChapters -> {
+                    val step = overlay as AdminOverlay.QuestionChapters
+                    SubjectsScreen(
+                        subjects = questionChapters,
+                        onBack = { overlay = AdminOverlay.QuestionClass(step.subject) },
+                        onSubjectClick = { chapter ->
+                            questionViewModel.consumeSaveResult()
+                            overlay = AdminOverlay.QuestionForm(chapter)
+                        }
+                    )
+                }
+
+                is AdminOverlay.QuestionForm -> {
+                    val step = overlay as AdminOverlay.QuestionForm
+                    QuestionEditorScreen(
+                        chapterTitle = step.chapter.title,
+                        onSubmit = { input -> questionViewModel.saveQuestion(step.chapter.id, input) },
+                        submitError = saveQuestionState.error,
+                        successMessage = saveQuestionState.success,
+                        isSubmitting = saveQuestionState.isSubmitting
+                    )
+                }
 
                 AdminOverlay.None -> when (tab) {
                     AdminTabs.HOME -> AdminDashboardScreen(
@@ -248,7 +373,7 @@ private fun AdminShell(adminUserId: String, displayName: String, onLogout: () ->
                         overview = overview.copy(adminName = displayName.ifBlank { "Admin" }),
                         onManageStudents = { tab = AdminTabs.PEOPLE },
                         onManageTeachers = { overlay = AdminOverlay.RegisterTeacher },
-                        onManageContent = { /* Stage 2 continues: question editor not wired here yet */ },
+                        onManageContent = { overlay = AdminOverlay.QuestionSubjects },
                         onHelpAndSupport = { }
                     )
 
@@ -271,5 +396,4 @@ private fun AdminShell(adminUserId: String, displayName: String, onLogout: () ->
 private object DemoData {
     val teacherProfile = ProfileUiState(avatarEmoji = "👩‍🏫", name = "Teacher", subtitle = "Teacher")
     val adminProfile = ProfileUiState(avatarEmoji = "🛡️", name = "Admin", subtitle = "Admin")
-    val alphabetSlides = ('A'..'Z').map { letter -> TeachingSlide(letter.toString(), "$letter for …") }
 }
