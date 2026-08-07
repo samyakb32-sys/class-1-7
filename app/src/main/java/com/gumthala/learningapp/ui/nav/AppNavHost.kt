@@ -23,6 +23,8 @@ import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import com.gumthala.learningapp.ui.components.AppTabBar
 import com.gumthala.learningapp.ui.components.PrimaryFullButton
+import com.gumthala.learningapp.domain.DifficultyLevel
+import com.gumthala.learningapp.ui.screens.DifficultyPickerScreen
 import com.gumthala.learningapp.ui.screens.HomeScreen
 import com.gumthala.learningapp.ui.screens.LessonScreen
 import com.gumthala.learningapp.ui.screens.PracticeScreen
@@ -44,7 +46,8 @@ private sealed interface Overlay {
     data object None : Overlay
     data object Chapters : Overlay
     data object Lesson : Overlay
-    data class Quiz(val chapterId: String) : Overlay
+    data class QuizDifficulty(val chapter: SubjectCardUi) : Overlay
+    data class Quiz(val chapterId: String, val difficulty: DifficultyLevel) : Overlay
 }
 
 /**
@@ -86,13 +89,20 @@ fun AppNavHost(userId: String, classLevel: Int, modifier: Modifier = Modifier) {
                     SubjectsScreen(
                         subjects = chaptersState.chapters,
                         onBack = { overlay = Overlay.None },
-                        onSubjectClick = { chapter: SubjectCardUi -> overlay = Overlay.Quiz(chapter.id) }
+                        onSubjectClick = { chapter: SubjectCardUi -> overlay = Overlay.QuizDifficulty(chapter) }
                     )
                 }
+
+                is Overlay.QuizDifficulty -> DifficultyPickerScreen(
+                    chapterTitle = current.chapter.title,
+                    onBack = { overlay = Overlay.Chapters },
+                    onPick = { level -> overlay = Overlay.Quiz(current.chapter.id, level) }
+                )
 
                 is Overlay.Quiz -> QuizHost(
                     chapterId = current.chapterId,
                     userId = userId,
+                    difficulty = current.difficulty,
                     onDone = { overlay = Overlay.None; tab = TopLevelDestination.LEARN }
                 )
 
@@ -146,10 +156,10 @@ fun AppNavHost(userId: String, classLevel: Int, modifier: Modifier = Modifier) {
  * with a real star count and a way back out.
  */
 @Composable
-private fun QuizHost(chapterId: String, userId: String, onDone: () -> Unit) {
+private fun QuizHost(chapterId: String, userId: String, difficulty: DifficultyLevel, onDone: () -> Unit) {
     val viewModel: QuizViewModel = hiltViewModel<QuizViewModel, QuizViewModel.Factory>(
-        key = "quiz:$chapterId:$userId"
-    ) { factory -> factory.create(chapterId, userId) }
+        key = "quiz:$chapterId:$userId:${difficulty.name}"
+    ) { factory -> factory.create(chapterId, userId, difficulty) }
     val state by viewModel.screenState.collectAsState()
 
     when (val s = state) {
@@ -161,6 +171,21 @@ private fun QuizHost(chapterId: String, userId: String, onDone: () -> Unit) {
             Column(horizontalAlignment = Alignment.CenterHorizontally) {
                 Text(
                     "No questions in this chapter yet.",
+                    style = display(TextSize.Label, FontWeight.Bold),
+                    color = AppColors.Muted
+                )
+                PrimaryFullButton(
+                    text = "Back",
+                    onClick = onDone,
+                    modifier = Modifier.padding(top = 16.dp)
+                )
+            }
+        }
+
+        QuizScreenState.Error -> Box(Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
+            Column(horizontalAlignment = Alignment.CenterHorizontally) {
+                Text(
+                    "Something went wrong with this quiz.",
                     style = display(TextSize.Label, FontWeight.Bold),
                     color = AppColors.Muted
                 )

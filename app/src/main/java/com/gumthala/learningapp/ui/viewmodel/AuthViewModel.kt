@@ -45,22 +45,27 @@ class AuthViewModel @Inject constructor(
 
     init {
         viewModelScope.launch {
-            val session = authRepository.currentSession.first()
-            _state.value = if (session != null) {
-                AuthUiState(
-                    isLoadingSession = false,
-                    signedInAs = when (session.role) {
-                        UserRole.ADMIN -> SignedInRole.ADMIN
-                        UserRole.TEACHER -> SignedInRole.TEACHER
-                        UserRole.STUDENT -> SignedInRole.STUDENT
-                    },
-                    signedInUserId = session.userId,
-                    signedInName = session.displayName,
-                    signedInClassLevel = session.classLevel
-                )
-            } else {
-                AuthUiState(isLoadingSession = false)
-            }
+            // Never let a startup crash strand the user on a spinner forever, and
+            // never let it crash the app — worst case, treat as logged-out.
+            runCatching { authRepository.currentSession.first() }
+                .onSuccess { session ->
+                    _state.value = if (session != null) {
+                        AuthUiState(
+                            isLoadingSession = false,
+                            signedInAs = when (session.role) {
+                                UserRole.ADMIN -> SignedInRole.ADMIN
+                                UserRole.TEACHER -> SignedInRole.TEACHER
+                                UserRole.STUDENT -> SignedInRole.STUDENT
+                            },
+                            signedInUserId = session.userId,
+                            signedInName = session.displayName,
+                            signedInClassLevel = session.classLevel
+                        )
+                    } else {
+                        AuthUiState(isLoadingSession = false)
+                    }
+                }
+                .onFailure { _state.value = AuthUiState(isLoadingSession = false) }
         }
     }
 
@@ -68,23 +73,29 @@ class AuthViewModel @Inject constructor(
         if (_state.value.isSubmitting) return
         _state.value = _state.value.copy(isSubmitting = true, errorMessage = null)
         viewModelScope.launch {
-            when (val result = authRepository.signInStudent(name, classLevel)) {
-                is AuthResult.Success -> _state.value = AuthUiState(
-                    isLoadingSession = false,
-                    signedInAs = SignedInRole.STUDENT,
-                    signedInUserId = result.user.id,
-                    signedInName = result.user.fullName,
-                    signedInClassLevel = result.user.classLevel
-                )
-                AuthResult.StudentNotRegistered -> _state.value = _state.value.copy(
-                    isSubmitting = false,
-                    errorMessage = "No student named \"$name\" is registered in Class $classLevel. Ask your teacher to add you first."
-                )
-                else -> _state.value = _state.value.copy(
-                    isSubmitting = false,
-                    errorMessage = "Something went wrong. Please try again."
-                )
-            }
+            runCatching { authRepository.signInStudent(name, classLevel) }
+                .onSuccess { result ->
+                    when (result) {
+                        is AuthResult.Success -> _state.value = AuthUiState(
+                            isLoadingSession = false,
+                            signedInAs = SignedInRole.STUDENT,
+                            signedInUserId = result.user.id,
+                            signedInName = result.user.fullName,
+                            signedInClassLevel = result.user.classLevel
+                        )
+                        AuthResult.StudentNotRegistered -> _state.value = _state.value.copy(
+                            isSubmitting = false,
+                            errorMessage = "No student named \"$name\" is registered in Class $classLevel. Ask your teacher to add you first."
+                        )
+                        else -> _state.value = _state.value.copy(
+                            isSubmitting = false,
+                            errorMessage = "Something went wrong. Please try again."
+                        )
+                    }
+                }
+                .onFailure {
+                    _state.value = _state.value.copy(isSubmitting = false, errorMessage = "Something went wrong. Please try again.")
+                }
         }
     }
 
@@ -92,26 +103,32 @@ class AuthViewModel @Inject constructor(
         if (_state.value.isSubmitting) return
         _state.value = _state.value.copy(isSubmitting = true, errorMessage = null)
         viewModelScope.launch {
-            when (val result = authRepository.signInStaff(email, password)) {
-                is AuthResult.Success -> _state.value = AuthUiState(
-                    isLoadingSession = false,
-                    signedInAs = if (result.user.role == UserRole.ADMIN) SignedInRole.ADMIN else SignedInRole.TEACHER,
-                    signedInUserId = result.user.id,
-                    signedInName = result.user.fullName
-                )
-                AuthResult.InvalidCredentials -> _state.value = _state.value.copy(
-                    isSubmitting = false,
-                    errorMessage = "Email or password is incorrect."
-                )
-                AuthResult.AccountDisabled -> _state.value = _state.value.copy(
-                    isSubmitting = false,
-                    errorMessage = "This account has been disabled. Contact your admin."
-                )
-                else -> _state.value = _state.value.copy(
-                    isSubmitting = false,
-                    errorMessage = "Something went wrong. Please try again."
-                )
-            }
+            runCatching { authRepository.signInStaff(email, password) }
+                .onSuccess { result ->
+                    when (result) {
+                        is AuthResult.Success -> _state.value = AuthUiState(
+                            isLoadingSession = false,
+                            signedInAs = if (result.user.role == UserRole.ADMIN) SignedInRole.ADMIN else SignedInRole.TEACHER,
+                            signedInUserId = result.user.id,
+                            signedInName = result.user.fullName
+                        )
+                        AuthResult.InvalidCredentials -> _state.value = _state.value.copy(
+                            isSubmitting = false,
+                            errorMessage = "Email or password is incorrect."
+                        )
+                        AuthResult.AccountDisabled -> _state.value = _state.value.copy(
+                            isSubmitting = false,
+                            errorMessage = "This account has been disabled. Contact your admin."
+                        )
+                        else -> _state.value = _state.value.copy(
+                            isSubmitting = false,
+                            errorMessage = "Something went wrong. Please try again."
+                        )
+                    }
+                }
+                .onFailure {
+                    _state.value = _state.value.copy(isSubmitting = false, errorMessage = "Something went wrong. Please try again.")
+                }
         }
     }
 
@@ -120,7 +137,7 @@ class AuthViewModel @Inject constructor(
     }
 
     fun logout() {
-        viewModelScope.launch { authRepository.logout() }
+        viewModelScope.launch { runCatching { authRepository.logout() } }
         _state.value = AuthUiState(isLoadingSession = false)
     }
 }

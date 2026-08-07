@@ -87,21 +87,27 @@ class AdminViewModel @AssistedInject constructor(
         if (_registerStudentState.value.isSubmitting) return
         _registerStudentState.value = RegisterStudentUiState(isSubmitting = true)
         viewModelScope.launch {
-            val result = authRepository.registerStudent(
-                actorId = adminUserId,
-                fullName = input.name,
-                classLevel = input.classLevel,
-                rollNo = input.rollNo
+            runCatching {
+                authRepository.registerStudent(
+                    actorId = adminUserId,
+                    fullName = input.name,
+                    classLevel = input.classLevel,
+                    rollNo = input.rollNo
+                )
+            }.fold(
+                onSuccess = { result ->
+                    _registerStudentState.value = when (result) {
+                        is RegisterResult.Success -> RegisterStudentUiState(
+                            success = "${result.user.fullName} added to Class ${input.classLevel}."
+                        )
+                        RegisterResult.StudentAlreadyExists -> RegisterStudentUiState(
+                            error = "A student with that name already exists in Class ${input.classLevel}."
+                        )
+                        else -> RegisterStudentUiState(error = "Something went wrong. Try again.")
+                    }
+                },
+                onFailure = { _registerStudentState.value = RegisterStudentUiState(error = "Something went wrong. Try again.") }
             )
-            _registerStudentState.value = when (result) {
-                is RegisterResult.Success -> RegisterStudentUiState(
-                    success = "${result.user.fullName} added to Class ${input.classLevel}."
-                )
-                RegisterResult.StudentAlreadyExists -> RegisterStudentUiState(
-                    error = "A student with that name already exists in Class ${input.classLevel}."
-                )
-                else -> RegisterStudentUiState(error = "Something went wrong. Try again.")
-            }
         }
     }
 
@@ -116,23 +122,29 @@ class AdminViewModel @AssistedInject constructor(
         if (_registerTeacherState.value.isSubmitting) return
         _registerTeacherState.value = RegisterTeacherUiState(isSubmitting = true)
         viewModelScope.launch {
-            val result = authRepository.registerStaff(
-                actorId = adminUserId,
-                fullName = input.name,
-                email = input.email,
-                password = input.temporaryPassword,
-                role = UserRole.TEACHER,
-                assignedClasses = input.assignedClasses
+            runCatching {
+                authRepository.registerStaff(
+                    actorId = adminUserId,
+                    fullName = input.name,
+                    email = input.email,
+                    password = input.temporaryPassword,
+                    role = UserRole.TEACHER,
+                    assignedClasses = input.assignedClasses
+                )
+            }.fold(
+                onSuccess = { result ->
+                    _registerTeacherState.value = when (result) {
+                        is RegisterResult.Success -> RegisterTeacherUiState(
+                            success = "${result.user.fullName} added as a teacher."
+                        )
+                        RegisterResult.EmailAlreadyUsed -> RegisterTeacherUiState(
+                            error = "That email is already registered."
+                        )
+                        else -> RegisterTeacherUiState(error = "Something went wrong. Try again.")
+                    }
+                },
+                onFailure = { _registerTeacherState.value = RegisterTeacherUiState(error = "Something went wrong. Try again.") }
             )
-            _registerTeacherState.value = when (result) {
-                is RegisterResult.Success -> RegisterTeacherUiState(
-                    success = "${result.user.fullName} added as a teacher."
-                )
-                RegisterResult.EmailAlreadyUsed -> RegisterTeacherUiState(
-                    error = "That email is already registered."
-                )
-                else -> RegisterTeacherUiState(error = "Something went wrong. Try again.")
-            }
         }
     }
 

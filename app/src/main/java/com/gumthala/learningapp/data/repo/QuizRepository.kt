@@ -11,6 +11,7 @@ import com.gumthala.learningapp.data.local.ProgressEntity
 import com.gumthala.learningapp.data.local.QuizAttemptEntity
 import com.gumthala.learningapp.domain.BadgeCode
 import com.gumthala.learningapp.domain.CelebrationTier
+import com.gumthala.learningapp.domain.DifficultyLevel
 import com.gumthala.learningapp.domain.Quiz
 import com.gumthala.learningapp.domain.QuizEngine
 import com.gumthala.learningapp.domain.Rewards
@@ -44,9 +45,18 @@ class QuizRepository @Inject constructor(
     private val badgeDao: BadgeDao
 ) {
 
-    suspend fun startQuiz(chapterId: String, language: AppLanguage): Quiz {
+    /**
+     * [difficulty] filters by QuestionEntity.difficulty band before building
+     * the quiz. If that filter would leave zero questions (thin content,
+     * mismatched band), falls back to the full chapter rather than handing a
+     * student an empty quiz — see DifficultyLevel's kdoc for why.
+     */
+    suspend fun startQuiz(chapterId: String, language: AppLanguage, difficulty: DifficultyLevel? = null): Quiz {
         val rows = contentDao.questionsWithOptions(chapterId)
-        return QuizEngine.build(chapterId, rows, language)
+        val filtered = if (difficulty == null) rows else {
+            rows.filter { it.question.difficulty in difficulty.range }.ifEmpty { rows }
+        }
+        return QuizEngine.build(chapterId, filtered, language)
     }
 
     /**

@@ -100,24 +100,30 @@ class TeacherViewModel @AssistedInject constructor(
         if (_registerState.value.isSubmitting) return
         _registerState.value = RegisterStudentUiState(isSubmitting = true)
         viewModelScope.launch {
-            val result = authRepository.registerStudent(
-                actorId = teacherUserId,
-                fullName = input.name,
-                classLevel = input.classLevel,
-                rollNo = input.rollNo
+            runCatching {
+                authRepository.registerStudent(
+                    actorId = teacherUserId,
+                    fullName = input.name,
+                    classLevel = input.classLevel,
+                    rollNo = input.rollNo
+                )
+            }.fold(
+                onSuccess = { result ->
+                    _registerState.value = when (result) {
+                        is RegisterResult.Success -> RegisterStudentUiState(
+                            success = "${result.user.fullName} added to Class ${input.classLevel}."
+                        )
+                        RegisterResult.StudentAlreadyExists -> RegisterStudentUiState(
+                            error = "A student with that name already exists in Class ${input.classLevel}."
+                        )
+                        RegisterResult.NotPermitted -> RegisterStudentUiState(
+                            error = "You're not assigned to Class ${input.classLevel}."
+                        )
+                        else -> RegisterStudentUiState(error = "Something went wrong. Try again.")
+                    }
+                },
+                onFailure = { _registerState.value = RegisterStudentUiState(error = "Something went wrong. Try again.") }
             )
-            _registerState.value = when (result) {
-                is RegisterResult.Success -> RegisterStudentUiState(
-                    success = "${result.user.fullName} added to Class ${input.classLevel}."
-                )
-                RegisterResult.StudentAlreadyExists -> RegisterStudentUiState(
-                    error = "A student with that name already exists in Class ${input.classLevel}."
-                )
-                RegisterResult.NotPermitted -> RegisterStudentUiState(
-                    error = "You're not assigned to Class ${input.classLevel}."
-                )
-                else -> RegisterStudentUiState(error = "Something went wrong. Try again.")
-            }
         }
     }
 

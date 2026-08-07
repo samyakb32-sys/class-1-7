@@ -475,6 +475,23 @@ seed = {
     "classes": classes
 }
 
+# Spread difficulty within each chapter (low -> medium -> high by position)
+# rather than leaving everything at the add_question() default of 3. This is
+# what makes the student-facing Low/Medium/High picker (DifficultyLevel) show
+# real, different questions per band instead of the same set three times.
+for c in classes:
+    for ch in c["chapters"]:
+        qs = ch["questions"]
+        n = len(qs)
+        for i, q in enumerate(qs):
+            frac = i / max(1, n - 1) if n > 1 else 0.5
+            if frac < 0.35:
+                q["difficulty"] = 2
+            elif frac < 0.7:
+                q["difficulty"] = 3
+            else:
+                q["difficulty"] = 4
+
 total_q = sum(len(ch["questions"]) for c in classes for ch in c["chapters"])
 total_ch = sum(len(c["chapters"]) for c in classes)
 print(f"Chapters: {total_ch}, Questions: {total_q}")

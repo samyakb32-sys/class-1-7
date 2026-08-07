@@ -64,3 +64,20 @@ enum class BadgeCode(val code: String) {
         }
     }
 }
+
+/**
+ * Low / Medium / High as seen by students. Maps onto QuestionEntity.difficulty
+ * (1 = easy .. 5 = stretch, already on every question) rather than adding a new
+ * column — no migration needed.
+ *
+ * Bands overlap slightly by design: if a chapter has thin coverage at the
+ * edges, a strict non-overlapping split (e.g. High = only 5) could leave a
+ * band with too few or zero questions. QuizRepository.startQuiz also falls
+ * back to the full chapter if a filtered band comes up empty — belt and
+ * braces so a student can never open a truly blank quiz.
+ */
+enum class DifficultyLevel(val label: String, val range: IntRange) {
+    LOW("Low", 1..2),
+    MEDIUM("Medium", 2..4),
+    HIGH("High", 4..5)
+}
