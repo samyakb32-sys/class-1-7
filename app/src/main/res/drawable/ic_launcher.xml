@@ -1,0 +1,37 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+  Placeholder launcher icon — an original abstract rocket-in-a-circle,
+  purple to match the app's brand color, drawn as a vector so no PNG
+  assets are needed for any density. Referenced directly as
+  android:icon/roundIcon in the manifest (skips mipmap density buckets
+  entirely, which is a normal, valid alternative to @mipmap resources).
+  Swap this file's <path> data whenever a real designed icon is ready.
+-->
+<vector xmlns:android="http://schemas.android.com/apk/res/android"
+    android:width="108dp"
+    android:height="108dp"
+    android:viewportWidth="108"
+    android:viewportHeight="108">
+
+    <!-- purple circular background -->
+    <path
+        android:fillColor="#5B4FE8"
+        android:pathData="M54,4 C81.6,4 104,26.4 104,54 C104,81.6 81.6,104 54,104 C26.4,104 4,81.6 4,54 C4,26.4 26.4,4 54,4 Z" />
+
+    <!-- simple white rocket silhouette -->
+    <path
+        android:fillColor="#FFFFFF"
+        android:pathData="M54,24 C62,32 66,44 66,56 C66,60 65,64 63,68 L45,68 C43,64 42,60 42,56 C42,44 46,32 54,24 Z" />
+    <path
+        android:fillColor="#FFFFFF"
+        android:pathData="M42,58 L30,70 L42,68 Z" />
+    <path
+        android:fillColor="#FFFFFF"
+        android:pathData="M66,58 L78,70 L66,68 Z" />
+    <path
+        android:fillColor="#5B4FE8"
+        android:pathData="M54,42 m-6,0 a6,6 0 1,0 12,0 a6,6 0 1,0 -12,0" />
+    <path
+        android:fillColor="#FFB74D"
+        android:pathData="M48,68 L60,68 L56,84 L52,84 Z" />
+</vector>
