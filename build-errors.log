@@ -1,0 +1,60 @@
+# Build errors
+
+Run: https://github.com/samyakb32-sys/class-1-7/actions/runs/31204411942
+Commit: 1f2faccb9d6faa42790763ac47fb823119203b93
+Generated: 2026-08-07 17:54:45 UTC
+
+## Compiler errors (e:/w: lines)
+```
+e: file:///home/runner/work/class-1-7/class-1-7/app/src/main/java/com/gumthala/learningapp/ui/screens/DifficultyPickerScreen.kt:63:64 Unresolved reference 'width'.
+e: file:///home/runner/work/class-1-7/class-1-7/app/src/main/java/com/gumthala/learningapp/ui/screens/admin/AdminDashboardScreen.kt:12:41 Unresolved reference 'item'.
+e: file:///home/runner/work/class-1-7/class-1-7/app/src/main/java/com/gumthala/learningapp/ui/screens/celebration/QuizCompleteScreen.kt:175:30 Unresolved reference 'scale'.
+e: file:///home/runner/work/class-1-7/class-1-7/app/src/main/java/com/gumthala/learningapp/ui/screens/rewards/LeaderboardScreen.kt:14:41 Unresolved reference 'item'.
+e: file:///home/runner/work/class-1-7/class-1-7/app/src/main/java/com/gumthala/learningapp/ui/screens/teacher/TeacherDashboardScreen.kt:12:41 Unresolved reference 'item'.
+e: file:///home/runner/work/class-1-7/class-1-7/app/src/main/java/com/gumthala/learningapp/ui/screens/teacher/TeachingSlidesScreen.kt:142:14 Unresolved reference 'width'.
+```
+
+## Gradle failure block
+```
+FAILURE: Build failed with an exception.
+
+* What went wrong:
+Execution failed for task ':app:compileDebugKotlin'.
+> A failure occurred while executing org.jetbrains.kotlin.compilerRunner.GradleCompilerRunnerWithWorkers$GradleKotlinCompilerWorkAction
+   > Compilation error. See log for more details
+
+* Try:
+```
+
+## Failing task + surrounding context
+```
+52-
+53-> Task :app:validateSigningDebug
+54-> Task :app:writeDebugAppMetadata
+55-> Task :app:writeDebugSigningConfigVersions
+56-
+57:> Task :app:compileDebugKotlin FAILED
+58-e: file:///home/runner/work/class-1-7/class-1-7/app/src/main/java/com/gumthala/learningapp/ui/screens/DifficultyPickerScreen.kt:63:64 Unresolved reference 'width'.
+59-e: file:///home/runner/work/class-1-7/class-1-7/app/src/main/java/com/gumthala/learningapp/ui/screens/admin/AdminDashboardScreen.kt:12:41 Unresolved reference 'item'.
+60-e: file:///home/runner/work/class-1-7/class-1-7/app/src/main/java/com/gumthala/learningapp/ui/screens/celebration/QuizCompleteScreen.kt:175:30 Unresolved reference 'scale'.
+61-e: file:///home/runner/work/class-1-7/class-1-7/app/src/main/java/com/gumthala/learningapp/ui/screens/rewards/LeaderboardScreen.kt:14:41 Unresolved reference 'item'.
+62-e: file:///home/runner/work/class-1-7/class-1-7/app/src/main/java/com/gumthala/learningapp/ui/screens/teacher/TeacherDashboardScreen.kt:12:41 Unresolved reference 'item'.
+63-e: file:///home/runner/work/class-1-7/class-1-7/app/src/main/java/com/gumthala/learningapp/ui/screens/teacher/TeachingSlidesScreen.kt:142:14 Unresolved reference 'width'.
+64-gradle/actions: Writing build results to /home/runner/work/_temp/.gradle-actions/build-results/build-1786125269073.json
+65-
+66-FAILURE: Build failed with an exception.
+67-
+68-* What went wrong:
+69-Execution failed for task ':app:compileDebugKotlin'.
+70-> A failure occurred while executing org.jetbrains.kotlin.compilerRunner.GradleCompilerRunnerWithWorkers$GradleKotlinCompilerWorkAction
+71-   > Compilation error. See log for more details
+72-
+73-* Try:
+74-> Run with --stacktrace option to get the stack trace.
+75-> Run with --info or --debug option to get more log output.
+76-> Run with --scan to get full insights.
+77-> Get more help at https://help.gradle.org.
+78-
+79-BUILD FAILED in 18s
+80-30 actionable tasks: 14 executed, 16 from cache
+```
