@@ -129,9 +129,25 @@ Nothing has been invented to paper over the gaps:
 
 ## Build
 
+**Easiest: download a ready-built APK, no local setup needed.**
+Every push to `main` triggers GitHub Actions to build a debug APK automatically.
+Go to the repo's **Actions** tab -> click the latest **Build debug APK** run ->
+scroll to **Artifacts** -> download `class-1-7-debug-apk`. It's a zip containing
+the .apk — unzip and install on an Android device (enable "install from unknown
+sources" for debug APKs).
+
+You can also trigger a build manually anytime from Actions -> Build debug APK ->
+Run workflow, without needing a new commit.
+
+**Locally, via Android Studio or command line:**
+
 ```
 ./gradlew :app:assembleDebug
 ```
 
-Gradle wrapper files aren't included — run `gradle wrapper --gradle-version 8.9` once, or
-open the folder in Android Studio and let it generate them.
+Gradle wrapper files (`gradlew`, `gradlew.bat`, `gradle/wrapper/`) aren't
+committed to this repo. The CI workflow generates them on the fly (the ubuntu
+runner has a system Gradle install). Locally, run `gradle wrapper --gradle-version 8.9`
+once, or just open the folder in Android Studio and let it generate them
+automatically on first sync.
+
