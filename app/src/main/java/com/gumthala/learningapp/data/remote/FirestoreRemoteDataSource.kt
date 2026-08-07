@@ -131,6 +131,7 @@ private fun UserEntity.toMap(): Map<String, Any?> = mapOf(
     "id" to id, "role" to role.name, "fullName" to fullName,
     "fullNameNormalized" to fullNameNormalized, "email" to email,
     "passwordHash" to passwordHash, "passwordSalt" to passwordSalt,
+    "mustChangePassword" to mustChangePassword,
     "classLevel" to classLevel, "rollNo" to rollNo, "assignedClasses" to assignedClasses,
     "avatarKey" to avatarKey, "isActive" to isActive, "createdBy" to createdBy,
     "createdAt" to createdAt, "updatedAt" to updatedAt
@@ -144,6 +145,7 @@ private fun Map<String, Any?>.toUserEntity(): UserEntity? {
         fullName = str("fullName").orEmpty(),
         fullNameNormalized = str("fullNameNormalized").orEmpty(),
         email = str("email"), passwordHash = str("passwordHash"), passwordSalt = str("passwordSalt"),
+        mustChangePassword = bool("mustChangePassword", false),
         classLevel = intOrNull("classLevel"), rollNo = str("rollNo"),
         assignedClasses = str("assignedClasses"), avatarKey = str("avatarKey"),
         isActive = bool("isActive", true), createdBy = str("createdBy"),

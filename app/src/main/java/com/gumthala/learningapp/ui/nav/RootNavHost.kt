@@ -24,6 +24,7 @@ import com.gumthala.learningapp.ui.screens.ProfileUiState
 import com.gumthala.learningapp.ui.screens.admin.AdminDashboardScreen
 import com.gumthala.learningapp.ui.screens.admin.ManageStudentsScreen
 import com.gumthala.learningapp.ui.screens.auth.AppRole
+import com.gumthala.learningapp.ui.screens.auth.ChangePasswordScreen
 import com.gumthala.learningapp.ui.screens.auth.RoleSelectScreen
 import com.gumthala.learningapp.ui.screens.auth.StaffLoginInput
 import com.gumthala.learningapp.ui.screens.auth.StaffLoginScreen
@@ -99,6 +100,12 @@ fun RootNavHost(modifier: Modifier = Modifier) {
                 classLevel = authState.signedInClassLevel ?: 1
             )
 
+            // Staff with a still-default password (seeded founder admin, or anyone an
+            // admin just reset) must set their own password before reaching anything
+            // else — checked before role, since it applies to both TEACHER and ADMIN.
+            authState.mustChangePassword && (authState.signedInAs == SignedInRole.TEACHER || authState.signedInAs == SignedInRole.ADMIN) ->
+                ChangePasswordGate(authViewModel = authViewModel)
+
             authState.signedInAs == SignedInRole.TEACHER -> TeacherShell(
                 teacherUserId = authState.signedInUserId.orEmpty(),
                 displayName = authState.signedInName.orEmpty(),
@@ -112,6 +119,29 @@ fun RootNavHost(modifier: Modifier = Modifier) {
             )
         }
     }
+}
+
+@Composable
+private fun ChangePasswordGate(authViewModel: AuthViewModel) {
+    var isSubmitting by remember { mutableStateOf(false) }
+    var error by remember { mutableStateOf<String?>(null) }
+
+    ChangePasswordScreen(
+        onSubmit = { newPassword ->
+            isSubmitting = true
+            error = null
+            authViewModel.changePassword(newPassword) { success ->
+                isSubmitting = false
+                if (success) {
+                    authViewModel.passwordChanged()
+                } else {
+                    error = "Couldn't save your password. Try again."
+                }
+            }
+        },
+        submitError = error,
+        isSubmitting = isSubmitting
+    )
 }
 
 private sealed interface TeacherOverlay {

@@ -33,6 +33,8 @@ data class UserEntity(
     val email: String? = null,
     val passwordHash: String? = null,
     val passwordSalt: String? = null,
+    /** true right after seeding/reset — forces a change screen before the staff member reaches their dashboard */
+    val mustChangePassword: Boolean = false,
     /** students only */
     val classLevel: Int? = null,
     val rollNo: String? = null,

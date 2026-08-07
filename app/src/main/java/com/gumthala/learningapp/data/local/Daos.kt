@@ -56,8 +56,8 @@ interface UserDao {
     @Query("UPDATE users SET isActive = :active, updatedAt = :now, isSynced = 0 WHERE id = :id")
     suspend fun setActive(id: String, active: Boolean, now: Long = System.currentTimeMillis())
 
-    @Query("UPDATE users SET passwordHash = :hash, passwordSalt = :salt, updatedAt = :now, isSynced = 0 WHERE id = :id")
-    suspend fun setPassword(id: String, hash: String, salt: String, now: Long = System.currentTimeMillis())
+    @Query("UPDATE users SET passwordHash = :hash, passwordSalt = :salt, mustChangePassword = :mustChange, updatedAt = :now, isSynced = 0 WHERE id = :id")
+    suspend fun setPassword(id: String, hash: String, salt: String, mustChange: Boolean, now: Long = System.currentTimeMillis())
 
     @Query("SELECT * FROM users WHERE isSynced = 0")
     suspend fun unsynced(): List<UserEntity>

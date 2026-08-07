@@ -131,12 +131,23 @@ class AuthRepository @Inject constructor(
         return RegisterResult.Success(user)
     }
 
-    /** Admin resets a staff password (recovery flow is: email support, admin resets). */
+    /** Admin resets a staff password (recovery flow is: email support, admin resets).
+     *  Forces the recovering staff member through the change-password screen on
+     *  their next login, same as the seeded founder admin. */
     suspend fun resetStaffPassword(actorId: String, targetUserId: String, newPassword: String): Boolean {
         val actor = userDao.findById(actorId) ?: return false
         if (actor.role != UserRole.ADMIN) return false
         val salt = PasswordHasher.newSalt()
-        userDao.setPassword(targetUserId, PasswordHasher.hash(newPassword, salt), salt)
+        userDao.setPassword(targetUserId, PasswordHasher.hash(newPassword, salt), salt, mustChange = true)
+        return true
+    }
+
+    /** Self-service: a signed-in staff member picks their own new password. Clears mustChangePassword. */
+    suspend fun changeOwnPassword(userId: String, newPassword: String): Boolean {
+        val user = userDao.findById(userId) ?: return false
+        if (user.role == UserRole.STUDENT) return false
+        val salt = PasswordHasher.newSalt()
+        userDao.setPassword(userId, PasswordHasher.hash(newPassword, salt), salt, mustChange = false)
         return true
     }
 

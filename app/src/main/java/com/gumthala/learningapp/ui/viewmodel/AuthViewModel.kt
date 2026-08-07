@@ -23,7 +23,8 @@ data class AuthUiState(
     val signedInAs: SignedInRole? = null,
     val signedInUserId: String? = null,
     val signedInName: String? = null,
-    val signedInClassLevel: Int? = null
+    val signedInClassLevel: Int? = null,
+    val mustChangePassword: Boolean = false
 )
 
 /**
@@ -59,7 +60,9 @@ class AuthViewModel @Inject constructor(
                             },
                             signedInUserId = session.userId,
                             signedInName = session.displayName,
-                            signedInClassLevel = session.classLevel
+                            signedInClassLevel = session.classLevel,
+                            mustChangePassword = runCatching { authRepository.user(session.userId) }
+                                .getOrNull()?.mustChangePassword ?: false
                         )
                     } else {
                         AuthUiState(isLoadingSession = false)
@@ -110,7 +113,8 @@ class AuthViewModel @Inject constructor(
                             isLoadingSession = false,
                             signedInAs = if (result.user.role == UserRole.ADMIN) SignedInRole.ADMIN else SignedInRole.TEACHER,
                             signedInUserId = result.user.id,
-                            signedInName = result.user.fullName
+                            signedInName = result.user.fullName,
+                            mustChangePassword = result.user.mustChangePassword
                         )
                         AuthResult.InvalidCredentials -> _state.value = _state.value.copy(
                             isSubmitting = false,
@@ -134,6 +138,19 @@ class AuthViewModel @Inject constructor(
 
     fun consumeSignIn() {
         _state.value = AuthUiState(isLoadingSession = false)
+    }
+
+    /** Called after the change-password screen succeeds — clears the gate without a full re-login. */
+    fun passwordChanged() {
+        _state.value = _state.value.copy(mustChangePassword = false)
+    }
+
+    fun changePassword(newPassword: String, onResult: (Boolean) -> Unit) {
+        val userId = _state.value.signedInUserId ?: return onResult(false)
+        viewModelScope.launch {
+            val ok = runCatching { authRepository.changeOwnPassword(userId, newPassword) }.getOrDefault(false)
+            onResult(ok)
+        }
     }
 
     fun logout() {

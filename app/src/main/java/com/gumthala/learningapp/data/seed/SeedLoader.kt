@@ -131,6 +131,7 @@ class SeedLoader @Inject constructor(
                 email = DEFAULT_ADMIN_EMAIL.normalizedEmail(),
                 passwordHash = PasswordHasher.hash(DEFAULT_ADMIN_PASSWORD, salt),
                 passwordSalt = salt,
+                mustChangePassword = true,
                 assignedClasses = "1,2,3,4,5,6,7"
             )
         )
