@@ -31,6 +31,7 @@ import com.gumthala.learningapp.ui.screens.ProgressScreen
 import com.gumthala.learningapp.ui.screens.QuizScreen
 import com.gumthala.learningapp.ui.screens.SubjectCardUi
 import com.gumthala.learningapp.ui.screens.SubjectsScreen
+import com.gumthala.learningapp.ui.screens.celebration.QuizCompleteScreen
 import com.gumthala.learningapp.ui.theme.AppColors
 import com.gumthala.learningapp.ui.theme.TextSize
 import com.gumthala.learningapp.ui.theme.display
@@ -177,25 +178,14 @@ private fun QuizHost(chapterId: String, userId: String, onDone: () -> Unit) {
             onNext = viewModel::next
         )
 
-        is QuizScreenState.Finished -> Box(Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
-            Column(horizontalAlignment = Alignment.CenterHorizontally) {
-                Text(
-                    "⭐".repeat(s.outcome.starsEarned).ifEmpty { "Keep practicing!" },
-                    style = display(TextSize.Header, FontWeight.ExtraBold),
-                    color = AppColors.Ink
-                )
-                Text(
-                    "${s.outcome.correctCount} / ${s.outcome.totalCount} correct",
-                    style = display(TextSize.Label, FontWeight.Bold),
-                    color = AppColors.Muted,
-                    modifier = Modifier.padding(top = 6.dp)
-                )
-                PrimaryFullButton(
-                    text = "Back to Chapters",
-                    onClick = onDone,
-                    modifier = Modifier.padding(top = 20.dp)
-                )
-            }
-        }
+        is QuizScreenState.Finished -> QuizCompleteScreen(
+            mascotSeed = chapterId,
+            correctCount = s.outcome.correctCount,
+            totalCount = s.outcome.totalCount,
+            starsEarned = s.outcome.starsEarned,
+            celebration = s.outcome.celebration,
+            newBadges = s.outcome.newBadges,
+            onContinue = onDone
+        )
     }
 }

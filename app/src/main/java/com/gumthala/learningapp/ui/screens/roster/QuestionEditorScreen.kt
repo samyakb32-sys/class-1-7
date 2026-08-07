@@ -26,16 +26,13 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
-import com.gumthala.learningapp.ui.screens.SubjectCardUi
 import com.gumthala.learningapp.ui.screens.auth.FieldLabel
 import com.gumthala.learningapp.ui.screens.auth.InputBox
 import com.gumthala.learningapp.ui.screens.auth.LoginHero
 import com.gumthala.learningapp.ui.screens.auth.LoginSubmitButton
 import com.gumthala.learningapp.ui.theme.AppColors
-import com.gumthala.learningapp.ui.theme.Radius
 import com.gumthala.learningapp.ui.theme.TextSize
 import com.gumthala.learningapp.ui.theme.body
-import com.gumthala.learningapp.ui.theme.display
 
 data class QuestionDraftInput(
     val promptEn: String,
