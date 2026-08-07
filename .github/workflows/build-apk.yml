@@ -1,11 +1,13 @@
 name: Build debug APK
 
-# Runs on every push to main, and can also be triggered manually from the
-# Actions tab (the "Run workflow" button) without needing a new commit.
 on:
   push:
     branches: [main]
   workflow_dispatch: {}
+
+# Needed so the "commit build errors" step below can push build-errors.log back.
+permissions:
+  contents: write
 
 jobs:
   build:
@@ -30,8 +32,49 @@ jobs:
           fi
           chmod +x gradlew
 
+      # Tee the full build output to a file so failures can be summarised below.
+      # --console=plain keeps the log free of progress-bar escape codes.
       - name: Build debug APK
-        run: ./gradlew :app:assembleDebug --stacktrace
+        id: build
+        run: |
+          set -o pipefail
+          ./gradlew :app:assembleDebug --console=plain 2>&1 | tee build-full.log
+
+      # On failure, pull just the useful lines out of the log and commit them to the
+      # repo, so the error is readable straight from the source tree instead of
+      # having to dig through the Actions UI (GitHub stores raw logs on a blob host
+      # that isn't always reachable).
+      - name: Save build errors to repo
+        if: failure()
+        run: |
+          {
+            echo "# Build errors"
+            echo
+            echo "Run: ${GITHUB_SERVER_URL}/${GITHUB_REPOSITORY}/actions/runs/${GITHUB_RUN_ID}"
+            echo "Commit: ${GITHUB_SHA}"
+            echo "Generated: $(date -u '+%Y-%m-%d %H:%M:%S UTC')"
+            echo
+            echo '## Compiler errors (e:/w: lines)'
+            echo '```'
+            grep -E '^(e:|w: .*error)' build-full.log | head -100 || echo "(none found)"
+            echo '```'
+            echo
+            echo '## Gradle failure block'
+            echo '```'
+            sed -n '/^FAILURE: Build failed/,/^\* Try:/p' build-full.log | head -60 || true
+            echo '```'
+            echo
+            echo '## Failing task + surrounding context'
+            echo '```'
+            grep -n -B5 -A30 'FAILED$' build-full.log | head -120 || true
+            echo '```'
+          } > build-errors.log
+
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add build-errors.log
+          git commit -m "CI: record build errors for run ${GITHUB_RUN_ID} [skip ci]" || exit 0
+          git push origin HEAD:main || echo "push failed (branch may have moved on) — errors still in the log above"
 
       - name: Upload APK
         uses: actions/upload-artifact@v4
@@ -39,3 +82,11 @@ jobs:
           name: class-1-7-debug-apk
           path: app/build/outputs/apk/debug/*.apk
           retention-days: 30
+
+      - name: Upload full build log
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: build-log
+          path: build-full.log
+          retention-days: 7
