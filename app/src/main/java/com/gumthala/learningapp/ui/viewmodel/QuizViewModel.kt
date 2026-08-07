@@ -45,15 +45,23 @@ sealed interface QuizScreenState {
  */
 @HiltViewModel(assistedFactory = QuizViewModel.Factory::class)
 class QuizViewModel @AssistedInject constructor(
-    @Assisted private val chapterId: String,
-    @Assisted private val userId: String,
+    @Assisted("chapterId") private val chapterId: String,
+    @Assisted("userId") private val userId: String,
     @Assisted private val difficulty: DifficultyLevel,
     private val quizRepository: QuizRepository
 ) : ViewModel() {
 
     @AssistedFactory
     interface Factory {
-        fun create(chapterId: String, userId: String, difficulty: DifficultyLevel): QuizViewModel
+        // chapterId and userId are both String — Dagger can't tell them apart without
+        // identifiers on both the factory method and the constructor above. difficulty
+        // is a distinct type, so it needs none. (First real compile error caught by CI:
+        // this exact ambiguity — assisted-inject params of the same type need @Assisted("id").)
+        fun create(
+            @Assisted("chapterId") chapterId: String,
+            @Assisted("userId") userId: String,
+            difficulty: DifficultyLevel
+        ): QuizViewModel
     }
 
     private val _screenState = MutableStateFlow<QuizScreenState>(QuizScreenState.Loading)
