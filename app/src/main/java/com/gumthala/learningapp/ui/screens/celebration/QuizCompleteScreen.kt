@@ -20,6 +20,7 @@ import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.draw.scale
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
@@ -171,6 +172,4 @@ fun QuizCompleteScreen(
 }
 
 /** Scales a composable uniformly — small local helper so the mascot has a pop-in feel. */
-private fun Modifier.graphicsLayerScale(scale: Float): Modifier = this.then(
-    androidx.compose.ui.draw.scale(scale)
-)
+private fun Modifier.graphicsLayerScale(scale: Float): Modifier = this.scale(scale)
