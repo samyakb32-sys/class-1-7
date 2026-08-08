@@ -82,7 +82,8 @@ fun RootNavHost(modifier: Modifier = Modifier) {
                         authViewModel.signInStudent(input.name, input.classLevel)
                     },
                     submitError = authState.errorMessage,
-                    isSubmitting = authState.isSubmitting
+                    isSubmitting = authState.isSubmitting,
+                    onBack = { authStep = AuthStep.RoleSelect }
                 )
 
                 is AuthStep.StaffLogin -> StaffLoginScreen(
@@ -91,7 +92,8 @@ fun RootNavHost(modifier: Modifier = Modifier) {
                         authViewModel.signInStaff(input.email, input.password)
                     },
                     submitError = authState.errorMessage,
-                    isSubmitting = authState.isSubmitting
+                    isSubmitting = authState.isSubmitting,
+                    onBack = { authStep = AuthStep.RoleSelect }
                 )
             }
 
@@ -208,7 +210,8 @@ private fun TeacherShell(teacherUserId: String, displayName: String, onLogout: (
                     onSubmit = { input -> viewModel.registerStudent(input) },
                     submitError = registerState.error,
                     successMessage = registerState.success,
-                    isSubmitting = registerState.isSubmitting
+                    isSubmitting = registerState.isSubmitting,
+                    onBack = { overlay = TeacherOverlay.None }
                 )
 
                 TeacherOverlay.QuestionSubjects -> SubjectsScreen(
@@ -249,7 +252,8 @@ private fun TeacherShell(teacherUserId: String, displayName: String, onLogout: (
                         onSubmit = { input -> questionViewModel.saveQuestion(step.chapter.id, input) },
                         submitError = saveQuestionState.error,
                         successMessage = saveQuestionState.success,
-                        isSubmitting = saveQuestionState.isSubmitting
+                        isSubmitting = saveQuestionState.isSubmitting,
+                        onBack = { overlay = TeacherOverlay.QuestionSubjects }
                     )
                 }
 
@@ -330,14 +334,16 @@ private fun AdminShell(adminUserId: String, displayName: String, onLogout: () ->
                     onSubmit = { input -> viewModel.registerStudent(input) },
                     submitError = registerStudentState.error,
                     successMessage = registerStudentState.success,
-                    isSubmitting = registerStudentState.isSubmitting
+                    isSubmitting = registerStudentState.isSubmitting,
+                    onBack = { overlay = AdminOverlay.None }
                 )
 
                 AdminOverlay.RegisterTeacher -> RegisterTeacherScreen(
                     onSubmit = { input -> viewModel.registerTeacher(input) },
                     submitError = registerTeacherState.error,
                     successMessage = registerTeacherState.success,
-                    isSubmitting = registerTeacherState.isSubmitting
+                    isSubmitting = registerTeacherState.isSubmitting,
+                    onBack = { overlay = AdminOverlay.None }
                 )
 
                 AdminOverlay.QuestionSubjects -> SubjectsScreen(
@@ -378,7 +384,8 @@ private fun AdminShell(adminUserId: String, displayName: String, onLogout: () ->
                         onSubmit = { input -> questionViewModel.saveQuestion(step.chapter.id, input) },
                         submitError = saveQuestionState.error,
                         successMessage = saveQuestionState.success,
-                        isSubmitting = saveQuestionState.isSubmitting
+                        isSubmitting = saveQuestionState.isSubmitting,
+                        onBack = { overlay = AdminOverlay.QuestionSubjects }
                     )
                 }
 

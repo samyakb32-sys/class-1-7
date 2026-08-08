@@ -1,0 +1,11 @@
+{
+  "version": 1,
+  "subject": {
+    "code": "english",
+    "name": { "en": "English", "mr": "इंग्रजी", "hi": "अंग्रेज़ी" },
+    "iconKey": "book",
+    "colorHex": "#2563EB",
+    "orderIndex": 1
+  },
+  "classes": []
+}

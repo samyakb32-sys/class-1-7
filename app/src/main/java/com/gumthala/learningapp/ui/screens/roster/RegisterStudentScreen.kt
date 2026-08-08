@@ -52,14 +52,15 @@ fun RegisterStudentScreen(
     modifier: Modifier = Modifier,
     submitError: String? = null,
     successMessage: String? = null,
-    isSubmitting: Boolean = false
+    isSubmitting: Boolean = false,
+    onBack: (() -> Unit)? = null
 ) {
     var name by remember { mutableStateOf("") }
     var classLevel by remember { mutableStateOf(allowedClassLevels.firstOrNull() ?: 1) }
     var rollNo by remember { mutableStateOf("") }
 
     Column(modifier = modifier.fillMaxSize().verticalScroll(rememberScrollState())) {
-        LoginHero("👧", "Register Student", "Add a new student to your class")
+        LoginHero("👧", "Register Student", "Add a new student to your class", onBack = onBack)
 
         Column(modifier = Modifier.padding(20.dp)) {
             FieldLabel("Student's Name")

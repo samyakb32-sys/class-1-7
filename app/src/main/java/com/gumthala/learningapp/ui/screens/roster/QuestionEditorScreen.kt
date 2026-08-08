@@ -59,7 +59,8 @@ fun QuestionEditorScreen(
     modifier: Modifier = Modifier,
     submitError: String? = null,
     successMessage: String? = null,
-    isSubmitting: Boolean = false
+    isSubmitting: Boolean = false,
+    onBack: (() -> Unit)? = null
 ) {
     var prompt by remember { mutableStateOf("") }
     var optionA by remember { mutableStateOf("") }
@@ -73,7 +74,7 @@ fun QuestionEditorScreen(
     val letters = listOf("A", "B", "C", "D")
 
     Column(modifier = modifier.fillMaxSize().verticalScroll(rememberScrollState())) {
-        LoginHero("✏️", "New Question", chapterTitle)
+        LoginHero("✏️", "New Question", chapterTitle, onBack = onBack)
 
         Column(modifier = Modifier.padding(20.dp)) {
             FieldLabel("Question")

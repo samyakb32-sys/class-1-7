@@ -41,14 +41,15 @@ fun StudentLoginScreen(
     onSubmit: (StudentLoginInput) -> Unit,
     modifier: Modifier = Modifier,
     submitError: String? = null,
-    isSubmitting: Boolean = false
+    isSubmitting: Boolean = false,
+    onBack: (() -> Unit)? = null
 ) {
     var name by remember { mutableStateOf("") }
     var classLevel by remember { mutableStateOf(1) }
     var language by remember { mutableStateOf(AppLanguage.ENGLISH) }
 
     Column(modifier = modifier.fillMaxSize().verticalScroll(rememberScrollState())) {
-        LoginHero("🎒", "Hi Explorer!", "Enter your name and pick your class")
+        LoginHero("🎒", "Hi Explorer!", "Enter your name and pick your class", onBack = onBack)
 
         Column(modifier = Modifier.padding(20.dp)) {
             FieldLabel("Your Name")

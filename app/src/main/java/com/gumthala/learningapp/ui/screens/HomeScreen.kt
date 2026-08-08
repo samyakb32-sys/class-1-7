@@ -54,12 +54,13 @@ data class HomeUiState(
     val featured: List<FeaturedSubject> = listOf(
         FeaturedSubject("🔢", "Maths", FeaturedPalette.One),
         FeaturedSubject("📖", "English", FeaturedPalette.Two),
-        FeaturedSubject("🔬", "Science", FeaturedPalette.Three)
+        FeaturedSubject("✍️", "Marathi", FeaturedPalette.Three),
+        FeaturedSubject("अ", "Hindi", FeaturedPalette.Four)
     ),
     val challengeTitle: String = "Daily Challenge",
     val challengeSubtitle: String = "Solve 5 Maths Qs · +50 XP",
     val weeklyProgress: String = "78%",
-    val upcomingQuiz: String = "Science"
+    val upcomingQuiz: String = "Maths"
 )
 
 @Composable

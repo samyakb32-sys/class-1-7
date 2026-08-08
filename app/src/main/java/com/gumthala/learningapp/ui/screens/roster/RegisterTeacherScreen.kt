@@ -52,7 +52,8 @@ fun RegisterTeacherScreen(
     modifier: Modifier = Modifier,
     submitError: String? = null,
     successMessage: String? = null,
-    isSubmitting: Boolean = false
+    isSubmitting: Boolean = false,
+    onBack: (() -> Unit)? = null
 ) {
     var name by remember { mutableStateOf("") }
     var email by remember { mutableStateOf("") }
@@ -60,7 +61,7 @@ fun RegisterTeacherScreen(
     var assigned by remember { mutableStateOf(setOf<Int>()) }
 
     Column(modifier = modifier.fillMaxSize().verticalScroll(rememberScrollState())) {
-        LoginHero("🍎", "Register Teacher", "Add a teacher and assign their classes")
+        LoginHero("🍎", "Register Teacher", "Add a teacher and assign their classes", onBack = onBack)
 
         Column(modifier = Modifier.padding(20.dp)) {
             FieldLabel("Teacher's Name")

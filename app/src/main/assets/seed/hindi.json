@@ -1,0 +1,11 @@
+{
+  "version": 1,
+  "subject": {
+    "code": "hindi",
+    "name": { "en": "Hindi", "mr": "हिंदी", "hi": "हिंदी" },
+    "iconKey": "hindi-a",
+    "colorHex": "#D6316B",
+    "orderIndex": 3
+  },
+  "classes": []
+}

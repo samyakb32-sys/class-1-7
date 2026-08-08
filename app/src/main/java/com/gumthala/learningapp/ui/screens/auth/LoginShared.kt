@@ -3,6 +3,7 @@ package com.gumthala.learningapp.ui.screens.auth
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.shape.RoundedCornerShape
@@ -30,7 +31,13 @@ import com.gumthala.learningapp.ui.theme.display
 
 /** `.login-hero` — the gradient banner shared by both login screens. */
 @Composable
-fun LoginHero(emoji: String, title: String, subtitle: String, modifier: Modifier = Modifier) {
+fun LoginHero(
+    emoji: String,
+    title: String,
+    subtitle: String,
+    modifier: Modifier = Modifier,
+    onBack: (() -> Unit)? = null
+) {
     Column(
         modifier = modifier
             .fillMaxWidth()
@@ -38,6 +45,16 @@ fun LoginHero(emoji: String, title: String, subtitle: String, modifier: Modifier
             .padding(top = 32.dp, bottom = 24.dp, start = 20.dp, end = 20.dp),
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
+        if (onBack != null) {
+            Row(modifier = Modifier.fillMaxWidth()) {
+                Text(
+                    "‹ Back",
+                    style = body(TextSize.Small, FontWeight.Bold),
+                    color = Color.White,
+                    modifier = Modifier.clickable(onClick = onBack)
+                )
+            }
+        }
         Text(emoji, style = body(TextSize.Screen))
         Text(
             title,

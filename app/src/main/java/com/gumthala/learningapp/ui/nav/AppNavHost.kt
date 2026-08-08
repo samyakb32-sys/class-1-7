@@ -1,6 +1,7 @@
 package com.gumthala.learningapp.ui.nav
 
 import androidx.compose.foundation.background
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
@@ -86,11 +87,15 @@ fun AppNavHost(userId: String, classLevel: Int, modifier: Modifier = Modifier) {
 
                 Overlay.Chapters -> {
                     val chaptersState by studentViewModel.chaptersState.collectAsState()
-                    SubjectsScreen(
-                        subjects = chaptersState.chapters,
-                        onBack = { overlay = Overlay.None },
-                        onSubjectClick = { chapter: SubjectCardUi -> overlay = Overlay.QuizDifficulty(chapter) }
-                    )
+                    if (chaptersState.chapters.isEmpty()) {
+                        ComingSoon(onBack = { overlay = Overlay.None })
+                    } else {
+                        SubjectsScreen(
+                            subjects = chaptersState.chapters,
+                            onBack = { overlay = Overlay.None },
+                            onSubjectClick = { chapter: SubjectCardUi -> overlay = Overlay.QuizDifficulty(chapter) }
+                        )
+                    }
                 }
 
                 is Overlay.QuizDifficulty -> DifficultyPickerScreen(
@@ -212,5 +217,44 @@ private fun QuizHost(chapterId: String, userId: String, difficulty: DifficultyLe
             newBadges = s.outcome.newBadges,
             onContinue = onDone
         )
+    }
+}
+
+/**
+ * Shown instead of an empty chapter list — e.g. tapping English/Marathi/Hindi
+ * today, since only Maths has real content seeded so far (see
+ * content-tools/README.md). Honest "not ready yet" beats a blank screen.
+ */
+@Composable
+private fun ComingSoon(onBack: () -> Unit) {
+    Box(Modifier.fillMaxSize()) {
+        Column(Modifier.fillMaxSize().padding(20.dp)) {
+            Text(
+                "‹ Back",
+                style = display(TextSize.Header, FontWeight.Bold),
+                color = AppColors.Ink,
+                modifier = Modifier.clickable(onClick = onBack)
+            )
+        }
+        Column(
+            Modifier.fillMaxSize().padding(24.dp),
+            horizontalAlignment = Alignment.CenterHorizontally,
+            verticalArrangement = androidx.compose.foundation.layout.Arrangement.Center
+        ) {
+            Text("🚧", style = body(TextSize.Screen))
+            Text(
+                "Coming Soon!",
+                style = display(TextSize.Header, FontWeight.ExtraBold),
+                color = AppColors.Ink,
+                modifier = Modifier.padding(top = 12.dp)
+            )
+            Text(
+                "We're still adding chapters for this subject. Check back soon!",
+                style = body(TextSize.Small, FontWeight.SemiBold),
+                color = AppColors.Muted,
+                textAlign = androidx.compose.ui.text.style.TextAlign.Center,
+                modifier = Modifier.padding(top = 8.dp)
+            )
+        }
     }
 }

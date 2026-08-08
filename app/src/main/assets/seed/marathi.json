@@ -1,0 +1,11 @@
+{
+  "version": 1,
+  "subject": {
+    "code": "marathi",
+    "name": { "en": "Marathi", "mr": "मराठी", "hi": "मराठी" },
+    "iconKey": "pen",
+    "colorHex": "#15803D",
+    "orderIndex": 2
+  },
+  "classes": []
+}

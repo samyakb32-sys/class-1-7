@@ -66,6 +66,7 @@ object FeaturedPalette {
     val One = SubjectPalette(Color(0xFFEAF1FF), Color(0xFFDCE9FF), Color(0xFF2563EB))
     val Two = SubjectPalette(AppColors.PinkBg, Color(0xFFFFD3E2), Color(0xFFD6316B))
     val Three = SubjectPalette(AppColors.GreenBg, Color(0xFFBBF7D0), Color(0xFF15803D))
+    val Four = SubjectPalette(AppColors.YellowBg, Color(0xFFFDE68A), AppColors.OnYellowButton)
 }
 
 /** Weekly Report bar tints, in the mockup's order. */

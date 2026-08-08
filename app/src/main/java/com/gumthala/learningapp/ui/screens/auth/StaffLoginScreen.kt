@@ -34,7 +34,8 @@ fun StaffLoginScreen(
     onSubmit: (StaffLoginInput) -> Unit,
     modifier: Modifier = Modifier,
     submitError: String? = null,
-    isSubmitting: Boolean = false
+    isSubmitting: Boolean = false,
+    onBack: (() -> Unit)? = null
 ) {
     var email by remember { mutableStateOf("") }
     var password by remember { mutableStateOf("") }
@@ -45,7 +46,7 @@ fun StaffLoginScreen(
     }
 
     Column(modifier = modifier.fillMaxSize().verticalScroll(rememberScrollState())) {
-        LoginHero(emoji, title, "Sign in with your school email")
+        LoginHero(emoji, title, "Sign in with your school email", onBack = onBack)
 
         Column(modifier = Modifier.padding(20.dp)) {
             FieldLabel("Email")
