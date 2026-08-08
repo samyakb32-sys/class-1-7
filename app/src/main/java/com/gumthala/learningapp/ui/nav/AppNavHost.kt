@@ -37,6 +37,7 @@ import com.gumthala.learningapp.ui.screens.SubjectsScreen
 import com.gumthala.learningapp.ui.screens.celebration.QuizCompleteScreen
 import com.gumthala.learningapp.ui.theme.AppColors
 import com.gumthala.learningapp.ui.theme.TextSize
+import com.gumthala.learningapp.ui.theme.body
 import com.gumthala.learningapp.ui.theme.display
 import com.gumthala.learningapp.ui.viewmodel.QuizScreenState
 import com.gumthala.learningapp.ui.viewmodel.QuizViewModel
