@@ -17,6 +17,7 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
+import com.gumthala.learningapp.ui.components.softCard
 import com.gumthala.learningapp.ui.theme.AppColors
 import com.gumthala.learningapp.ui.theme.Radius
 import com.gumthala.learningapp.ui.theme.TextSize
@@ -29,9 +30,11 @@ import com.gumthala.learningapp.ui.theme.display
  */
 @Composable
 fun StatBox(number: String, label: String, background: Color, foreground: Color, modifier: Modifier = Modifier) {
+    val shape = RoundedCornerShape(Radius.Soft)
     Column(
         modifier = modifier
-            .clip(RoundedCornerShape(Radius.Soft))
+            .softCard(shape, 2.dp)
+            .clip(shape)
             .background(background)
             .padding(vertical = 12.dp),
         horizontalAlignment = Alignment.CenterHorizontally
@@ -53,11 +56,13 @@ fun ActionRow(
     subtitle: String,
     onClick: () -> Unit
 ) {
+    val shape = RoundedCornerShape(Radius.Soft)
     Row(
         modifier = Modifier
             .fillMaxWidth()
             .padding(top = 8.dp)
-            .clip(RoundedCornerShape(Radius.Soft))
+            .softCard(shape, 2.dp)
+            .clip(shape)
             .background(AppColors.SurfaceSoft)
             .clickable(onClick = onClick)
             .padding(11.dp),

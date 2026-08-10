@@ -24,6 +24,7 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import com.gumthala.learningapp.ui.theme.AppColors
 import com.gumthala.learningapp.ui.theme.AppColors2
+import com.gumthala.learningapp.ui.components.softCard
 import com.gumthala.learningapp.ui.theme.Radius
 import com.gumthala.learningapp.ui.theme.TextSize
 import com.gumthala.learningapp.ui.theme.body
@@ -83,11 +84,13 @@ fun ManageStudentsScreen(
 /** `.stud-row` — shared between Manage Students and the Teacher's roster. */
 @Composable
 fun StudentRow(student: ManagedStudentRow, onClick: () -> Unit) {
+    val shape = RoundedCornerShape(Radius.Soft)
     Row(
         modifier = Modifier
             .fillMaxWidth()
             .padding(bottom = 8.dp)
-            .clip(RoundedCornerShape(Radius.Soft))
+            .softCard(shape, 2.dp)
+            .clip(shape)
             .background(AppColors.SurfaceSoft)
             .clickable(onClick = onClick)
             .padding(horizontal = 12.dp, vertical = 10.dp),
@@ -120,6 +123,7 @@ fun FloatingAddButton(onClick: () -> Unit, modifier: Modifier = Modifier) {
     Box(
         modifier = modifier
             .size(44.dp)
+            .softCard(CircleShape, 6.dp)
             .clip(CircleShape)
             .background(AppColors.Yellow)
             .clickable(onClick = onClick),

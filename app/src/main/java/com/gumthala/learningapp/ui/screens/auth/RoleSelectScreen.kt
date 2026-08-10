@@ -21,6 +21,7 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import com.gumthala.learningapp.ui.components.PurpleDeepGradient
+import com.gumthala.learningapp.ui.components.softCard
 import com.gumthala.learningapp.ui.theme.AppColors
 import com.gumthala.learningapp.ui.theme.Radius
 import com.gumthala.learningapp.ui.theme.TextSize
@@ -84,11 +85,13 @@ private fun RoleCard(
     subtitle: String,
     onClick: () -> Unit
 ) {
+    val shape = RoundedCornerShape(Radius.Sheet)
     Row(
         modifier = Modifier
             .fillMaxWidth()
             .padding(bottom = 12.dp)
-            .clip(RoundedCornerShape(Radius.Sheet))
+            .softCard(shape, 4.dp)
+            .clip(shape)
             .background(Color.White)
             .clickable(onClick = onClick)
             .padding(16.dp),

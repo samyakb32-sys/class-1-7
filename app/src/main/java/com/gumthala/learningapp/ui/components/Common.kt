@@ -2,6 +2,8 @@ package com.gumthala.learningapp.ui.components
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
+import androidx.compose.foundation.interaction.MutableInteractionSource
+import androidx.compose.foundation.interaction.collectIsPressedAsState
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -11,13 +13,21 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.animation.core.Spring
+import androidx.compose.animation.core.animateFloatAsState
+import androidx.compose.animation.core.spring
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.draw.scale
+import androidx.compose.ui.draw.shadow
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.Shape
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
@@ -26,6 +36,14 @@ import com.gumthala.learningapp.ui.theme.Radius
 import com.gumthala.learningapp.ui.theme.TextSize
 import com.gumthala.learningapp.ui.theme.body
 import com.gumthala.learningapp.ui.theme.display
+
+/**
+ * A soft drop shadow matching the app's rounded-card language — one call
+ * instead of repeating `.shadow(elevation, shape, ...)` at every card site.
+ * ponytail: shared modifier > per-screen shadow tuning.
+ */
+fun Modifier.softCard(shape: Shape, elevation: Dp = 3.dp): Modifier =
+    this.shadow(elevation, shape, clip = false)
 
 /** `.sec-head` — a bold heading with an optional trailing purple action. */
 @Composable
@@ -75,7 +93,7 @@ fun EmojiTile(
     }
 }
 
-/** `.full-btn` — full-width purple primary action. */
+/** `.full-btn` — full-width purple primary action, with a soft shadow and a subtle press-in. */
 @Composable
 fun PrimaryFullButton(
     text: String,
@@ -83,12 +101,22 @@ fun PrimaryFullButton(
     modifier: Modifier = Modifier,
     enabled: Boolean = true
 ) {
+    val interactionSource = remember { MutableInteractionSource() }
+    val pressed by interactionSource.collectIsPressedAsState()
+    val scale by animateFloatAsState(
+        targetValue = if (pressed) 0.97f else 1f,
+        animationSpec = spring(dampingRatio = Spring.DampingRatioMediumBouncy, stiffness = Spring.StiffnessMedium),
+        label = "buttonPress"
+    )
+    val shape = RoundedCornerShape(Radius.Card)
     Box(
         modifier = modifier
             .fillMaxWidth()
-            .clip(RoundedCornerShape(Radius.Card))
+            .scale(scale)
+            .then(if (enabled) Modifier.softCard(shape, 4.dp) else Modifier)
+            .clip(shape)
             .background(if (enabled) AppColors.Purple else AppColors.Muted)
-            .clickable(enabled = enabled, onClick = onClick)
+            .clickable(interactionSource = interactionSource, indication = null, enabled = enabled, onClick = onClick)
             .padding(vertical = 14.dp),
         contentAlignment = Alignment.Center
     ) {

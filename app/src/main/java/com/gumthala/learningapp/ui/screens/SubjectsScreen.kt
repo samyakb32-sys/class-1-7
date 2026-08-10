@@ -21,6 +21,7 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import com.gumthala.learningapp.ui.components.EmojiTile
+import com.gumthala.learningapp.ui.components.softCard
 import com.gumthala.learningapp.ui.theme.AppColors
 import com.gumthala.learningapp.ui.theme.Radius
 import com.gumthala.learningapp.ui.theme.ScreenPadding
@@ -99,10 +100,12 @@ fun SubjectsScreen(
 
 @Composable
 private fun SubjectCard(subject: SubjectCardUi, onClick: () -> Unit) {
+    val shape = RoundedCornerShape(Radius.Large)
     Row(
         modifier = Modifier
             .fillMaxWidth()
-            .clip(RoundedCornerShape(Radius.Large))
+            .softCard(shape)
+            .clip(shape)
             .background(subject.palette.background)
             .clickable(onClick = onClick)
             .padding(14.dp),
