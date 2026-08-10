@@ -149,7 +149,14 @@ class QuizViewModel @AssistedInject constructor(
                 selectedIndex = selectedOptionIndex,
                 revealed = revealed,
                 feedbackTitle = if (!revealed) "" else {
-                    if (selectedOptionIndex == correctIndex) "Correct! 🎉" else "Not quite"
+                    // Playful, and never scolding on a wrong answer — the spec asks for
+                    // adventure/play, not academic pressure. Varied by question index so
+                    // a 12-question quiz doesn't repeat the same two lines twelve times.
+                    if (selectedOptionIndex == correctIndex) {
+                        CORRECT_CHEERS[currentIndex % CORRECT_CHEERS.size]
+                    } else {
+                        WRONG_NUDGES[currentIndex % WRONG_NUDGES.size]
+                    }
                 },
                 feedbackDetail = if (!revealed) "" else question.hint ?: "",
                 nextLabel = if (currentIndex >= q.questions.lastIndex) "Finish Quiz" else "Next Question"
@@ -157,3 +164,19 @@ class QuizViewModel @AssistedInject constructor(
         )
     }
 }
+
+private val CORRECT_CHEERS = listOf(
+    "Correct! 🎉",
+    "Nailed it! ⭐",
+    "Brilliant! 🌟",
+    "You got it! 🎯",
+    "Superb! 🚀"
+)
+
+private val WRONG_NUDGES = listOf(
+    "Close one! 💪",
+    "Nice try — here's the trick 🔍",
+    "Almost! Keep going 🌱",
+    "Good thinking — check this out 💡",
+    "Not this time — you'll get the next! ✨"
+)

@@ -20,6 +20,8 @@ import com.gumthala.learningapp.ui.components.RoleTabBar
 import com.gumthala.learningapp.ui.components.TeacherTabs
 import com.gumthala.learningapp.ui.components.AdminTabs
 import com.gumthala.learningapp.ui.screens.ProfileScreen
+import com.gumthala.learningapp.ui.screens.ProfileMenuItemUi
+import com.gumthala.learningapp.ui.screens.ProfileStat
 import com.gumthala.learningapp.ui.screens.ProfileUiState
 import com.gumthala.learningapp.ui.screens.admin.AdminDashboardScreen
 import com.gumthala.learningapp.ui.screens.admin.ManageStudentsScreen
@@ -269,7 +271,6 @@ private fun TeacherShell(teacherUserId: String, displayName: String, onLogout: (
                     TeacherTabs.STUDENTS -> ManageStudentsScreen(
                         students = students,
                         onBack = { tab = TeacherTabs.HOME },
-                        onSearch = { },
                         onStudentClick = { },
                         onAddStudent = { viewModel.consumeRegisterResult(); overlay = TeacherOverlay.RegisterStudent }
                     )
@@ -284,7 +285,19 @@ private fun TeacherShell(teacherUserId: String, displayName: String, onLogout: (
                     )
 
                     else -> ProfileScreen(
-                        state = DemoData.teacherProfile.copy(name = displayName.ifBlank { "Teacher" }),
+                        state = teacherProfile(
+                            name = displayName.ifBlank { "Teacher" },
+                            studentCount = overview.myStudentCount,
+                            classes = assignedClasses
+                        ),
+                        onMenuClick = { item ->
+                            when (item.id) {
+                                "students" -> tab = TeacherTabs.STUDENTS
+                                "slides" -> overlay = TeacherOverlay.SlideDecks
+                                "questions" -> overlay = TeacherOverlay.QuestionSubjects
+                                else -> Unit
+                            }
+                        },
                         onLogout = onLogout
                     )
                 }
@@ -401,7 +414,6 @@ private fun AdminShell(adminUserId: String, displayName: String, onLogout: () ->
                     AdminTabs.PEOPLE -> ManageStudentsScreen(
                         students = students,
                         onBack = { tab = AdminTabs.HOME },
-                        onSearch = { },
                         onStudentClick = { },
                         onAddStudent = { viewModel.consumeRegisterStudentResult(); overlay = AdminOverlay.RegisterStudent }
                     )
@@ -415,7 +427,20 @@ private fun AdminShell(adminUserId: String, displayName: String, onLogout: () ->
                     )
 
                     else -> ProfileScreen(
-                        state = DemoData.adminProfile.copy(name = displayName.ifBlank { "Admin" }),
+                        state = adminProfile(
+                            name = displayName.ifBlank { "Admin" },
+                            studentCount = overview.studentCount,
+                            teacherCount = overview.teacherCount,
+                            questionCount = overview.questionCount
+                        ),
+                        onMenuClick = { item ->
+                            when (item.id) {
+                                "students" -> tab = AdminTabs.PEOPLE
+                                "teachers" -> overlay = AdminOverlay.RegisterTeacher
+                                "content" -> overlay = AdminOverlay.QuestionSubjects
+                                else -> Unit
+                            }
+                        },
                         onLogout = onLogout
                     )
                 }
@@ -430,7 +455,45 @@ private fun AdminShell(adminUserId: String, displayName: String, onLogout: () ->
  * wiring — SlideRepository exists but isn't connected here yet) and both Profile
  * screens' stats/menu (avatar, XP, achievements — cosmetic, no backing data model).
  */
-private object DemoData {
-    val teacherProfile = ProfileUiState(avatarEmoji = "👩‍🏫", name = "Teacher", subtitle = "Teacher")
-    val adminProfile = ProfileUiState(avatarEmoji = "🛡️", name = "Admin", subtitle = "Admin")
-}
+/**
+ * Staff profiles show what a teacher/admin actually needs — how many students
+ * they're responsible for and shortcuts into their real tools. They previously
+ * fell through to ProfileUiState's defaults, which are a *student's* profile
+ * (XP, Coins, 🔥streak, "My Certificates") — wrong audience entirely.
+ */
+private fun teacherProfile(name: String, studentCount: Int, classes: List<Int>): ProfileUiState =
+    ProfileUiState(
+        avatarEmoji = "👩‍🏫",
+        name = name,
+        subtitle = if (classes.isEmpty()) "Teacher" else "Teacher · Class ${classes.joinToString(", ")}",
+        stats = listOf(
+            ProfileStat("👧$studentCount", "Students"),
+            ProfileStat("📚${classes.size}", "Classes")
+        ),
+        menu = listOf(
+            ProfileMenuItemUi("students", "👧", "My Students"),
+            ProfileMenuItemUi("slides", "🖼️", "Teaching Slides"),
+            ProfileMenuItemUi("questions", "✏️", "My Questions"),
+            ProfileMenuItemUi("help", "💬", "Help & Support"),
+            ProfileMenuItemUi("about", "ℹ️", "About App")
+        )
+    )
+
+private fun adminProfile(name: String, studentCount: Int, teacherCount: Int, questionCount: Int): ProfileUiState =
+    ProfileUiState(
+        avatarEmoji = "🛡️",
+        name = name,
+        subtitle = "Administrator",
+        stats = listOf(
+            ProfileStat("👧$studentCount", "Students"),
+            ProfileStat("🍎$teacherCount", "Teachers"),
+            ProfileStat("❓$questionCount", "Questions")
+        ),
+        menu = listOf(
+            ProfileMenuItemUi("students", "👧", "Manage Students"),
+            ProfileMenuItemUi("teachers", "🍎", "Manage Teachers"),
+            ProfileMenuItemUi("content", "📚", "Manage Content"),
+            ProfileMenuItemUi("help", "💬", "Help & Support"),
+            ProfileMenuItemUi("about", "ℹ️", "About App")
+        )
+    )

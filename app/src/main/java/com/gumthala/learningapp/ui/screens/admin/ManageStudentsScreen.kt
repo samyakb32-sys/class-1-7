@@ -13,12 +13,18 @@ import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.foundation.text.BasicTextField
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Brush
+import androidx.compose.ui.graphics.SolidColor
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
@@ -39,19 +45,31 @@ data class ManagedStudentRow(
 )
 
 /**
- * `Manage Students` — admin's roster with a search affordance and a floating
- * "+" that opens registration. Teachers see the same row shape scoped to their
- * own classes via [TeacherStudentsScreen] rather than duplicating this list.
+ * `Manage Students` — roster with working search and a floating "+" that opens
+ * registration. Used by both Admin (all classes) and Teacher (their own).
+ *
+ * Search filters the list already in memory rather than round-tripping to Room:
+ * a single school's roster is small, and the caller's Flow already has every
+ * row. ponytail: in-memory filter, move to a DAO query if a roster ever gets
+ * big enough to stutter.
  */
 @Composable
 fun ManageStudentsScreen(
     students: List<ManagedStudentRow>,
     onBack: () -> Unit,
-    onSearch: () -> Unit,
     onStudentClick: (ManagedStudentRow) -> Unit,
     onAddStudent: () -> Unit,
     modifier: Modifier = Modifier
 ) {
+    var query by remember { mutableStateOf("") }
+    val visible = remember(students, query) {
+        if (query.isBlank()) students
+        else students.filter {
+            it.fullName.contains(query.trim(), ignoreCase = true) ||
+                it.classLabel.contains(query.trim(), ignoreCase = true)
+        }
+    }
+
     Box(modifier = modifier.fillMaxSize()) {
         Column(modifier = Modifier.fillMaxSize().padding(horizontal = 20.dp)) {
             Row(
@@ -67,17 +85,71 @@ fun ManageStudentsScreen(
                     modifier = Modifier.weight(1f),
                     textAlign = androidx.compose.ui.text.style.TextAlign.Center
                 )
-                Text("🔍", style = body(TextSize.Body), modifier = Modifier.clickable(onClick = onSearch))
+                Text("${visible.size}", style = body(TextSize.Small, FontWeight.Bold), color = AppColors.Muted)
             }
 
-            LazyColumn {
-                items(students, key = { it.id }) { student ->
-                    StudentRow(student, onClick = { onStudentClick(student) })
+            SearchBox(query = query, onQueryChange = { query = it })
+
+            if (visible.isEmpty()) {
+                Text(
+                    if (students.isEmpty()) "No students registered yet. Tap ＋ to add one."
+                    else "No student matches \"$query\".",
+                    style = body(TextSize.Small, FontWeight.Bold),
+                    color = AppColors.Muted,
+                    modifier = Modifier.padding(top = 24.dp)
+                )
+            } else {
+                LazyColumn(modifier = Modifier.padding(top = 10.dp)) {
+                    items(visible, key = { it.id }) { student ->
+                        StudentRow(student, onClick = { onStudentClick(student) })
+                    }
                 }
             }
         }
 
         FloatingAddButton(onClick = onAddStudent, modifier = Modifier.align(Alignment.BottomEnd).padding(16.dp))
+    }
+}
+
+/** Flat search field matching the app's input styling. */
+@Composable
+private fun SearchBox(query: String, onQueryChange: (String) -> Unit) {
+    val shape = RoundedCornerShape(Radius.Card)
+    Row(
+        modifier = Modifier
+            .fillMaxWidth()
+            .clip(shape)
+            .background(AppColors.SurfaceSoft)
+            .padding(horizontal = 12.dp, vertical = 10.dp),
+        verticalAlignment = Alignment.CenterVertically
+    ) {
+        Text("🔍", style = body(TextSize.Small))
+        BasicTextField(
+            value = query,
+            onValueChange = onQueryChange,
+            singleLine = true,
+            textStyle = body(TextSize.Small, FontWeight.Bold).copy(color = AppColors.Ink),
+            cursorBrush = SolidColor(AppColors.Purple),
+            modifier = Modifier.weight(1f).padding(start = 8.dp),
+            decorationBox = { inner ->
+                if (query.isEmpty()) {
+                    Text(
+                        "Search by name or class",
+                        style = body(TextSize.Small, FontWeight.Bold),
+                        color = AppColors.Muted
+                    )
+                }
+                inner()
+            }
+        )
+        if (query.isNotEmpty()) {
+            Text(
+                "✕",
+                style = body(TextSize.Small, FontWeight.Bold),
+                color = AppColors.Muted,
+                modifier = Modifier.clickable { onQueryChange("") }
+            )
+        }
     }
 }
 
