@@ -151,3 +151,51 @@ runner has a system Gradle install). Locally, run `gradle wrapper --gradle-versi
 once, or just open the folder in Android Studio and let it generate them
 automatically on first sync.
 
+
+## Firebase (optional sync)
+
+The app is offline-first and works fully without Firebase. Sync is opt-in.
+
+### Turning it on
+
+1. Firebase Console → create a project → Add app → **Android**
+2. Package name: `com.gumthala.learningapp`
+   (Debug builds use `com.gumthala.learningapp.debug` — add that as a second
+   Android app in the same project, or the debug APK won't connect.)
+3. Download `google-services.json` → put it in `app/`
+4. Firestore Database → Create database
+5. Rules tab → paste `firestore.rules` from this repo → Publish
+6. Rebuild. The Gradle log will say `Firebase: google-services.json found`.
+
+No code changes needed — `app/build.gradle.kts` applies the Google Services
+plugin only when that file exists, so the build stays green before you add it
+and lights up automatically after. Without it, `AppModule` falls back to
+`NoOpRemoteDataSource` and nothing tries to reach the network.
+
+`google-services.json` is gitignored. Every device/developer adds their own.
+
+### Using it
+
+Admin → Profile → **Sync Now**. It pushes local changes and pulls remote ones.
+Offline or unconfigured, it reports that and does nothing — it never blocks or
+crashes the app.
+
+### What syncs, and one deliberate gap
+
+Synced: students, chapters, questions, progress, attempts.
+
+**Not synced: staff password hashes.** This app signs in locally (so login works
+without a network), which means it doesn't use Firebase Auth — and without
+Firebase Auth, Firestore rules can't scope access per user or per role. Anything
+in the database is readable by anything holding the app's config. Credential
+hashes are the one thing there worth stealing, so they never leave the device.
+
+The practical effect:
+- **Students** (name + class, no password) sync across devices normally.
+- **Teachers/admins** signing in on a *new* device need an admin to set their
+  password on that device first.
+
+If you'd rather have full staff-credential sync, the honest way is to add
+Firebase Anonymous Auth (or real Firebase Auth for staff) and tighten
+`firestore.rules` to `if request.auth != null`. That's a real change, not a
+config toggle — ask before assuming it's done.

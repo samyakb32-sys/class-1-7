@@ -127,10 +127,22 @@ private fun Map<String, Any?>.bool(key: String, default: Boolean = false): Boole
     this[key] as? Boolean ?: default
 private fun Map<String, Any?>.str(key: String): String? = this[key] as? String
 
+/**
+ * NOTE: passwordHash / passwordSalt are deliberately NOT uploaded.
+ *
+ * This app authenticates locally, not via Firebase Auth, so Firestore rules
+ * can't scope reads per-user — any client holding the app's config could read
+ * whatever is in the database. Staff credential hashes are the one thing in
+ * here worth stealing, so they never leave the device.
+ *
+ * Consequence: students (name + class, no password) sync across devices
+ * perfectly. A teacher/admin signing in on a NEW device needs an admin to set
+ * their password on that device first. That's a deliberate trade — see the
+ * Firebase section in README.md.
+ */
 private fun UserEntity.toMap(): Map<String, Any?> = mapOf(
     "id" to id, "role" to role.name, "fullName" to fullName,
     "fullNameNormalized" to fullNameNormalized, "email" to email,
-    "passwordHash" to passwordHash, "passwordSalt" to passwordSalt,
     "mustChangePassword" to mustChangePassword,
     "classLevel" to classLevel, "rollNo" to rollNo, "assignedClasses" to assignedClasses,
     "avatarKey" to avatarKey, "isActive" to isActive, "createdBy" to createdBy,
@@ -144,7 +156,9 @@ private fun Map<String, Any?>.toUserEntity(): UserEntity? {
         id = id, role = role,
         fullName = str("fullName").orEmpty(),
         fullNameNormalized = str("fullNameNormalized").orEmpty(),
-        email = str("email"), passwordHash = str("passwordHash"), passwordSalt = str("passwordSalt"),
+        // credentials are never synced (see UserEntity.toMap above) — SyncManager
+        // restores the local hash before this row is written to Room
+        email = str("email"), passwordHash = null, passwordSalt = null,
         mustChangePassword = bool("mustChangePassword", false),
         classLevel = intOrNull("classLevel"), rollNo = str("rollNo"),
         assignedClasses = str("assignedClasses"), avatarKey = str("avatarKey"),

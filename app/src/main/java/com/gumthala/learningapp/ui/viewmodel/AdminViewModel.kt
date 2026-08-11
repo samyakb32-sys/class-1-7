@@ -6,6 +6,7 @@ import com.gumthala.learningapp.core.ClassLevels
 import com.gumthala.learningapp.core.UserRole
 import com.gumthala.learningapp.data.repo.AuthRepository
 import com.gumthala.learningapp.data.repo.ContentRepository
+import com.gumthala.learningapp.data.remote.SyncManager
 import com.gumthala.learningapp.data.repo.QuizRepository
 import com.gumthala.learningapp.data.repo.RegisterResult
 import com.gumthala.learningapp.ui.screens.admin.AdminOverview
@@ -35,7 +36,8 @@ class AdminViewModel @AssistedInject constructor(
     @Assisted private val adminUserId: String,
     private val authRepository: AuthRepository,
     private val quizRepository: QuizRepository,
-    private val contentRepository: ContentRepository
+    private val contentRepository: ContentRepository,
+    private val syncManager: SyncManager
 ) : ViewModel() {
 
     @AssistedFactory
@@ -150,6 +152,28 @@ class AdminViewModel @AssistedInject constructor(
 
     fun consumeRegisterTeacherResult() {
         _registerTeacherState.value = RegisterTeacherUiState()
+    }
+
+    /**
+     * Manual "Sync Now". SyncManager already no-ops when offline or when
+     * Firebase isn't configured, so this is safe to tap in any state — it just
+     * reports back what happened.
+     */
+    private val _syncStatus = MutableStateFlow<String?>(null)
+    val syncStatus: StateFlow<String?> = _syncStatus.asStateFlow()
+
+    fun syncNow() {
+        if (_syncStatus.value == "Syncing…") return
+        _syncStatus.value = "Syncing…"
+        viewModelScope.launch {
+            val report = runCatching { syncManager.fullSync() }.getOrNull()
+            _syncStatus.value = when {
+                report == null -> "Sync failed — try again"
+                report.skipped -> "Offline — will sync later"
+                report.error != null -> "Sync failed — try again"
+                else -> "Synced ✓"
+            }
+        }
     }
 }
 

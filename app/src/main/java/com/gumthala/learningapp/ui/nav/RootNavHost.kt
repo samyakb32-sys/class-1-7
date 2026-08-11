@@ -339,6 +339,7 @@ private fun AdminShell(adminUserId: String, displayName: String, onLogout: () ->
     val questionSubjects by questionViewModel.subjects.collectAsState()
     val questionChapters by questionViewModel.chapters.collectAsState()
     val saveQuestionState by questionViewModel.saveState.collectAsState()
+    val syncStatus by viewModel.syncStatus.collectAsState()
 
     Column(modifier = Modifier.fillMaxSize()) {
         Column(Modifier.weight(1f)) {
@@ -431,13 +432,15 @@ private fun AdminShell(adminUserId: String, displayName: String, onLogout: () ->
                             name = displayName.ifBlank { "Admin" },
                             studentCount = overview.studentCount,
                             teacherCount = overview.teacherCount,
-                            questionCount = overview.questionCount
+                            questionCount = overview.questionCount,
+                            syncStatus = syncStatus
                         ),
                         onMenuClick = { item ->
                             when (item.id) {
                                 "students" -> tab = AdminTabs.PEOPLE
                                 "teachers" -> overlay = AdminOverlay.RegisterTeacher
                                 "content" -> overlay = AdminOverlay.QuestionSubjects
+                                "sync" -> viewModel.syncNow()
                                 else -> Unit
                             }
                         },
@@ -479,11 +482,17 @@ private fun teacherProfile(name: String, studentCount: Int, classes: List<Int>):
         )
     )
 
-private fun adminProfile(name: String, studentCount: Int, teacherCount: Int, questionCount: Int): ProfileUiState =
+private fun adminProfile(
+    name: String,
+    studentCount: Int,
+    teacherCount: Int,
+    questionCount: Int,
+    syncStatus: String? = null
+): ProfileUiState =
     ProfileUiState(
         avatarEmoji = "🛡️",
         name = name,
-        subtitle = "Administrator",
+        subtitle = syncStatus ?: "Administrator",
         stats = listOf(
             ProfileStat("👧$studentCount", "Students"),
             ProfileStat("🍎$teacherCount", "Teachers"),
@@ -493,6 +502,7 @@ private fun adminProfile(name: String, studentCount: Int, teacherCount: Int, que
             ProfileMenuItemUi("students", "👧", "Manage Students"),
             ProfileMenuItemUi("teachers", "🍎", "Manage Teachers"),
             ProfileMenuItemUi("content", "📚", "Manage Content"),
+            ProfileMenuItemUi("sync", "☁️", "Sync Now"),
             ProfileMenuItemUi("help", "💬", "Help & Support"),
             ProfileMenuItemUi("about", "ℹ️", "About App")
         )

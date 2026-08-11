@@ -1,0 +1,51 @@
+rules_version = '2';
+
+// Firestore security rules for Class 1 to 7 Learning Course.
+//
+// Deploy: Firebase Console -> Firestore Database -> Rules -> paste -> Publish.
+// (Or `firebase deploy --only firestore:rules` if you use the CLI.)
+//
+// IMPORTANT CONTEXT: this app authenticates LOCALLY (PBKDF2 hashes in Room), not
+// via Firebase Auth, because sign-in has to work with no network. That means
+// request.auth is always null here, so these rules cannot scope access per user
+// or per role — they can only be open or closed.
+//
+// The app therefore never uploads password hashes (see
+// FirestoreRemoteDataSource.toMap), and these rules lock everything except the
+// collections sync actually needs.
+
+service cloud.firestore {
+  match /databases/{database}/documents {
+
+    // Everything is denied unless a rule below explicitly allows it.
+    match /{document=**} {
+      allow read, write: if false;
+    }
+
+    match /schools/{schoolId} {
+
+      // Roster: names, classes, roll numbers. No credentials are ever written
+      // here by the app. Still personal data about children — if you later add
+      // Firebase Anonymous Auth, tighten these to `if request.auth != null`.
+      match /users/{userId} {
+        allow read, write: if true;
+      }
+
+      // Curriculum. Safe to read; writes come from admin/teacher devices.
+      match /chapters/{chapterId} {
+        allow read, write: if true;
+      }
+      match /questions/{questionId} {
+        allow read, write: if true;
+      }
+
+      // Student progress and quiz attempts.
+      match /progress/{progressId} {
+        allow read, write: if true;
+      }
+      match /attempts/{attemptId} {
+        allow read, write: if true;
+      }
+    }
+  }
+}

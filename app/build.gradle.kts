@@ -5,8 +5,19 @@ plugins {
     alias(libs.plugins.kotlin.serialization)
     alias(libs.plugins.ksp)
     alias(libs.plugins.hilt)
-    // Uncomment once google-services.json is added:
-    // id("com.google.gms.google-services")
+}
+
+// Firebase is optional. The plugin is applied only when google-services.json is
+// actually present, so a fresh clone (and CI) builds fine without Firebase, and
+// sync switches on automatically the moment the file is dropped into app/.
+// Without it, AppModule falls back to NoOpRemoteDataSource and the app is
+// offline-only — see the "Firebase" section in README.md.
+val googleServicesJson = file("google-services.json")
+if (googleServicesJson.exists()) {
+    apply(plugin = "com.google.gms.google-services")
+    logger.lifecycle("Firebase: google-services.json found — sync enabled.")
+} else {
+    logger.lifecycle("Firebase: no google-services.json — building offline-only.")
 }
 
 android {

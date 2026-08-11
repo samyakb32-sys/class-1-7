@@ -105,7 +105,21 @@ class SyncManager @Inject constructor(
         if (!isOnline() || !remote.isAvailable()) return@withContext SyncReport(skipped = true)
         runCatching {
             val users = remote.pullUsers(since).getOrElse { emptyList() }
-            if (users.isNotEmpty()) userDao.upsertAll(users.map { it.copy(isSynced = true) })
+            if (users.isNotEmpty()) {
+                // Credentials are never synced, so every pulled row has a null
+                // passwordHash. Writing that straight to Room would wipe the local
+                // hash and lock a teacher out of their own device on the next sync.
+                // Carry the local credentials forward instead.
+                val merged = users.map { incoming ->
+                    val local = userDao.findById(incoming.id)
+                    incoming.copy(
+                        passwordHash = local?.passwordHash,
+                        passwordSalt = local?.passwordSalt,
+                        isSynced = true
+                    )
+                }
+                userDao.upsertAll(merged)
+            }
 
             val content = remote.pullContent(since).getOrElse {
                 RemoteContent(emptyList(), emptyList(), emptyList())
