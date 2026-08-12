@@ -1,5 +1,6 @@
 package com.gumthala.learningapp.ui.nav
 
+import androidx.activity.compose.BackHandler
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Box
@@ -71,6 +72,26 @@ fun AppNavHost(userId: String, classLevel: Int, modifier: Modifier = Modifier) {
     val studentViewModel: StudentViewModel = hiltViewModel<StudentViewModel, StudentViewModel.Factory>(
         key = "student:$userId:$classLevel"
     ) { factory -> factory.create(userId, classLevel) }
+
+    // System/hardware back button was exiting the WHOLE app from any section
+    // instead of going back one screen inside it — this is the fix. One
+    // BackHandler computes "what does back mean right now" from the current
+    // overlay/tab and reuses the exact same target each on-screen '‹' button
+    // already navigates to, so the two can never disagree. Only enabled when
+    // there's actually somewhere to go back to; at Home with nothing open, back
+    // falls through to the system default (minimize/exit), which is correct —
+    // Home is the true root of this shell.
+    val currentOverlay = overlay
+    val atRoot = currentOverlay == Overlay.None && tab == TopLevelDestination.HOME
+    BackHandler(enabled = !atRoot) {
+        when (currentOverlay) {
+            Overlay.None -> tab = TopLevelDestination.HOME
+            Overlay.Lesson -> overlay = Overlay.Chapters
+            Overlay.Chapters -> overlay = Overlay.None
+            is Overlay.QuizDifficulty -> overlay = Overlay.Chapters
+            is Overlay.Quiz -> { overlay = Overlay.None; tab = TopLevelDestination.LEARN }
+        }
+    }
 
     Column(
         modifier = modifier

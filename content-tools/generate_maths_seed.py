@@ -55,7 +55,11 @@ def gen_addition(chapter, n, lo, hi, spread):
             chapter,
             lt(f"What is {a} + {b}?", f"{a} + {b} किती?", f"{a} + {b} कितना होता है?"),
             correct, distinct_distractors(correct, 3, spread),
-            hint=lt("Count them together.", "दोन्ही एकत्र मोज.", "दोनों को साथ गिनो।")
+            hint=lt(
+                f"Start at {a} and count up {b} more, one at a time, until you reach {correct}. So {a} + {b} = {correct}.",
+                f"{a} पासून सुरू करून {b} वेळा पुढे मोज, म्हणजे {correct} पर्यंत पोहोचशील. म्हणून {a} + {b} = {correct}.",
+                f"{a} से शुरू करके {b} बार आगे गिनो, तब तुम {correct} तक पहुँचोगे। इसलिए {a} + {b} = {correct}।"
+            )
         )
 
 def gen_subtraction(chapter, n, lo, hi, spread):
@@ -67,18 +71,27 @@ def gen_subtraction(chapter, n, lo, hi, spread):
             chapter,
             lt(f"What is {a} - {b}?", f"{a} - {b} किती उरतात?", f"{a} - {b} कितना बचता है?"),
             correct, distinct_distractors(correct, 3, spread),
-            hint=lt("Take away from the total.", "एकूणमधून वजा कर.", "कुल में से घटाओ।")
+            hint=lt(
+                f"Start with {a}. Take away {b}, one at a time, counting down. You land on {correct}. So {a} - {b} = {correct}.",
+                f"{a} पासून सुरुवात कर. {b} एक-एक करून वजा कर, खाली मोजत जा. तू {correct} वर पोहोचशील. म्हणून {a} - {b} = {correct}.",
+                f"{a} से शुरू करो। {b} को एक-एक करके घटाओ, नीचे गिनते जाओ। तुम {correct} पर पहुँचोगे। इसलिए {a} - {b} = {correct}।"
+            )
         )
 
 def gen_multiplication(chapter, n, table_lo, table_hi, mult_lo, mult_hi):
     for _ in range(n):
         a, b = random.randint(table_lo, table_hi), random.randint(mult_lo, mult_hi)
         correct = a * b
+        addends_en = " + ".join([str(a)] * b)
         add_question(
             chapter,
             lt(f"What is {a} × {b}?", f"{a} × {b} किती?", f"{a} × {b} कितना होता है?"),
             correct, distinct_distractors(correct, 3, max(3, correct // 5)),
-            hint=lt(f"Add {a}, {b} times.", f"{a} ला {b} वेळा बेरीज कर.", f"{a} को {b} बार जोड़ो।")
+            hint=lt(
+                f"{a} × {b} means {b} groups of {a}: {addends_en} = {correct}.",
+                f"{a} × {b} म्हणजे {a} च्या {b} गट: {addends_en} = {correct}.",
+                f"{a} × {b} का मतलब है {a} के {b} समूह: {addends_en} = {correct}।"
+            )
         )
 
 def gen_division(chapter, n, divisor_lo, divisor_hi, quotient_lo, quotient_hi):
@@ -90,7 +103,11 @@ def gen_division(chapter, n, divisor_lo, divisor_hi, quotient_lo, quotient_hi):
             chapter,
             lt(f"What is {a} ÷ {b}?", f"{a} ÷ {b} किती?", f"{a} ÷ {b} कितना होता है?"),
             q, distinct_distractors(q, 3, max(2, q // 3)),
-            hint=lt("Split into equal groups.", "समान गटांत विभागा.", "बराबर समूहों में बाँटो।")
+            hint=lt(
+                f"Split {a} into {b} equal groups. Each group gets {q}, because {b} × {q} = {a}. So {a} ÷ {b} = {q}.",
+                f"{a} ला {b} समान गटांत विभाग. प्रत्येक गटात {q} येतात, कारण {b} × {q} = {a}. म्हणून {a} ÷ {b} = {q}.",
+                f"{a} को {b} बराबर समूहों में बाँटो। हर समूह में {q} आते हैं, क्योंकि {b} × {q} = {a}। इसलिए {a} ÷ {b} = {q}।"
+            )
         )
 
 def gen_place_value(chapter, n, digits):
@@ -109,7 +126,11 @@ def gen_place_value(chapter, n, digits):
                 f"{num} में {place_names_hi[pos]} स्थान पर कौन-सा अंक है?"
             ),
             digit, distinct_distractors(digit, 3, 4),
-            hint=lt("Count places from the right.", "उजवीकडून स्थान मोज.", "दाईं ओर से स्थान गिनो।")
+            hint=lt(
+                f"Count places from the right: {', '.join(place_names_en[:pos+1])}. In {num}, that digit is {digit}.",
+                f"उजवीकडून स्थान मोज: {', '.join(place_names_mr[:pos+1])}. {num} मध्ये तो अंक {digit} आहे.",
+                f"दाईं ओर से स्थान गिनो: {', '.join(place_names_hi[:pos+1])}। {num} में वह अंक {digit} है।"
+            )
         )
 
 def gen_word_problem_fruit(chapter, n, lo, hi):
@@ -127,8 +148,72 @@ def gen_word_problem_fruit(chapter, n, lo, hi):
                 f"टोकरी में {total} {f_hi} हैं। {given} दे दिए। कितने बचे?"
             ),
             correct, distinct_distractors(correct, 3, max(2, total // 4)),
-            hint=lt("Subtract what was given away.", "दिलेले वजा कर.", "दिए गए घटाओ।")
+            hint=lt(
+                f"Start with {total}. {given} were given away, so subtract: {total} - {given} = {correct}.",
+                f"{total} पासून सुरुवात कर. {given} दिले, म्हणून वजा कर: {total} - {given} = {correct}.",
+                f"{total} से शुरू करो। {given} दे दिए, इसलिए घटाओ: {total} - {given} = {correct}।"
+            )
         )
+
+def gen_multiplication_picture_word(chapter, n, groups_lo, groups_hi, per_group_lo, per_group_hi):
+    """Picture-worksheet style: 'N groups of M objects, how many total?' — the
+    same pattern as a Match-the-Picture-to-the-Sentence multiplication sheet,
+    just told as a word problem instead of drawn pictures."""
+    objects = [
+        ("balloons", "फुगे", "गुब्बारे"), ("apples", "सफरचंद", "सेब"),
+        ("flowers", "फुले", "फूल"), ("toy cars", "खेळण्यातील गाड्या", "खिलौना गाड़ियाँ")
+    ]
+    for _ in range(n):
+        groups = random.randint(groups_lo, groups_hi)
+        per_group = random.randint(per_group_lo, per_group_hi)
+        correct = groups * per_group
+        obj_en, obj_mr, obj_hi = random.choice(objects)
+        addends = " + ".join([str(per_group)] * groups)
+        add_question(
+            chapter,
+            lt(
+                f"There are {groups} baskets. Each basket has {per_group} {obj_en}. How many {obj_en} in total?",
+                f"{groups} टोपल्या आहेत. प्रत्येक टोपलीत {per_group} {obj_mr} आहेत. एकूण किती {obj_mr}?",
+                f"{groups} टोकरियाँ हैं। हर टोकरी में {per_group} {obj_hi} हैं। कुल कितने {obj_hi}?"
+            ),
+            correct, distinct_distractors(correct, 3, max(3, correct // 4)),
+            hint=lt(
+                f"{groups} groups of {per_group} means adding {per_group} to itself {groups} times: {addends} = {correct}. So {groups} × {per_group} = {correct}.",
+                f"{groups} गट, प्रत्येकी {per_group} म्हणजे {per_group} ला {groups} वेळा बेरीज करणे: {addends} = {correct}. म्हणून {groups} × {per_group} = {correct}.",
+                f"{groups} समूह, हर एक में {per_group} का मतलब है {per_group} को {groups} बार जोड़ना: {addends} = {correct}। इसलिए {groups} × {per_group} = {correct}।"
+            ),
+            difficulty=2
+        )
+
+
+def gen_division_picture_word(chapter, n, groups_lo, groups_hi, per_group_lo, per_group_hi):
+    """Inverse of the picture-multiplication word problem: total shared into
+    equal groups, find how many per group."""
+    objects = [
+        ("balloons", "फुगे", "गुब्बारे"), ("apples", "सफरचंद", "सेब"),
+        ("flowers", "फुले", "फूल"), ("toy cars", "खेळण्यातील गाड्या", "खिलौना गाड़ियाँ")
+    ]
+    for _ in range(n):
+        groups = random.randint(groups_lo, groups_hi)
+        per_group = random.randint(per_group_lo, per_group_hi)
+        total = groups * per_group
+        obj_en, obj_mr, obj_hi = random.choice(objects)
+        add_question(
+            chapter,
+            lt(
+                f"{total} {obj_en} are shared equally into {groups} baskets. How many {obj_en} in each basket?",
+                f"{total} {obj_mr} {groups} टोपल्यांत समान वाटले. प्रत्येक टोपलीत किती {obj_mr}?",
+                f"{total} {obj_hi} {groups} टोकरियों में बराबर बाँटे गए। हर टोकरी में कितने {obj_hi}?"
+            ),
+            per_group, distinct_distractors(per_group, 3, max(2, per_group // 2)),
+            hint=lt(
+                f"Share {total} equally into {groups} baskets: each basket gets {per_group}, because {groups} × {per_group} = {total}. So {total} ÷ {groups} = {per_group}.",
+                f"{total} ला {groups} टोपल्यांत समान वाटा: प्रत्येकीला {per_group} मिळतात, कारण {groups} × {per_group} = {total}. म्हणून {total} ÷ {groups} = {per_group}.",
+                f"{total} को {groups} टोकरियों में बराबर बाँटो: हर एक को {per_group} मिलते हैं, क्योंकि {groups} × {per_group} = {total}। इसलिए {total} ÷ {groups} = {per_group}।"
+            ),
+            difficulty=2
+        )
+
 
 def gen_comparison(chapter, n, lo, hi):
     for _ in range(n):
@@ -140,7 +225,11 @@ def gen_comparison(chapter, n, lo, hi):
             chapter,
             lt(f"Which is greater: {a} or {b}?", f"कोणती संख्या मोठी: {a} की {b}?", f"कौन-सी संख्या बड़ी है: {a} या {b}?"),
             bigger, [min(a, b)],
-            hint=lt("Compare digit by digit.", "अंक-अंक तुलना कर.", "अंक-दर-अंक तुलना करो।")
+            hint=lt(
+                f"{bigger} has more value than {min(a, b)}, so {bigger} is the greater number.",
+                f"{bigger} ची किंमत {min(a, b)} पेक्षा जास्त आहे, म्हणून {bigger} मोठी संख्या आहे.",
+                f"{bigger} का मान {min(a, b)} से ज़्यादा है, इसलिए {bigger} बड़ी संख्या है।"
+            )
         )
 
 def gen_fraction_basic(chapter, n):
@@ -158,7 +247,11 @@ def gen_fraction_basic(chapter, n):
                 f"{total} का {num}/{den} कितना होता है?"
             ),
             correct, distinct_distractors(correct, 3, max(3, correct // 4)),
-            hint=lt(f"First find 1/{den} of {total}.", f"आधी {total} चा 1/{den} शोध.", f"पहले {total} का 1/{den} निकालो।")
+            hint=lt(
+                f"1/{den} of {total} is {total // den}. So {num}/{den} of {total} is {num} × {total // den} = {correct}.",
+                f"{total} चा 1/{den} म्हणजे {total // den}. म्हणून {total} चा {num}/{den} म्हणजे {num} × {total // den} = {correct}.",
+                f"{total} का 1/{den} है {total // den}। इसलिए {total} का {num}/{den} है {num} × {total // den} = {correct}।"
+            )
         )
 
 def gen_percentage(chapter, n):
@@ -170,7 +263,11 @@ def gen_percentage(chapter, n):
             chapter,
             lt(f"What is {pct}% of {total}?", f"{total} च्या {pct}% किती?", f"{total} का {pct}% कितना होता है?"),
             correct, distinct_distractors(correct, 3, max(3, correct // 3)),
-            hint=lt("Percent means 'out of 100'.", "टक्केवारी म्हणजे '100 पैकी'.", "प्रतिशत का मतलब है '100 में से'।")
+            hint=lt(
+                f"{pct}% means {pct} out of 100. {pct}% of {total} = ({pct} ÷ 100) × {total} = {correct}.",
+                f"{pct}% म्हणजे 100 पैकी {pct}. {total} च्या {pct}% = ({pct} ÷ 100) × {total} = {correct}.",
+                f"{pct}% का मतलब है 100 में से {pct}। {total} का {pct}% = ({pct} ÷ 100) × {total} = {correct}।"
+            )
         )
 
 def gen_simple_equation(chapter, n):
@@ -182,7 +279,11 @@ def gen_simple_equation(chapter, n):
             chapter,
             lt(f"If x + {b} = {c}, what is x?", f"जर x + {b} = {c}, तर x किती?", f"यदि x + {b} = {c}, तो x क्या है?"),
             x, distinct_distractors(x, 3, 5),
-            hint=lt(f"Subtract {b} from {c}.", f"{c} मधून {b} वजा कर.", f"{c} में से {b} घटाओ।")
+            hint=lt(
+                f"x + {b} = {c}, so x = {c} - {b} = {x}. Check: {x} + {b} = {c}. ✓",
+                f"x + {b} = {c}, म्हणून x = {c} - {b} = {x}. तपासा: {x} + {b} = {c}. ✓",
+                f"x + {b} = {c}, इसलिए x = {c} - {b} = {x}। जाँच करो: {x} + {b} = {c}। ✓"
+            )
         )
 
 def gen_perimeter_rect(chapter, n):
@@ -197,7 +298,11 @@ def gen_perimeter_rect(chapter, n):
                 f"एक आयत की लंबाई {l} सेमी और चौड़ाई {w} सेमी है। परिधि क्या है?"
             ),
             correct, distinct_distractors(correct, 3, max(4, correct // 5)),
-            hint=lt("Perimeter = 2 × (length + width).", "परिमिती = 2 × (लांबी + रुंदी).", "परिधि = 2 × (लंबाई + चौड़ाई)।")
+            hint=lt(
+                f"Perimeter = 2 × (length + width) = 2 × ({l} + {w}) = 2 × {l + w} = {correct} cm.",
+                f"परिमिती = 2 × (लांबी + रुंदी) = 2 × ({l} + {w}) = 2 × {l + w} = {correct} सेमी.",
+                f"परिधि = 2 × (लंबाई + चौड़ाई) = 2 × ({l} + {w}) = 2 × {l + w} = {correct} सेमी।"
+            )
         )
 
 def gen_area_rect(chapter, n):
@@ -212,7 +317,11 @@ def gen_area_rect(chapter, n):
                 f"एक आयत की लंबाई {l} सेमी और चौड़ाई {w} सेमी है। क्षेत्रफल क्या है?"
             ),
             correct, distinct_distractors(correct, 3, max(4, correct // 5)),
-            hint=lt("Area = length × width.", "क्षेत्रफळ = लांबी × रुंदी.", "क्षेत्रफल = लंबाई × चौड़ाई।")
+            hint=lt(
+                f"Area = length × width = {l} × {w} = {correct} sq cm.",
+                f"क्षेत्रफळ = लांबी × रुंदी = {l} × {w} = {correct} चौ. सेमी.",
+                f"क्षेत्रफल = लंबाई × चौड़ाई = {l} × {w} = {correct} वर्ग सेमी।"
+            )
         )
 
 def gen_ratio(chapter, n):
@@ -231,7 +340,11 @@ def gen_ratio(chapter, n):
                 f"लड़कों और लड़कियों का अनुपात {a}:{b} है। यदि {b * multiplier} लड़कियाँ हैं, तो लड़के कितने हैं?"
             ),
             correct, distinct_distractors(correct, 3, max(3, correct // 4)),
-            hint=lt("Find the multiplier from the girls' count first.", "आधी मुलींवरून गुणक शोध.", "पहले लड़कियों से गुणक निकालो।")
+            hint=lt(
+                f"{b * multiplier} girls ÷ {b} (the girls' ratio part) = {multiplier}. So boys = {a} × {multiplier} = {correct}.",
+                f"{b * multiplier} मुली ÷ {b} (मुलींचा गुणोत्तर भाग) = {multiplier}. म्हणून मुले = {a} × {multiplier} = {correct}.",
+                f"{b * multiplier} लड़कियाँ ÷ {b} (लड़कियों का अनुपात भाग) = {multiplier}। इसलिए लड़के = {a} × {multiplier} = {correct}।"
+            )
         )
 
 def gen_integers(chapter, n):
@@ -243,7 +356,11 @@ def gen_integers(chapter, n):
             chapter,
             lt(f"What is ({a}) + ({b})?", f"({a}) + ({b}) किती?", f"({a}) + ({b}) कितना होता है?"),
             correct, distinct_distractors(correct, 3, 6),
-            hint=lt("Watch the signs carefully.", "चिन्हांकडे लक्ष दे.", "चिन्हों पर ध्यान दो।")
+            hint=lt(
+                f"({a}) + ({b}) = {correct}. {'Both move in the same direction, so add and keep the sign.' if (a<0)==(b<0) else 'They move in opposite directions, so subtract the smaller from the bigger and keep the sign of the bigger.'}",
+                f"({a}) + ({b}) = {correct}. {'दोन्ही एकाच दिशेने जातात, म्हणून बेरीज कर आणि चिन्ह तसेच ठेव.' if (a<0)==(b<0) else 'दोन्ही विरुद्ध दिशेने जातात, म्हणून मोठ्यातून लहान वजा कर आणि मोठ्याचे चिन्ह ठेव.'}",
+                f"({a}) + ({b}) = {correct}। {'दोनों एक ही दिशा में जाते हैं, इसलिए जोड़ो और चिन्ह वही रखो।' if (a<0)==(b<0) else 'दोनों विपरीत दिशा में जाते हैं, इसलिए बड़े में से छोटा घटाओ और बड़े का चिन्ह रखो।'}"
+            )
         )
 
 # ---------- build all classes ----------
@@ -279,6 +396,16 @@ def build_class1():
     gen_word_problem_fruit(ch5, 6, 6, 18)
     gen_addition(ch5, 5, 1, 15, 3)
     c["chapters"].append(ch5)
+
+    ch6 = new_chapter("maths_c1_ch6", lt("Groups of Fun", "मजेदार गट", "मज़ेदार समूह"),
+        lt("Multiplication as equal groups, with pictures in mind.", "गुणाकार म्हणजे समान गट.", "गुणा यानी बराबर समूह।"), "grid")
+    gen_multiplication_picture_word(ch6, 11, 2, 5, 2, 5)
+    c["chapters"].append(ch6)
+
+    ch7 = new_chapter("maths_c1_ch7", lt("Sharing Fair and Square", "समान वाटणी", "बराबर बाँट"),
+        lt("Division as equal sharing.", "भागाकार म्हणजे समान वाटणी.", "भाग यानी बराबर बाँटना।"), "divide")
+    gen_division_picture_word(ch7, 10, 2, 5, 2, 5)
+    c["chapters"].append(ch7)
     return c
 
 def build_class2():

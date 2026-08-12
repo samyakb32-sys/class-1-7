@@ -1,5 +1,6 @@
 package com.gumthala.learningapp.ui.nav
 
+import androidx.activity.compose.BackHandler
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
@@ -79,24 +80,30 @@ fun RootNavHost(modifier: Modifier = Modifier) {
                     }
                 )
 
-                AuthStep.StudentLogin -> StudentLoginScreen(
-                    onSubmit = { input: StudentLoginInput ->
-                        authViewModel.signInStudent(input.name, input.classLevel)
-                    },
-                    submitError = authState.errorMessage,
-                    isSubmitting = authState.isSubmitting,
-                    onBack = { authStep = AuthStep.RoleSelect }
-                )
+                AuthStep.StudentLogin -> {
+                    BackHandler { authStep = AuthStep.RoleSelect }
+                    StudentLoginScreen(
+                        onSubmit = { input: StudentLoginInput ->
+                            authViewModel.signInStudent(input.name, input.classLevel)
+                        },
+                        submitError = authState.errorMessage,
+                        isSubmitting = authState.isSubmitting,
+                        onBack = { authStep = AuthStep.RoleSelect }
+                    )
+                }
 
-                is AuthStep.StaffLogin -> StaffLoginScreen(
-                    role = step.role,
-                    onSubmit = { input: StaffLoginInput ->
-                        authViewModel.signInStaff(input.email, input.password)
-                    },
-                    submitError = authState.errorMessage,
-                    isSubmitting = authState.isSubmitting,
-                    onBack = { authStep = AuthStep.RoleSelect }
-                )
+                is AuthStep.StaffLogin -> {
+                    BackHandler { authStep = AuthStep.RoleSelect }
+                    StaffLoginScreen(
+                        role = step.role,
+                        onSubmit = { input: StaffLoginInput ->
+                            authViewModel.signInStaff(input.email, input.password)
+                        },
+                        submitError = authState.errorMessage,
+                        isSubmitting = authState.isSubmitting,
+                        onBack = { authStep = AuthStep.RoleSelect }
+                    )
+                }
             }
 
             authState.signedInAs == SignedInRole.STUDENT -> AppNavHost(
@@ -184,6 +191,23 @@ private fun TeacherShell(teacherUserId: String, displayName: String, onLogout: (
     val questionSubjects by questionViewModel.subjects.collectAsState()
     val questionChapters by questionViewModel.chapters.collectAsState()
     val saveQuestionState by questionViewModel.saveState.collectAsState()
+
+    // Same fix as AppNavHost: system back was exiting the app instead of
+    // popping one step. Mirrors each screen's own '‹' target exactly.
+    val currentOverlay = overlay
+    val atRoot = currentOverlay == TeacherOverlay.None && tab == TeacherTabs.HOME
+    BackHandler(enabled = !atRoot) {
+        overlay = when (val o = currentOverlay) {
+            TeacherOverlay.None -> { tab = TeacherTabs.HOME; TeacherOverlay.None }
+            TeacherOverlay.SlideDecks -> TeacherOverlay.None
+            TeacherOverlay.SlideViewer -> TeacherOverlay.SlideDecks
+            TeacherOverlay.RegisterStudent -> TeacherOverlay.None
+            TeacherOverlay.QuestionSubjects -> TeacherOverlay.None
+            is TeacherOverlay.QuestionClass -> TeacherOverlay.QuestionSubjects
+            is TeacherOverlay.QuestionChapters -> TeacherOverlay.QuestionClass(o.subject)
+            is TeacherOverlay.QuestionForm -> TeacherOverlay.QuestionSubjects
+        }
+    }
 
     Column(modifier = Modifier.fillMaxSize()) {
         Column(Modifier.weight(1f)) {
@@ -340,6 +364,20 @@ private fun AdminShell(adminUserId: String, displayName: String, onLogout: () ->
     val questionChapters by questionViewModel.chapters.collectAsState()
     val saveQuestionState by questionViewModel.saveState.collectAsState()
     val syncStatus by viewModel.syncStatus.collectAsState()
+
+    val currentOverlay = overlay
+    val atRoot = currentOverlay == AdminOverlay.None && tab == AdminTabs.HOME
+    BackHandler(enabled = !atRoot) {
+        overlay = when (val o = currentOverlay) {
+            AdminOverlay.None -> { tab = AdminTabs.HOME; AdminOverlay.None }
+            AdminOverlay.RegisterStudent -> AdminOverlay.None
+            AdminOverlay.RegisterTeacher -> AdminOverlay.None
+            AdminOverlay.QuestionSubjects -> AdminOverlay.None
+            is AdminOverlay.QuestionClass -> AdminOverlay.QuestionSubjects
+            is AdminOverlay.QuestionChapters -> AdminOverlay.QuestionClass(o.subject)
+            is AdminOverlay.QuestionForm -> AdminOverlay.QuestionSubjects
+        }
+    }
 
     Column(modifier = Modifier.fillMaxSize()) {
         Column(Modifier.weight(1f)) {
