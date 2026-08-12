@@ -1,0 +1,48 @@
+{
+  "project_info": {
+    "project_number": "985162905868",
+    "project_id": "gumthala-learning-project",
+    "storage_bucket": "gumthala-learning-project.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:985162905868:android:eba916cd4bd63e1a1c7129",
+        "android_client_info": {
+          "package_name": "com.gumthala.learningapp"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyAjOkDsp-ZEF0q--qEcKnOw7IvAx37lrOg"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    },
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:985162905868:android:8d1352bfe8cfd9611c7129",
+        "android_client_info": {
+          "package_name": "com.gumthala.learningapp.debug"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyAjOkDsp-ZEF0q--qEcKnOw7IvAx37lrOg"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

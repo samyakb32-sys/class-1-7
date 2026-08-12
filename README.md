@@ -156,23 +156,28 @@ automatically on first sync.
 
 The app is offline-first and works fully without Firebase. Sync is opt-in.
 
-### Turning it on
+### Status: configured
 
-1. Firebase Console → create a project → Add app → **Android**
-2. Package name: `com.gumthala.learningapp`
-   (Debug builds use `com.gumthala.learningapp.debug` — add that as a second
-   Android app in the same project, or the debug APK won't connect.)
-3. Download `google-services.json` → put it in `app/`
-4. Firestore Database → Create database
-5. Rules tab → paste `firestore.rules` from this repo → Publish
-6. Rebuild. The Gradle log will say `Firebase: google-services.json found`.
+Connected to Firebase project **gumthala-learning-project**, with both
+`com.gumthala.learningapp` and `com.gumthala.learningapp.debug` registered.
+`app/google-services.json` is committed, so CI builds a Firebase-enabled APK.
 
-No code changes needed — `app/build.gradle.kts` applies the Google Services
-plugin only when that file exists, so the build stays green before you add it
-and lights up automatically after. Without it, `AppModule` falls back to
-`NoOpRemoteDataSource` and nothing tries to reach the network.
+`app/build.gradle.kts` applies the Google Services plugin only when that file
+exists, so removing it cleanly reverts to offline-only — `AppModule` falls back
+to `NoOpRemoteDataSource` and nothing touches the network.
 
-`google-services.json` is gitignored. Every device/developer adds their own.
+**Remaining setup step:** in the Firebase Console, go to Firestore Database →
+Rules, paste `firestore.rules` from this repo, and Publish. Until you do, the
+database is in whatever default state the console left it in — usually either
+locked (sync silently fails) or fully open (anyone can read the roster).
+
+### On committing google-services.json
+
+The Android API key in that file is **not a secret**. It ships inside every APK
+and can be pulled out by decompiling — Google documents it as identifying, not
+authenticating, the app. Making the repo private does not protect it either.
+
+What actually protects the data is `firestore.rules`. Publish them.
 
 ### Using it
 
