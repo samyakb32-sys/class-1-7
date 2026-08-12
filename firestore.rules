@@ -24,6 +24,15 @@ service cloud.firestore {
 
     match /schools/{schoolId} {
 
+      // The school document itself (not its subcollections below) is never
+      // written to by the app, but IS read directly — SyncManager warms up
+      // the Firestore connection and checks reachability with a get() on
+      // exactly this path (see FirestoreRemoteDataSource.isAvailable). Without
+      // this line, that probe gets denied by the top-level catch-all above
+      // even though every subcollection is open, and the app reports
+      // "Offline — will sync later" no matter how good the connection is.
+      allow get: if true;
+
       // Roster: names, classes, roll numbers. No credentials are ever written
       // here by the app. Still personal data about children — if you later add
       // Firebase Anonymous Auth, tighten these to `if request.auth != null`.
