@@ -156,15 +156,14 @@ private fun BadgePill(background: Color, text: String, foreground: Color) {
 }
 
 /**
- * The six subjects exactly as the mockup lists them. Note this includes Science
- * and EVS, which are not in the app's Maths / English / Marathi / Hindi spec —
- * see README, "Mockup vs spec".
+ * Preview/fallback list only — the real Subjects screen reads from Room via
+ * StudentViewModel. Kept to the app's four actual subjects (Maths, English,
+ * Marathi, Hindi); the mockup's Science and EVS were never in the spec and
+ * had no content behind them.
  */
 val defaultSubjects = listOf(
     SubjectCardUi("maths", "🔢", "Mathematics", "Easy-Hard", "78% Complete · 24/30", SubjectPalette.Blue),
     SubjectCardUi("english", "📖", "English", "Easy-Med", "65% Complete · 20/30", SubjectPalette.Pink),
-    SubjectCardUi("science", "🔬", "Science", "Med-Hard", "70% Complete · 21/30", SubjectPalette.Green),
-    SubjectCardUi("evs", "🌱", "EVS", "Easy-Med", "60% Complete · 18/30", SubjectPalette.Yellow),
-    SubjectCardUi("hindi", "🅰️", "Hindi", "Easy-Med", "82% Complete · 25/30", SubjectPalette.Violet),
-    SubjectCardUi("marathi", "✍️", "Marathi", "Medium", "68% Complete · 20/30", SubjectPalette.Orange)
+    SubjectCardUi("marathi", "✍️", "Marathi", "Medium", "68% Complete · 20/30", SubjectPalette.Green),
+    SubjectCardUi("hindi", "अ", "Hindi", "Easy-Med", "82% Complete · 25/30", SubjectPalette.Violet)
 )

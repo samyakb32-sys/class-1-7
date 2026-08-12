@@ -48,8 +48,8 @@ data class ProgressUiState(
     val subjectScores: List<SubjectScoreUi> = listOf(
         SubjectScoreUi("Maths", 85, SubjectPalette.Blue),
         SubjectScoreUi("English", 78, SubjectPalette.Pink),
-        SubjectScoreUi("Science", 82, SubjectPalette.Green),
-        SubjectScoreUi("EVS", 76, SubjectPalette.Yellow)
+        SubjectScoreUi("Marathi", 82, SubjectPalette.Green),
+        SubjectScoreUi("Hindi", 76, SubjectPalette.Yellow)
     ),
     /** Seven daily values, 0f..1f, matching the mockup's bar heights. */
     val weeklyBars: List<Float> = listOf(0.40f, 0.60f, 0.75f, 0.50f, 0.90f, 0.65f, 0.80f)
