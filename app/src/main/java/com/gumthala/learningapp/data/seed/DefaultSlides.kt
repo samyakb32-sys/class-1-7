@@ -15,6 +15,8 @@ object DefaultSlides {
     private const val TABLES_DECK_PREFIX = "deck_table_"
     private const val BARAKHADI_MR = "deck_barakhadi_mr"
     private const val BARAKHADI_EN = "deck_barakhadi_en"
+    private const val BARAKHADI_HI = "deck_barakhadi_hi"
+    private const val DIVISION_DECK_PREFIX = "deck_division_"
 
     private val alphabetWords = mapOf(
         'A' to Triple("Apple", "सफरचंद", "सेब"),
@@ -49,6 +51,12 @@ object DefaultSlides {
         "क", "ख", "ग", "घ", "च", "छ", "ज", "झ", "ट", "ठ", "ड", "ढ", "ण",
         "त", "थ", "द", "ध", "न", "प", "फ", "ब", "भ", "म", "य", "र", "ल",
         "व", "श", "ष", "स", "ह", "ळ"
+    )
+
+    private val hindiConsonants = listOf(
+        "क", "ख", "ग", "घ", "च", "छ", "ज", "झ", "ट", "ठ", "ड", "ढ", "ण",
+        "त", "थ", "द", "ध", "न", "प", "फ", "ब", "भ", "म", "य", "र", "ल",
+        "व", "श", "ष", "स", "ह"
     )
 
     /** matra suffixes for the 12-column barakhadi row */
@@ -102,6 +110,32 @@ object DefaultSlides {
                 orderIndex = 31
             )
         )
+        add(
+            SlideDeckEntity(
+                id = BARAKHADI_HI,
+                title = LocalizedText("Hindi Barahkhadi", "हिंदी बाराखडी", "हिंदी बारहखड़ी"),
+                category = "barakhadi",
+                isDefault = true,
+                orderIndex = 32
+            )
+        )
+        // Division tables — the inverse of each multiplication table, so a
+        // teacher can show "12 ÷ 3 = 4" right after "3 × 4 = 12".
+        (1..10).forEach { divisor ->
+            add(
+                SlideDeckEntity(
+                    id = "$DIVISION_DECK_PREFIX$divisor",
+                    title = LocalizedText(
+                        "Division by $divisor",
+                        "$divisor ने भागाकार",
+                        "$divisor से भाग"
+                    ),
+                    category = "division",
+                    isDefault = true,
+                    orderIndex = 40 + divisor
+                )
+            )
+        }
     }
 
     fun slides(): List<SlideEntity> = buildList {
@@ -171,6 +205,42 @@ object DefaultSlides {
                     )
                 )
             )
+        }
+        // Hindi barahkhadi — same 12-form row as Marathi, Hindi consonant set
+        hindiConsonants.forEachIndexed { index, consonant ->
+            val row = matras.joinToString("  ") { consonant + it }
+            add(
+                SlideEntity(
+                    id = "slide_bara_hi_$index",
+                    deckId = BARAKHADI_HI,
+                    orderIndex = index,
+                    headline = row,
+                    caption = LocalizedText(
+                        "Barahkhadi of $consonant",
+                        "$consonant ची बाराखडी",
+                        "$consonant की बारहखड़ी"
+                    )
+                )
+            )
+        }
+        // Division tables 1–10, mirroring the multiplication decks
+        (1..10).forEach { divisor ->
+            (1..10).forEach { quotient ->
+                val dividend = divisor * quotient
+                add(
+                    SlideEntity(
+                        id = "slide_division_${divisor}_$quotient",
+                        deckId = "$DIVISION_DECK_PREFIX$divisor",
+                        orderIndex = quotient - 1,
+                        headline = "$dividend ÷ $divisor = $quotient",
+                        caption = LocalizedText(
+                            "$dividend shared into $divisor equal groups gives $quotient each",
+                            "$dividend चे $divisor समान गट केले की प्रत्येकी $quotient येतात",
+                            "$dividend को $divisor बराबर समूहों में बाँटने पर हर एक में $quotient आते हैं"
+                        )
+                    )
+                )
+            }
         }
     }
 }

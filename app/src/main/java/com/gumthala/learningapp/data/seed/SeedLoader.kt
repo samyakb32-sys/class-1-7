@@ -1,6 +1,8 @@
 package com.gumthala.learningapp.data.seed
 
 import android.content.Context
+import androidx.datastore.preferences.core.edit
+import androidx.datastore.preferences.core.intPreferencesKey
 import com.gumthala.learningapp.core.LocalizedText
 import com.gumthala.learningapp.core.PasswordHasher
 import com.gumthala.learningapp.core.UserRole
@@ -14,7 +16,9 @@ import com.gumthala.learningapp.data.local.SlideDao
 import com.gumthala.learningapp.data.local.SubjectEntity
 import com.gumthala.learningapp.data.local.UserDao
 import com.gumthala.learningapp.data.local.UserEntity
+import com.gumthala.learningapp.data.session.seedStore
 import dagger.hilt.android.qualifiers.ApplicationContext
+import kotlinx.coroutines.flow.first
 import kotlinx.serialization.json.Json
 import java.util.UUID
 import javax.inject.Inject
@@ -23,6 +27,17 @@ import javax.inject.Singleton
 /**
  * First-run bootstrap: loads bundled content into Room so the app is fully usable
  * with no network and no Firebase project configured.
+ *
+ * Re-seeds when [CONTENT_VERSION] increases. The old guards only asked "is this
+ * table empty?", which meant anyone who had already installed the app never
+ * received newly-shipped content — the language subjects and the extra slide
+ * decks would have been invisible to every existing user, only appearing on a
+ * fresh install. Bump CONTENT_VERSION whenever assets/seed/ or DefaultSlides
+ * change, and existing installs pick the new content up on next launch.
+ *
+ * Upserts are id-keyed, so re-seeding overwrites bundled rows without touching
+ * student progress, attempts, or teacher-authored questions (those carry their
+ * own generated ids and are never part of the seed).
  */
 @Singleton
 class SeedLoader @Inject constructor(
@@ -33,10 +48,24 @@ class SeedLoader @Inject constructor(
 ) {
     private val json = Json { ignoreUnknownKeys = true; isLenient = true }
 
+    private val seededVersionKey = intPreferencesKey("seeded_content_version")
+
     suspend fun seedIfNeeded() {
-        if (contentDao.subjectCount() == 0) seedContent()
-        if (slideDao.defaultDeckCount() == 0) seedSlides()
+        val seededVersion = runCatching {
+            context.seedStore.data.first()[seededVersionKey] ?: 0
+        }.getOrDefault(0)
+
+        val needsContentRefresh = seededVersion < CONTENT_VERSION
+
+        if (contentDao.subjectCount() == 0 || needsContentRefresh) seedContent()
+        if (slideDao.defaultDeckCount() == 0 || needsContentRefresh) seedSlides()
         if (userDao.adminCount() == 0) seedFounderAdmin()
+
+        if (needsContentRefresh) {
+            runCatching {
+                context.seedStore.edit { it[seededVersionKey] = CONTENT_VERSION }
+            }
+        }
     }
 
     private suspend fun seedContent() {
@@ -138,6 +167,16 @@ class SeedLoader @Inject constructor(
     }
 
     companion object {
+        /**
+         * Bump this whenever bundled content changes (assets/seed/*.json or
+         * DefaultSlides) so existing installs re-seed instead of keeping stale
+         * content forever.
+         *
+         * 2 — added English/Marathi/Hindi question banks, Hindi barahkhadi and
+         *     division slide decks, and full worked explanations on Maths.
+         */
+        const val CONTENT_VERSION = 2
+
         const val DEFAULT_ADMIN_EMAIL = "educationfreedigital@gmail.com"
         /** Change on first login. */
         const val DEFAULT_ADMIN_PASSWORD = "ChangeMe@123"
