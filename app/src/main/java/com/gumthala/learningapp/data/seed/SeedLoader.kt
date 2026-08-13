@@ -168,7 +168,7 @@ class SeedLoader @Inject constructor(
 
     companion object {
         /**
-         * Bump this whenever bundled content changes (assets/seed/*.json or
+         * Bump this whenever bundled content changes (the seed JSON assets or
          * DefaultSlides) so existing installs re-seed instead of keeping stale
          * content forever.
          *
