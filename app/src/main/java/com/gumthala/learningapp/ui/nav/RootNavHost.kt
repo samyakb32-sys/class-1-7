@@ -108,7 +108,9 @@ fun RootNavHost(modifier: Modifier = Modifier) {
 
             authState.signedInAs == SignedInRole.STUDENT -> AppNavHost(
                 userId = authState.signedInUserId.orEmpty(),
-                classLevel = authState.signedInClassLevel ?: 1
+                classLevel = authState.signedInClassLevel ?: 1,
+                displayName = authState.signedInName.orEmpty(),
+                onLogout = { authViewModel.logout(); authStep = AuthStep.RoleSelect }
             )
 
             // Staff with a still-default password (seeded founder admin, or anyone an

@@ -65,7 +65,13 @@ private sealed interface Overlay {
  * Streak/weekly-bar fields have no backing columns).
  */
 @Composable
-fun AppNavHost(userId: String, classLevel: Int, modifier: Modifier = Modifier) {
+fun AppNavHost(
+    userId: String,
+    classLevel: Int,
+    displayName: String,
+    onLogout: () -> Unit,
+    modifier: Modifier = Modifier
+) {
     var tab by remember { mutableStateOf(TopLevelDestination.HOME) }
     var overlay by remember { mutableStateOf<Overlay>(Overlay.None) }
 
@@ -160,7 +166,21 @@ fun AppNavHost(userId: String, classLevel: Int, modifier: Modifier = Modifier) {
 
                     TopLevelDestination.PROGRESS -> ProgressScreen()
 
-                    TopLevelDestination.PROFILE -> ProfileScreen()
+                    TopLevelDestination.PROFILE -> {
+                        val progress by studentViewModel.progressState.collectAsState()
+                        ProfileScreen(
+                            state = com.gumthala.learningapp.ui.screens.ProfileUiState(
+                                avatarEmoji = "👧",
+                                name = displayName.ifBlank { "Student" },
+                                subtitle = "Class $classLevel · Learner",
+                                stats = listOf(
+                                    com.gumthala.learningapp.ui.screens.ProfileStat("⭐${progress.totalStars}", "Stars"),
+                                    com.gumthala.learningapp.ui.screens.ProfileStat("📚${progress.chaptersCompleted}", "Chapters")
+                                )
+                            ),
+                            onLogout = onLogout
+                        )
+                    }
                 }
             }
         }
