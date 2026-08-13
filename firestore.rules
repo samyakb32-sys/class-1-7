@@ -13,6 +13,17 @@ rules_version = '2';
 // The app therefore never uploads password hashes (see
 // FirestoreRemoteDataSource.toMap), and these rules lock everything except the
 // collections sync actually needs.
+//
+// KEEP IN SYNC WITH THE CODE:
+//   * FirestoreRemoteDataSource.isAvailable() probes
+//     schools/{schoolId}/users with limit(1). It deliberately probes a real
+//     synced collection rather than some special path, so that "the probe
+//     passed" genuinely means "syncing will work". If you ever restrict the
+//     users rules below, the probe must be changed to match, or the app will
+//     report that Firestore is unreachable.
+//   * The five collections below are exactly the five RemotePaths constants.
+//     Adding a new synced collection means adding a rule here too — otherwise
+//     that one operation fails while everything else succeeds.
 
 service cloud.firestore {
   match /databases/{database}/documents {
@@ -24,13 +35,8 @@ service cloud.firestore {
 
     match /schools/{schoolId} {
 
-      // The school document itself (not its subcollections below) is never
-      // written to by the app, but IS read directly — SyncManager warms up
-      // the Firestore connection and checks reachability with a get() on
-      // exactly this path (see FirestoreRemoteDataSource.isAvailable). Without
-      // this line, that probe gets denied by the top-level catch-all above
-      // even though every subcollection is open, and the app reports
-      // "Offline — will sync later" no matter how good the connection is.
+      // The school document itself. The app never writes it, but keeping it
+      // readable costs nothing and avoids surprises if anything probes it.
       allow get: if true;
 
       // Roster: names, classes, roll numbers. No credentials are ever written

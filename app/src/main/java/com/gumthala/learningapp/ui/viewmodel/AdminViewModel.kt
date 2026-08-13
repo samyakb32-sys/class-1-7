@@ -7,6 +7,7 @@ import com.gumthala.learningapp.core.UserRole
 import com.gumthala.learningapp.data.repo.AuthRepository
 import com.gumthala.learningapp.data.repo.ContentRepository
 import com.gumthala.learningapp.data.remote.SyncManager
+import com.gumthala.learningapp.data.remote.SyncSkipReason
 import com.gumthala.learningapp.data.repo.QuizRepository
 import com.gumthala.learningapp.data.repo.RegisterResult
 import com.gumthala.learningapp.ui.screens.admin.AdminOverview
@@ -163,17 +164,30 @@ class AdminViewModel @AssistedInject constructor(
     val syncStatus: StateFlow<String?> = _syncStatus.asStateFlow()
 
     fun syncNow() {
-        if (_syncStatus.value == "Syncing…") return
-        _syncStatus.value = "Syncing…"
+        if (_syncStatus.value == SYNCING) return
+        _syncStatus.value = SYNCING
         viewModelScope.launch {
-            val report = runCatching { syncManager.fullSync() }.getOrNull()
+            val result = runCatching { syncManager.fullSync() }
+            val report = result.getOrNull()
             _syncStatus.value = when {
-                report == null -> "Sync failed — try again"
-                report.skipped -> "Offline — will sync later"
-                report.error != null -> "Sync failed — try again"
+                // Distinct messages per cause. Everything used to collapse into
+                // "Offline — will sync later", which sent us chasing a network
+                // problem when the real cause was Firestore rules.
+                report == null -> "Sync failed: ${result.exceptionOrNull()?.message ?: "unknown error"}"
+                report.skipped -> when (report.skipReason) {
+                    SyncSkipReason.NO_NETWORK -> "No internet — will sync later"
+                    SyncSkipReason.NOT_CONFIGURED -> "Firebase not set up in this build"
+                    SyncSkipReason.UNREACHABLE -> "Can't reach Firestore — check rules are published"
+                    null -> "Sync skipped"
+                }
+                report.error != null -> "Sync failed: ${report.error.message ?: "unknown error"}"
                 else -> "Synced ✓"
             }
         }
+    }
+
+    private companion object {
+        const val SYNCING = "Syncing…"
     }
 }
 

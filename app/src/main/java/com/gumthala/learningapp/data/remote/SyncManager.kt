@@ -13,8 +13,19 @@ import kotlinx.coroutines.withContext
 import javax.inject.Inject
 import javax.inject.Singleton
 
+/** Why a sync didn't run, when it didn't. */
+enum class SyncSkipReason {
+    /** Device has no validated internet connection. */
+    NO_NETWORK,
+    /** Firebase isn't configured in this build (no google-services.json). */
+    NOT_CONFIGURED,
+    /** Online and configured, but Firestore couldn't be reached or refused us. */
+    UNREACHABLE
+}
+
 data class SyncReport(
     val skipped: Boolean = false,
+    val skipReason: SyncSkipReason? = null,
     val usersPushed: Int = 0,
     val progressPushed: Int = 0,
     val attemptsPushed: Int = 0,
@@ -22,7 +33,10 @@ data class SyncReport(
     val contentPulled: Int = 0,
     val usersPulled: Int = 0,
     val error: Throwable? = null
-)
+) {
+    /** True when nothing went wrong — used by the UI to decide the message. */
+    val isSuccess: Boolean get() = !skipped && error == null
+}
 
 /**
  * Offline-first sync. Room is always the source of truth for reads; this only
@@ -48,9 +62,23 @@ class SyncManager @Inject constructor(
             caps.hasCapability(NetworkCapabilities.NET_CAPABILITY_VALIDATED)
     }
 
+    /**
+     * Checks the three things sync needs, in order, and says which one failed.
+     * Previously each entry point did `if (!isOnline() || !remote.isAvailable())`
+     * and reported a bare "skipped", so a Firestore rules rejection was
+     * indistinguishable from having no signal — the app said "Offline" on a
+     * perfectly good connection and there was no way to tell from the UI.
+     */
+    private suspend fun checkPreconditions(): SyncSkipReason? = when {
+        !isOnline() -> SyncSkipReason.NO_NETWORK
+        remote is NoOpRemoteDataSource -> SyncSkipReason.NOT_CONFIGURED
+        !remote.isAvailable() -> SyncSkipReason.UNREACHABLE
+        else -> null
+    }
+
     /** Called right after a quiz finishes. Safe to call when offline — it no-ops. */
     suspend fun pushProgressNow(): SyncReport = withContext(io) {
-        if (!isOnline() || !remote.isAvailable()) return@withContext SyncReport(skipped = true)
+        checkPreconditions()?.let { return@withContext SyncReport(skipped = true, skipReason = it) }
         runCatching {
             val progress = progressDao.unsynced()
             val attempts = attemptDao.unsyncedAttempts()
@@ -71,7 +99,7 @@ class SyncManager @Inject constructor(
 
     /** Admin content push: local edits (chapters, questions, options) go up. */
     suspend fun pushContent(): SyncReport = withContext(io) {
-        if (!isOnline() || !remote.isAvailable()) return@withContext SyncReport(skipped = true)
+        checkPreconditions()?.let { return@withContext SyncReport(skipped = true, skipReason = it) }
         runCatching {
             val chapters = contentDao.unsyncedChapters()
             val questions = contentDao.unsyncedQuestions()
@@ -87,7 +115,7 @@ class SyncManager @Inject constructor(
 
     /** Admin roster push. */
     suspend fun pushUsers(): SyncReport = withContext(io) {
-        if (!isOnline() || !remote.isAvailable()) return@withContext SyncReport(skipped = true)
+        checkPreconditions()?.let { return@withContext SyncReport(skipped = true, skipReason = it) }
         runCatching {
             val users = userDao.unsynced()
             if (users.isEmpty()) return@runCatching SyncReport()
@@ -102,7 +130,7 @@ class SyncManager @Inject constructor(
      * serving what it already has and the caller sees no error state.
      */
     suspend fun pullAll(since: Long = 0L): SyncReport = withContext(io) {
-        if (!isOnline() || !remote.isAvailable()) return@withContext SyncReport(skipped = true)
+        checkPreconditions()?.let { return@withContext SyncReport(skipped = true, skipReason = it) }
         runCatching {
             val users = remote.pullUsers(since).getOrElse { emptyList() }
             if (users.isNotEmpty()) {
@@ -138,8 +166,27 @@ class SyncManager @Inject constructor(
         }.getOrElse { SyncReport(error = it) }
     }
 
+    /**
+     * Runs every stage and aggregates the outcome. The old version discarded the
+     * three push results and returned only pullAll()'s, so a push that failed
+     * outright still surfaced as "Synced ✓" in the UI.
+     */
     suspend fun fullSync(): SyncReport {
-        pushUsers(); pushContent(); pushProgressNow()
-        return pullAll()
+        val stages = listOf(pushUsers(), pushContent(), pushProgressNow(), pullAll())
+
+        stages.firstOrNull { it.error != null }?.let { failed ->
+            return SyncReport(error = failed.error, skipReason = failed.skipReason)
+        }
+        stages.firstOrNull { it.skipped }?.let { skipped ->
+            return SyncReport(skipped = true, skipReason = skipped.skipReason)
+        }
+        return SyncReport(
+            usersPushed = stages.sumOf { it.usersPushed },
+            progressPushed = stages.sumOf { it.progressPushed },
+            attemptsPushed = stages.sumOf { it.attemptsPushed },
+            contentPushed = stages.sumOf { it.contentPushed },
+            contentPulled = stages.sumOf { it.contentPulled },
+            usersPulled = stages.sumOf { it.usersPulled }
+        )
     }
 }

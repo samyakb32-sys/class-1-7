@@ -1,5 +1,6 @@
 package com.gumthala.learningapp.data.remote
 
+import android.util.Log
 import com.google.firebase.firestore.FirebaseFirestore
 import com.google.firebase.firestore.Source
 import com.gumthala.learningapp.core.LocalizedText
@@ -24,11 +25,32 @@ class FirestoreRemoteDataSource @Inject constructor(
 
     private fun school() = firestore.collection(RemotePaths.SCHOOLS).document(schoolId)
 
+    private companion object {
+        const val TAG = "FirestoreSync"
+    }
+
+    /**
+     * Reachability probe.
+     *
+     * Deliberately probes a SUBCOLLECTION rather than the school document
+     * itself: nothing in this app ever writes `schools/{schoolId}` as a
+     * document (only its subcollections), so that path may not exist, and its
+     * read permission is easy to forget when writing rules — which is exactly
+     * what made this report "Offline" on a perfectly good connection before.
+     * A limit(1) query against `users` needs the same permission real syncing
+     * needs, so if this passes, syncing will actually work.
+     *
+     * Failures are logged with the real Firestore reason (PERMISSION_DENIED,
+     * UNAVAILABLE, etc.) instead of being silently swallowed — without this,
+     * a rules problem and a dead network were indistinguishable.
+     */
     override suspend fun isAvailable(): Boolean = runCatching {
-        // Cheap reachability probe that also warms the Firestore client.
-        school().get(Source.SERVER).await()
+        school().collection(RemotePaths.USERS).limit(1).get(Source.SERVER).await()
         true
-    }.getOrElse { false }
+    }.getOrElse { e ->
+        Log.w(TAG, "Firestore unreachable: ${e::class.java.simpleName}: ${e.message}", e)
+        false
+    }
 
     override suspend fun pushUsers(users: List<UserEntity>): Result<Unit> = batched(users) { batch, user ->
         batch.set(school().collection(RemotePaths.USERS).document(user.id), user.toMap())
