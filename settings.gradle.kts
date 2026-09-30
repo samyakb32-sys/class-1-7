@@ -15,3 +15,4 @@ dependencyResolutionManagement {
 
 rootProject.name = "Class 1 to 7 Learning Course"
 include(":app")
+include(":tv")

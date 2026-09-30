@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!-- Dark indigo behind the first frame so there is no white flash before Compose draws. -->
+    <style name="Theme.MathsTv" parent="android:Theme.Material.NoActionBar">
+        <item name="android:windowBackground">#FF3B2FB8</item>
+        <item name="android:statusBarColor">#FF3B2FB8</item>
+        <item name="android:navigationBarColor">#FF3B2FB8</item>
+    </style>
+</resources>
