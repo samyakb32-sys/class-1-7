@@ -35,7 +35,7 @@ both can be installed on the same device.
 | 9 | Algebra & Data Planet | Class 6 to 7 | 13 |
 
 *More Subjects* has English, Hindi and Marathi quizzes (plus the phone app's Maths bank) for **Classes 1 to 7**.
-Every class has its **own five chapters**: for example Hindi Class 2 is groups, plurals, gender and numbers, Class 5 is
+Every class has its **own five chapters** (Classes 6 and 7 are medium to hard: Maths has multi-step integers, unlike fractions, percent change, two-sided equations, Pythagoras, circles and powers): for example Hindi Class 2 is groups, plurals, gender and numbers, Class 5 is
 proverbs, one-word-for-many and punctuation, and Class 7 is alankar, harder idioms and tatsam/tadbhav words. Each
 question can be shown in English, Marathi or Hindi. The banks are generated from hand-written word lists by
 `content-tools/tvseed/` (see below) and bundled in `src/main/assets/seed/`.

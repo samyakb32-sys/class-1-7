@@ -329,16 +329,24 @@ def chapters(b: Bank):
         cont,
     )
 
-    st = {"statement": L("statement", "विधान", "कथन"), "question": L("question", "प्रश्न", "प्रश्न"), "command": L("command", "आज्ञा", "आज्ञा"), "exclamation": L("exclamation", "उद्गार", "विस्मय")}
-    sent = [("The sky is blue.", "statement"), ("Is it raining?", "question"), ("Close the door.", "command"), ("What a big fish!", "exclamation"),
-            ("Ravi plays football.", "statement"), ("Where is my bag?", "question"), ("Please sit down.", "command"), ("How brave you are!", "exclamation"),
-            ("We went to the zoo.", "statement"), ("Do you like mangoes?", "question"), ("Open your books.", "command"), ("What a beautiful garden!", "exclamation")]
+    fix = [("She doesn't like apples.", ["She don't like apples.", "She not like apples.", "She doesn't likes apples."]),
+           ("Neither of the boys was late.", ["Neither of the boys were late.", "Neither of the boys are late.", "Neither of the boys is being late."]),
+           ("I have been living here since 2019.", ["I am living here since 2019.", "I have been living here from 2019.", "I living here since 2019."]),
+           ("If it rains, we will stay at home.", ["If it will rain, we will stay at home.", "If it rains, we would stayed at home.", "If it rained, we will stay at home."]),
+           ("He is taller than his brother.", ["He is more taller than his brother.", "He is tall than his brother.", "He is the taller than his brother."]),
+           ("The news is good.", ["The news are good.", "The news were good.", "The news is goods."]),
+           ("She has lived here for ten years.", ["She has lived here since ten years.", "She lives here since ten years.", "She have lived here for ten years."]),
+           ("Each of the students has a book.", ["Each of the students have a book.", "Each of the students are having a book.", "Each of the student has a book."]),
+           ("I look forward to meeting you.", ["I look forward to meet you.", "I look forward for meeting you.", "I look forward to meets you."]),
+           ("She asked me where I was going.", ["She asked me where was I going.", "She asked me where am I going.", "She asked me where I am go."]),
+           ("The books on the table are mine.", ["The books on the table is mine.", "The books on the table am mine.", "The book on the table are mine."]),
+           ("He is interested in music.", ["He is interested on music.", "He is interesting in music.", "He is interest in music."])]
     ch_st = b.chapter(
-        cid(6, 2), L("Kinds of Sentences", "वाक्यांचे प्रकार", "वाक्यों के प्रकार"),
-        L("Telling, asking, ordering, wondering.", "सांगणे, विचारणे, आज्ञा, आश्चर्य.", "बताना, पूछना, आदेश, हैरानी।"), "chat",
-        L("What kind of sentence is this? \"{q}\"", "हे कोणत्या प्रकारचे वाक्य आहे? \"{q}\"", "यह किस प्रकार का वाक्य है? \"{q}\""),
-        L("A statement tells, a question asks, a command orders and an exclamation shows strong feeling.", "विधान सांगते, प्रश्न विचारतो, आज्ञा हुकूम देते आणि उद्गार तीव्र भावना दाखवतो.", "कथन बताता है, प्रश्न पूछता है, आज्ञा आदेश देती है और विस्मय तेज़ भावना दिखाता है।"),
-        [(q, st[k], [v for kk, v in st.items() if kk != k]) for q, k in sent],
+        cid(6, 2), L("Spot the Mistake", "चूक शोधा", "गलती पहचानिए"),
+        L("Choose the sentence with no error.", "बिनचूक वाक्य निवडा.", "बिना गलती वाला वाक्य चुनिए।"), "search",
+        L("Which sentence is correct?", "कोणते वाक्य बरोबर आहे?", "कौन-सा वाक्य सही है?"),
+        L("Check the verb form, the preposition and the word order. The correct sentence is: {a}", "क्रियापदाचे रूप, पूर्वसर्ग आणि शब्दांचा क्रम तपासा. बरोबर वाक्य: {a}", "क्रिया का रूप, संबंधबोधक और शब्दक्रम जाँचिए। सही वाक्य: {a}"),
+        [(None, c, w) for c, w in fix], difficulty=3,
     )
 
     idi = [("a piece of cake", "very easy"), ("under the weather", "feeling ill"), ("break the ice", "start a friendly talk"), ("once in a blue moon", "very rarely"),

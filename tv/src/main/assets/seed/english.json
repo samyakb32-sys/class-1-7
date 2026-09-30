@@ -14731,60 +14731,60 @@
     {
      "id": "english_c6_ch2",
      "title": {
-      "en": "Kinds of Sentences",
-      "mr": "वाक्यांचे प्रकार",
-      "hi": "वाक्यों के प्रकार"
+      "en": "Spot the Mistake",
+      "mr": "चूक शोधा",
+      "hi": "गलती पहचानिए"
      },
      "blurb": {
-      "en": "Telling, asking, ordering, wondering.",
-      "mr": "सांगणे, विचारणे, आज्ञा, आश्चर्य.",
-      "hi": "बताना, पूछना, आदेश, हैरानी।"
+      "en": "Choose the sentence with no error.",
+      "mr": "बिनचूक वाक्य निवडा.",
+      "hi": "बिना गलती वाला वाक्य चुनिए।"
      },
-     "iconKey": "chat",
+     "iconKey": "search",
      "questions": [
       {
        "id": "english_c6_ch2_q1",
        "prompt": {
-        "en": "What kind of sentence is this? \"Do you like mangoes?\"",
-        "mr": "हे कोणत्या प्रकारचे वाक्य आहे? \"Do you like mangoes?\"",
-        "hi": "यह किस प्रकार का वाक्य है? \"Do you like mangoes?\""
+        "en": "Which sentence is correct?",
+        "mr": "कोणते वाक्य बरोबर आहे?",
+        "hi": "कौन-सा वाक्य सही है?"
        },
-       "difficulty": 2,
+       "difficulty": 3,
        "hint": {
-        "en": "A statement tells, a question asks, a command orders and an exclamation shows strong feeling.",
-        "mr": "विधान सांगते, प्रश्न विचारतो, आज्ञा हुकूम देते आणि उद्गार तीव्र भावना दाखवतो.",
-        "hi": "कथन बताता है, प्रश्न पूछता है, आज्ञा आदेश देती है और विस्मय तेज़ भावना दिखाता है।"
+        "en": "Check the verb form, the preposition and the word order. The correct sentence is: She asked me where I was going.",
+        "mr": "क्रियापदाचे रूप, पूर्वसर्ग आणि शब्दांचा क्रम तपासा. बरोबर वाक्य: She asked me where I was going.",
+        "hi": "क्रिया का रूप, संबंधबोधक और शब्दक्रम जाँचिए। सही वाक्य: She asked me where I was going."
        },
        "options": [
         {
          "text": {
-          "en": "exclamation",
-          "mr": "उद्गार",
-          "hi": "विस्मय"
+          "en": "She asked me where I am go.",
+          "mr": "She asked me where I am go.",
+          "hi": "She asked me where I am go."
          },
          "correct": false
         },
         {
          "text": {
-          "en": "command",
-          "mr": "आज्ञा",
-          "hi": "आज्ञा"
+          "en": "She asked me where am I going.",
+          "mr": "She asked me where am I going.",
+          "hi": "She asked me where am I going."
          },
          "correct": false
         },
         {
          "text": {
-          "en": "statement",
-          "mr": "विधान",
-          "hi": "कथन"
+          "en": "She asked me where was I going.",
+          "mr": "She asked me where was I going.",
+          "hi": "She asked me where was I going."
          },
          "correct": false
         },
         {
          "text": {
-          "en": "question",
-          "mr": "प्रश्न",
-          "hi": "प्रश्न"
+          "en": "She asked me where I was going.",
+          "mr": "She asked me where I was going.",
+          "hi": "She asked me where I was going."
          },
          "correct": true
         }
@@ -14793,46 +14793,46 @@
       {
        "id": "english_c6_ch2_q2",
        "prompt": {
-        "en": "What kind of sentence is this? \"Is it raining?\"",
-        "mr": "हे कोणत्या प्रकारचे वाक्य आहे? \"Is it raining?\"",
-        "hi": "यह किस प्रकार का वाक्य है? \"Is it raining?\""
+        "en": "Which sentence is correct?",
+        "mr": "कोणते वाक्य बरोबर आहे?",
+        "hi": "कौन-सा वाक्य सही है?"
        },
-       "difficulty": 2,
+       "difficulty": 3,
        "hint": {
-        "en": "A statement tells, a question asks, a command orders and an exclamation shows strong feeling.",
-        "mr": "विधान सांगते, प्रश्न विचारतो, आज्ञा हुकूम देते आणि उद्गार तीव्र भावना दाखवतो.",
-        "hi": "कथन बताता है, प्रश्न पूछता है, आज्ञा आदेश देती है और विस्मय तेज़ भावना दिखाता है।"
+        "en": "Check the verb form, the preposition and the word order. The correct sentence is: Neither of the boys was late.",
+        "mr": "क्रियापदाचे रूप, पूर्वसर्ग आणि शब्दांचा क्रम तपासा. बरोबर वाक्य: Neither of the boys was late.",
+        "hi": "क्रिया का रूप, संबंधबोधक और शब्दक्रम जाँचिए। सही वाक्य: Neither of the boys was late."
        },
        "options": [
         {
          "text": {
-          "en": "command",
-          "mr": "आज्ञा",
-          "hi": "आज्ञा"
+          "en": "Neither of the boys are late.",
+          "mr": "Neither of the boys are late.",
+          "hi": "Neither of the boys are late."
          },
          "correct": false
         },
         {
          "text": {
-          "en": "question",
-          "mr": "प्रश्न",
-          "hi": "प्रश्न"
+          "en": "Neither of the boys was late.",
+          "mr": "Neither of the boys was late.",
+          "hi": "Neither of the boys was late."
          },
          "correct": true
         },
         {
          "text": {
-          "en": "exclamation",
-          "mr": "उद्गार",
-          "hi": "विस्मय"
+          "en": "Neither of the boys is being late.",
+          "mr": "Neither of the boys is being late.",
+          "hi": "Neither of the boys is being late."
          },
          "correct": false
         },
         {
          "text": {
-          "en": "statement",
-          "mr": "विधान",
-          "hi": "कथन"
+          "en": "Neither of the boys were late.",
+          "mr": "Neither of the boys were late.",
+          "hi": "Neither of the boys were late."
          },
          "correct": false
         }
@@ -14841,46 +14841,46 @@
       {
        "id": "english_c6_ch2_q3",
        "prompt": {
-        "en": "What kind of sentence is this? \"What a big fish!\"",
-        "mr": "हे कोणत्या प्रकारचे वाक्य आहे? \"What a big fish!\"",
-        "hi": "यह किस प्रकार का वाक्य है? \"What a big fish!\""
+        "en": "Which sentence is correct?",
+        "mr": "कोणते वाक्य बरोबर आहे?",
+        "hi": "कौन-सा वाक्य सही है?"
        },
-       "difficulty": 2,
+       "difficulty": 3,
        "hint": {
-        "en": "A statement tells, a question asks, a command orders and an exclamation shows strong feeling.",
-        "mr": "विधान सांगते, प्रश्न विचारतो, आज्ञा हुकूम देते आणि उद्गार तीव्र भावना दाखवतो.",
-        "hi": "कथन बताता है, प्रश्न पूछता है, आज्ञा आदेश देती है और विस्मय तेज़ भावना दिखाता है।"
+        "en": "Check the verb form, the preposition and the word order. The correct sentence is: If it rains, we will stay at home.",
+        "mr": "क्रियापदाचे रूप, पूर्वसर्ग आणि शब्दांचा क्रम तपासा. बरोबर वाक्य: If it rains, we will stay at home.",
+        "hi": "क्रिया का रूप, संबंधबोधक और शब्दक्रम जाँचिए। सही वाक्य: If it rains, we will stay at home."
        },
        "options": [
         {
          "text": {
-          "en": "exclamation",
-          "mr": "उद्गार",
-          "hi": "विस्मय"
+          "en": "If it rains, we will stay at home.",
+          "mr": "If it rains, we will stay at home.",
+          "hi": "If it rains, we will stay at home."
          },
          "correct": true
         },
         {
          "text": {
-          "en": "question",
-          "mr": "प्रश्न",
-          "hi": "प्रश्न"
+          "en": "If it rains, we would stayed at home.",
+          "mr": "If it rains, we would stayed at home.",
+          "hi": "If it rains, we would stayed at home."
          },
          "correct": false
         },
         {
          "text": {
-          "en": "statement",
-          "mr": "विधान",
-          "hi": "कथन"
+          "en": "If it will rain, we will stay at home.",
+          "mr": "If it will rain, we will stay at home.",
+          "hi": "If it will rain, we will stay at home."
          },
          "correct": false
         },
         {
          "text": {
-          "en": "command",
-          "mr": "आज्ञा",
-          "hi": "आज्ञा"
+          "en": "If it rained, we will stay at home.",
+          "mr": "If it rained, we will stay at home.",
+          "hi": "If it rained, we will stay at home."
          },
          "correct": false
         }
@@ -14889,46 +14889,46 @@
       {
        "id": "english_c6_ch2_q4",
        "prompt": {
-        "en": "What kind of sentence is this? \"What a beautiful garden!\"",
-        "mr": "हे कोणत्या प्रकारचे वाक्य आहे? \"What a beautiful garden!\"",
-        "hi": "यह किस प्रकार का वाक्य है? \"What a beautiful garden!\""
+        "en": "Which sentence is correct?",
+        "mr": "कोणते वाक्य बरोबर आहे?",
+        "hi": "कौन-सा वाक्य सही है?"
        },
-       "difficulty": 2,
+       "difficulty": 3,
        "hint": {
-        "en": "A statement tells, a question asks, a command orders and an exclamation shows strong feeling.",
-        "mr": "विधान सांगते, प्रश्न विचारतो, आज्ञा हुकूम देते आणि उद्गार तीव्र भावना दाखवतो.",
-        "hi": "कथन बताता है, प्रश्न पूछता है, आज्ञा आदेश देती है और विस्मय तेज़ भावना दिखाता है।"
+        "en": "Check the verb form, the preposition and the word order. The correct sentence is: He is interested in music.",
+        "mr": "क्रियापदाचे रूप, पूर्वसर्ग आणि शब्दांचा क्रम तपासा. बरोबर वाक्य: He is interested in music.",
+        "hi": "क्रिया का रूप, संबंधबोधक और शब्दक्रम जाँचिए। सही वाक्य: He is interested in music."
        },
        "options": [
         {
          "text": {
-          "en": "exclamation",
-          "mr": "उद्गार",
-          "hi": "विस्मय"
+          "en": "He is interested in music.",
+          "mr": "He is interested in music.",
+          "hi": "He is interested in music."
          },
          "correct": true
         },
         {
          "text": {
-          "en": "question",
-          "mr": "प्रश्न",
-          "hi": "प्रश्न"
+          "en": "He is interesting in music.",
+          "mr": "He is interesting in music.",
+          "hi": "He is interesting in music."
          },
          "correct": false
         },
         {
          "text": {
-          "en": "command",
-          "mr": "आज्ञा",
-          "hi": "आज्ञा"
+          "en": "He is interest in music.",
+          "mr": "He is interest in music.",
+          "hi": "He is interest in music."
          },
          "correct": false
         },
         {
          "text": {
-          "en": "statement",
-          "mr": "विधान",
-          "hi": "कथन"
+          "en": "He is interested on music.",
+          "mr": "He is interested on music.",
+          "hi": "He is interested on music."
          },
          "correct": false
         }
@@ -14937,46 +14937,46 @@
       {
        "id": "english_c6_ch2_q5",
        "prompt": {
-        "en": "What kind of sentence is this? \"Where is my bag?\"",
-        "mr": "हे कोणत्या प्रकारचे वाक्य आहे? \"Where is my bag?\"",
-        "hi": "यह किस प्रकार का वाक्य है? \"Where is my bag?\""
+        "en": "Which sentence is correct?",
+        "mr": "कोणते वाक्य बरोबर आहे?",
+        "hi": "कौन-सा वाक्य सही है?"
        },
-       "difficulty": 2,
+       "difficulty": 3,
        "hint": {
-        "en": "A statement tells, a question asks, a command orders and an exclamation shows strong feeling.",
-        "mr": "विधान सांगते, प्रश्न विचारतो, आज्ञा हुकूम देते आणि उद्गार तीव्र भावना दाखवतो.",
-        "hi": "कथन बताता है, प्रश्न पूछता है, आज्ञा आदेश देती है और विस्मय तेज़ भावना दिखाता है।"
+        "en": "Check the verb form, the preposition and the word order. The correct sentence is: The news is good.",
+        "mr": "क्रियापदाचे रूप, पूर्वसर्ग आणि शब्दांचा क्रम तपासा. बरोबर वाक्य: The news is good.",
+        "hi": "क्रिया का रूप, संबंधबोधक और शब्दक्रम जाँचिए। सही वाक्य: The news is good."
        },
        "options": [
         {
          "text": {
-          "en": "command",
-          "mr": "आज्ञा",
-          "hi": "आज्ञा"
+          "en": "The news were good.",
+          "mr": "The news were good.",
+          "hi": "The news were good."
          },
          "correct": false
         },
         {
          "text": {
-          "en": "question",
-          "mr": "प्रश्न",
-          "hi": "प्रश्न"
+          "en": "The news is good.",
+          "mr": "The news is good.",
+          "hi": "The news is good."
          },
          "correct": true
         },
         {
          "text": {
-          "en": "exclamation",
-          "mr": "उद्गार",
-          "hi": "विस्मय"
+          "en": "The news is goods.",
+          "mr": "The news is goods.",
+          "hi": "The news is goods."
          },
          "correct": false
         },
         {
          "text": {
-          "en": "statement",
-          "mr": "विधान",
-          "hi": "कथन"
+          "en": "The news are good.",
+          "mr": "The news are good.",
+          "hi": "The news are good."
          },
          "correct": false
         }
@@ -14985,46 +14985,46 @@
       {
        "id": "english_c6_ch2_q6",
        "prompt": {
-        "en": "What kind of sentence is this? \"Close the door.\"",
-        "mr": "हे कोणत्या प्रकारचे वाक्य आहे? \"Close the door.\"",
-        "hi": "यह किस प्रकार का वाक्य है? \"Close the door.\""
+        "en": "Which sentence is correct?",
+        "mr": "कोणते वाक्य बरोबर आहे?",
+        "hi": "कौन-सा वाक्य सही है?"
        },
-       "difficulty": 2,
+       "difficulty": 3,
        "hint": {
-        "en": "A statement tells, a question asks, a command orders and an exclamation shows strong feeling.",
-        "mr": "विधान सांगते, प्रश्न विचारतो, आज्ञा हुकूम देते आणि उद्गार तीव्र भावना दाखवतो.",
-        "hi": "कथन बताता है, प्रश्न पूछता है, आज्ञा आदेश देती है और विस्मय तेज़ भावना दिखाता है।"
+        "en": "Check the verb form, the preposition and the word order. The correct sentence is: I have been living here since 2019.",
+        "mr": "क्रियापदाचे रूप, पूर्वसर्ग आणि शब्दांचा क्रम तपासा. बरोबर वाक्य: I have been living here since 2019.",
+        "hi": "क्रिया का रूप, संबंधबोधक और शब्दक्रम जाँचिए। सही वाक्य: I have been living here since 2019."
        },
        "options": [
         {
          "text": {
-          "en": "question",
-          "mr": "प्रश्न",
-          "hi": "प्रश्न"
+          "en": "I have been living here from 2019.",
+          "mr": "I have been living here from 2019.",
+          "hi": "I have been living here from 2019."
          },
          "correct": false
         },
         {
          "text": {
-          "en": "command",
-          "mr": "आज्ञा",
-          "hi": "आज्ञा"
+          "en": "I have been living here since 2019.",
+          "mr": "I have been living here since 2019.",
+          "hi": "I have been living here since 2019."
          },
          "correct": true
         },
         {
          "text": {
-          "en": "exclamation",
-          "mr": "उद्गार",
-          "hi": "विस्मय"
+          "en": "I living here since 2019.",
+          "mr": "I living here since 2019.",
+          "hi": "I living here since 2019."
          },
          "correct": false
         },
         {
          "text": {
-          "en": "statement",
-          "mr": "विधान",
-          "hi": "कथन"
+          "en": "I am living here since 2019.",
+          "mr": "I am living here since 2019.",
+          "hi": "I am living here since 2019."
          },
          "correct": false
         }
@@ -15033,46 +15033,46 @@
       {
        "id": "english_c6_ch2_q7",
        "prompt": {
-        "en": "What kind of sentence is this? \"We went to the zoo.\"",
-        "mr": "हे कोणत्या प्रकारचे वाक्य आहे? \"We went to the zoo.\"",
-        "hi": "यह किस प्रकार का वाक्य है? \"We went to the zoo.\""
+        "en": "Which sentence is correct?",
+        "mr": "कोणते वाक्य बरोबर आहे?",
+        "hi": "कौन-सा वाक्य सही है?"
        },
-       "difficulty": 2,
+       "difficulty": 3,
        "hint": {
-        "en": "A statement tells, a question asks, a command orders and an exclamation shows strong feeling.",
-        "mr": "विधान सांगते, प्रश्न विचारतो, आज्ञा हुकूम देते आणि उद्गार तीव्र भावना दाखवतो.",
-        "hi": "कथन बताता है, प्रश्न पूछता है, आज्ञा आदेश देती है और विस्मय तेज़ भावना दिखाता है।"
+        "en": "Check the verb form, the preposition and the word order. The correct sentence is: I look forward to meeting you.",
+        "mr": "क्रियापदाचे रूप, पूर्वसर्ग आणि शब्दांचा क्रम तपासा. बरोबर वाक्य: I look forward to meeting you.",
+        "hi": "क्रिया का रूप, संबंधबोधक और शब्दक्रम जाँचिए। सही वाक्य: I look forward to meeting you."
        },
        "options": [
         {
          "text": {
-          "en": "question",
-          "mr": "प्रश्न",
-          "hi": "प्रश्न"
+          "en": "I look forward to meet you.",
+          "mr": "I look forward to meet you.",
+          "hi": "I look forward to meet you."
          },
          "correct": false
         },
         {
          "text": {
-          "en": "statement",
-          "mr": "विधान",
-          "hi": "कथन"
+          "en": "I look forward to meeting you.",
+          "mr": "I look forward to meeting you.",
+          "hi": "I look forward to meeting you."
          },
          "correct": true
         },
         {
          "text": {
-          "en": "command",
-          "mr": "आज्ञा",
-          "hi": "आज्ञा"
+          "en": "I look forward for meeting you.",
+          "mr": "I look forward for meeting you.",
+          "hi": "I look forward for meeting you."
          },
          "correct": false
         },
         {
          "text": {
-          "en": "exclamation",
-          "mr": "उद्गार",
-          "hi": "विस्मय"
+          "en": "I look forward to meets you.",
+          "mr": "I look forward to meets you.",
+          "hi": "I look forward to meets you."
          },
          "correct": false
         }
@@ -15081,46 +15081,46 @@
       {
        "id": "english_c6_ch2_q8",
        "prompt": {
-        "en": "What kind of sentence is this? \"Open your books.\"",
-        "mr": "हे कोणत्या प्रकारचे वाक्य आहे? \"Open your books.\"",
-        "hi": "यह किस प्रकार का वाक्य है? \"Open your books.\""
+        "en": "Which sentence is correct?",
+        "mr": "कोणते वाक्य बरोबर आहे?",
+        "hi": "कौन-सा वाक्य सही है?"
        },
-       "difficulty": 2,
+       "difficulty": 3,
        "hint": {
-        "en": "A statement tells, a question asks, a command orders and an exclamation shows strong feeling.",
-        "mr": "विधान सांगते, प्रश्न विचारतो, आज्ञा हुकूम देते आणि उद्गार तीव्र भावना दाखवतो.",
-        "hi": "कथन बताता है, प्रश्न पूछता है, आज्ञा आदेश देती है और विस्मय तेज़ भावना दिखाता है।"
+        "en": "Check the verb form, the preposition and the word order. The correct sentence is: The books on the table are mine.",
+        "mr": "क्रियापदाचे रूप, पूर्वसर्ग आणि शब्दांचा क्रम तपासा. बरोबर वाक्य: The books on the table are mine.",
+        "hi": "क्रिया का रूप, संबंधबोधक और शब्दक्रम जाँचिए। सही वाक्य: The books on the table are mine."
        },
        "options": [
         {
          "text": {
-          "en": "question",
-          "mr": "प्रश्न",
-          "hi": "प्रश्न"
+          "en": "The books on the table am mine.",
+          "mr": "The books on the table am mine.",
+          "hi": "The books on the table am mine."
          },
          "correct": false
         },
         {
          "text": {
-          "en": "command",
-          "mr": "आज्ञा",
-          "hi": "आज्ञा"
+          "en": "The books on the table are mine.",
+          "mr": "The books on the table are mine.",
+          "hi": "The books on the table are mine."
          },
          "correct": true
         },
         {
          "text": {
-          "en": "statement",
-          "mr": "विधान",
-          "hi": "कथन"
+          "en": "The books on the table is mine.",
+          "mr": "The books on the table is mine.",
+          "hi": "The books on the table is mine."
          },
          "correct": false
         },
         {
          "text": {
-          "en": "exclamation",
-          "mr": "उद्गार",
-          "hi": "विस्मय"
+          "en": "The book on the table are mine.",
+          "mr": "The book on the table are mine.",
+          "hi": "The book on the table are mine."
          },
          "correct": false
         }
@@ -15129,46 +15129,46 @@
       {
        "id": "english_c6_ch2_q9",
        "prompt": {
-        "en": "What kind of sentence is this? \"Please sit down.\"",
-        "mr": "हे कोणत्या प्रकारचे वाक्य आहे? \"Please sit down.\"",
-        "hi": "यह किस प्रकार का वाक्य है? \"Please sit down.\""
+        "en": "Which sentence is correct?",
+        "mr": "कोणते वाक्य बरोबर आहे?",
+        "hi": "कौन-सा वाक्य सही है?"
        },
-       "difficulty": 2,
+       "difficulty": 3,
        "hint": {
-        "en": "A statement tells, a question asks, a command orders and an exclamation shows strong feeling.",
-        "mr": "विधान सांगते, प्रश्न विचारतो, आज्ञा हुकूम देते आणि उद्गार तीव्र भावना दाखवतो.",
-        "hi": "कथन बताता है, प्रश्न पूछता है, आज्ञा आदेश देती है और विस्मय तेज़ भावना दिखाता है।"
+        "en": "Check the verb form, the preposition and the word order. The correct sentence is: She has lived here for ten years.",
+        "mr": "क्रियापदाचे रूप, पूर्वसर्ग आणि शब्दांचा क्रम तपासा. बरोबर वाक्य: She has lived here for ten years.",
+        "hi": "क्रिया का रूप, संबंधबोधक और शब्दक्रम जाँचिए। सही वाक्य: She has lived here for ten years."
        },
        "options": [
         {
          "text": {
-          "en": "question",
-          "mr": "प्रश्न",
-          "hi": "प्रश्न"
+          "en": "She lives here since ten years.",
+          "mr": "She lives here since ten years.",
+          "hi": "She lives here since ten years."
          },
          "correct": false
         },
         {
          "text": {
-          "en": "command",
-          "mr": "आज्ञा",
-          "hi": "आज्ञा"
+          "en": "She has lived here for ten years.",
+          "mr": "She has lived here for ten years.",
+          "hi": "She has lived here for ten years."
          },
          "correct": true
         },
         {
          "text": {
-          "en": "statement",
-          "mr": "विधान",
-          "hi": "कथन"
+          "en": "She has lived here since ten years.",
+          "mr": "She has lived here since ten years.",
+          "hi": "She has lived here since ten years."
          },
          "correct": false
         },
         {
          "text": {
-          "en": "exclamation",
-          "mr": "उद्गार",
-          "hi": "विस्मय"
+          "en": "She have lived here for ten years.",
+          "mr": "She have lived here for ten years.",
+          "hi": "She have lived here for ten years."
          },
          "correct": false
         }
@@ -15177,46 +15177,46 @@
       {
        "id": "english_c6_ch2_q10",
        "prompt": {
-        "en": "What kind of sentence is this? \"The sky is blue.\"",
-        "mr": "हे कोणत्या प्रकारचे वाक्य आहे? \"The sky is blue.\"",
-        "hi": "यह किस प्रकार का वाक्य है? \"The sky is blue.\""
+        "en": "Which sentence is correct?",
+        "mr": "कोणते वाक्य बरोबर आहे?",
+        "hi": "कौन-सा वाक्य सही है?"
        },
-       "difficulty": 2,
+       "difficulty": 3,
        "hint": {
-        "en": "A statement tells, a question asks, a command orders and an exclamation shows strong feeling.",
-        "mr": "विधान सांगते, प्रश्न विचारतो, आज्ञा हुकूम देते आणि उद्गार तीव्र भावना दाखवतो.",
-        "hi": "कथन बताता है, प्रश्न पूछता है, आज्ञा आदेश देती है और विस्मय तेज़ भावना दिखाता है।"
+        "en": "Check the verb form, the preposition and the word order. The correct sentence is: She doesn't like apples.",
+        "mr": "क्रियापदाचे रूप, पूर्वसर्ग आणि शब्दांचा क्रम तपासा. बरोबर वाक्य: She doesn't like apples.",
+        "hi": "क्रिया का रूप, संबंधबोधक और शब्दक्रम जाँचिए। सही वाक्य: She doesn't like apples."
        },
        "options": [
         {
          "text": {
-          "en": "exclamation",
-          "mr": "उद्गार",
-          "hi": "विस्मय"
+          "en": "She doesn't likes apples.",
+          "mr": "She doesn't likes apples.",
+          "hi": "She doesn't likes apples."
          },
          "correct": false
         },
         {
          "text": {
-          "en": "statement",
-          "mr": "विधान",
-          "hi": "कथन"
+          "en": "She doesn't like apples.",
+          "mr": "She doesn't like apples.",
+          "hi": "She doesn't like apples."
          },
          "correct": true
         },
         {
          "text": {
-          "en": "command",
-          "mr": "आज्ञा",
-          "hi": "आज्ञा"
+          "en": "She not like apples.",
+          "mr": "She not like apples.",
+          "hi": "She not like apples."
          },
          "correct": false
         },
         {
          "text": {
-          "en": "question",
-          "mr": "प्रश्न",
-          "hi": "प्रश्न"
+          "en": "She don't like apples.",
+          "mr": "She don't like apples.",
+          "hi": "She don't like apples."
          },
          "correct": false
         }
@@ -15225,46 +15225,46 @@
       {
        "id": "english_c6_ch2_q11",
        "prompt": {
-        "en": "What kind of sentence is this? \"How brave you are!\"",
-        "mr": "हे कोणत्या प्रकारचे वाक्य आहे? \"How brave you are!\"",
-        "hi": "यह किस प्रकार का वाक्य है? \"How brave you are!\""
+        "en": "Which sentence is correct?",
+        "mr": "कोणते वाक्य बरोबर आहे?",
+        "hi": "कौन-सा वाक्य सही है?"
        },
-       "difficulty": 2,
+       "difficulty": 3,
        "hint": {
-        "en": "A statement tells, a question asks, a command orders and an exclamation shows strong feeling.",
-        "mr": "विधान सांगते, प्रश्न विचारतो, आज्ञा हुकूम देते आणि उद्गार तीव्र भावना दाखवतो.",
-        "hi": "कथन बताता है, प्रश्न पूछता है, आज्ञा आदेश देती है और विस्मय तेज़ भावना दिखाता है।"
+        "en": "Check the verb form, the preposition and the word order. The correct sentence is: Each of the students has a book.",
+        "mr": "क्रियापदाचे रूप, पूर्वसर्ग आणि शब्दांचा क्रम तपासा. बरोबर वाक्य: Each of the students has a book.",
+        "hi": "क्रिया का रूप, संबंधबोधक और शब्दक्रम जाँचिए। सही वाक्य: Each of the students has a book."
        },
        "options": [
         {
          "text": {
-          "en": "command",
-          "mr": "आज्ञा",
-          "hi": "आज्ञा"
+          "en": "Each of the student has a book.",
+          "mr": "Each of the student has a book.",
+          "hi": "Each of the student has a book."
          },
          "correct": false
         },
         {
          "text": {
-          "en": "question",
-          "mr": "प्रश्न",
-          "hi": "प्रश्न"
+          "en": "Each of the students are having a book.",
+          "mr": "Each of the students are having a book.",
+          "hi": "Each of the students are having a book."
          },
          "correct": false
         },
         {
          "text": {
-          "en": "exclamation",
-          "mr": "उद्गार",
-          "hi": "विस्मय"
+          "en": "Each of the students has a book.",
+          "mr": "Each of the students has a book.",
+          "hi": "Each of the students has a book."
          },
          "correct": true
         },
         {
          "text": {
-          "en": "statement",
-          "mr": "विधान",
-          "hi": "कथन"
+          "en": "Each of the students have a book.",
+          "mr": "Each of the students have a book.",
+          "hi": "Each of the students have a book."
          },
          "correct": false
         }
@@ -15273,46 +15273,46 @@
       {
        "id": "english_c6_ch2_q12",
        "prompt": {
-        "en": "What kind of sentence is this? \"Ravi plays football.\"",
-        "mr": "हे कोणत्या प्रकारचे वाक्य आहे? \"Ravi plays football.\"",
-        "hi": "यह किस प्रकार का वाक्य है? \"Ravi plays football.\""
+        "en": "Which sentence is correct?",
+        "mr": "कोणते वाक्य बरोबर आहे?",
+        "hi": "कौन-सा वाक्य सही है?"
        },
-       "difficulty": 2,
+       "difficulty": 3,
        "hint": {
-        "en": "A statement tells, a question asks, a command orders and an exclamation shows strong feeling.",
-        "mr": "विधान सांगते, प्रश्न विचारतो, आज्ञा हुकूम देते आणि उद्गार तीव्र भावना दाखवतो.",
-        "hi": "कथन बताता है, प्रश्न पूछता है, आज्ञा आदेश देती है और विस्मय तेज़ भावना दिखाता है।"
+        "en": "Check the verb form, the preposition and the word order. The correct sentence is: He is taller than his brother.",
+        "mr": "क्रियापदाचे रूप, पूर्वसर्ग आणि शब्दांचा क्रम तपासा. बरोबर वाक्य: He is taller than his brother.",
+        "hi": "क्रिया का रूप, संबंधबोधक और शब्दक्रम जाँचिए। सही वाक्य: He is taller than his brother."
        },
        "options": [
         {
          "text": {
-          "en": "question",
-          "mr": "प्रश्न",
-          "hi": "प्रश्न"
+          "en": "He is more taller than his brother.",
+          "mr": "He is more taller than his brother.",
+          "hi": "He is more taller than his brother."
          },
          "correct": false
         },
         {
          "text": {
-          "en": "exclamation",
-          "mr": "उद्गार",
-          "hi": "विस्मय"
+          "en": "He is the taller than his brother.",
+          "mr": "He is the taller than his brother.",
+          "hi": "He is the taller than his brother."
          },
          "correct": false
         },
         {
          "text": {
-          "en": "statement",
-          "mr": "विधान",
-          "hi": "कथन"
+          "en": "He is taller than his brother.",
+          "mr": "He is taller than his brother.",
+          "hi": "He is taller than his brother."
          },
          "correct": true
         },
         {
          "text": {
-          "en": "command",
-          "mr": "आज्ञा",
-          "hi": "आज्ञा"
+          "en": "He is tall than his brother.",
+          "mr": "He is tall than his brother.",
+          "hi": "He is tall than his brother."
          },
          "correct": false
         }

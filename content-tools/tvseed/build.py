@@ -12,7 +12,7 @@ import json, os, shutil, sys
 HERE = os.path.dirname(os.path.abspath(__file__))
 sys.path.insert(0, HERE)
 from common import Bank, check_subject  # noqa: E402
-import english, hindi, marathi  # noqa: E402
+import english, hindi, marathi, maths_hard  # noqa: E402
 
 ROOT = os.path.abspath(os.path.join(HERE, "..", ".."))
 SRC = os.path.join(ROOT, "app", "src", "main", "assets", "seed")
@@ -82,8 +82,17 @@ def main():
             json.dump(doc, f, ensure_ascii=False, indent=1)
         n = sum(len(ch["questions"]) for c in doc["classes"] for ch in c["chapters"])
         print(f"{code}: {len(doc['classes'])} classes, {sum(len(c['chapters']) for c in doc['classes'])} chapters, {n} questions")
-    shutil.copy(os.path.join(SRC, "maths.json"), os.path.join(OUT, "maths.json"))
-    print("maths: copied unchanged")
+    # Maths: Classes 1-5 from the phone bank, Classes 6-7 rewritten at medium-to-hard level
+    base = load("maths")
+    hard = maths_hard.chapters(Bank("maths", 2029))
+    classes = [c for c in base["classes"] if c["classLevel"] <= 5]
+    proto = {k: v for k, v in base["classes"][0].items() if k not in ("classLevel", "chapters")}
+    classes += [dict(proto, classLevel=lvl, chapters=hard[lvl]) for lvl in sorted(hard)]
+    doc = {"version": 2, "subject": base["subject"], "classes": classes}
+    check_subject({"classes": [c for c in classes if c["classLevel"] >= 6]})  # Classes 1-5 are the phone bank, untouched
+    with open(os.path.join(OUT, "maths.json"), "w", encoding="utf8") as f:
+        json.dump(doc, f, ensure_ascii=False, indent=1)
+    print("maths: classes 1-5 kept, classes 6-7 rebuilt:", sum(len(ch["questions"]) for c in classes if c["classLevel"] >= 6 for ch in c["chapters"]), "questions")
 
 
 if __name__ == "__main__":
