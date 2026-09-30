@@ -31,12 +31,6 @@ android {
     kotlinOptions { jvmTarget = "17" }
     buildFeatures { compose = true }
     packaging { resources.excludes += "/META-INF/{AL2.0,LGPL2.1}" }
-
-    // Reuse the phone app's English / Marathi / Hindi question banks (assets/seed/*.json)
-    // instead of copying ~2.8 MB of JSON into a second place.
-    sourceSets {
-        getByName("main") { assets.srcDir("../app/src/main/assets") }
-    }
 }
 
 dependencies {

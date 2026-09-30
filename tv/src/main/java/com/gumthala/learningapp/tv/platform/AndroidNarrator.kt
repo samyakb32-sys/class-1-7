@@ -3,6 +3,7 @@ package com.gumthala.learningapp.tv.platform
 import android.content.Context
 import android.speech.tts.TextToSpeech
 import android.speech.tts.UtteranceProgressListener
+import android.speech.tts.Voice
 import com.gumthala.learningapp.tv.core.Narrator
 import com.gumthala.learningapp.tv.core.speakingTimeMs
 import kotlinx.coroutines.CancellableContinuation
@@ -41,7 +42,8 @@ class AndroidNarrator(context: Context) : Narrator {
             tts?.setSpeechRate(rate())
         }
 
-    private fun rate() = if (slow) 0.78f else 1.0f
+    // 0.78 sounded robotic; a gentle 0.88 is still easy to follow for little ears but keeps natural rhythm.
+    private fun rate() = if (slow) 0.88f else 1.0f
 
     private val listener = object : UtteranceProgressListener() {
         override fun onStart(utteranceId: String?) {}
@@ -65,7 +67,7 @@ class AndroidNarrator(context: Context) : Narrator {
                 val engine = tts
                 if (status == TextToSpeech.SUCCESS && engine != null) {
                     engine.setOnUtteranceProgressListener(listener)
-                    engine.setPitch(1.1f)
+                    engine.setPitch(1.0f)
                     engine.setSpeechRate(rate())
                     ready = true
                     applyLanguage()
@@ -90,6 +92,27 @@ class AndroidNarrator(context: Context) : Narrator {
         }
         // For Hindi / Marathi, silence beats reading Devanagari with an English voice.
         languageOk = result != TextToSpeech.LANG_MISSING_DATA && result != TextToSpeech.LANG_NOT_SUPPORTED
+        if (languageOk) bestOfflineVoice(engine, locale)?.let {
+            try { engine.setVoice(it) } catch (_: Exception) { }
+        }
+    }
+
+    /**
+     * The most natural voice that works with no internet: same language (same country first, so en-IN
+     * beats en-US for an Indian child), installed on the TV, and the highest quality on offer.
+     * Network voices are skipped so the lesson never stalls waiting for a connection.
+     */
+    private fun bestOfflineVoice(engine: TextToSpeech, locale: Locale): Voice? = try {
+        engine.voices.orEmpty()
+            .filter { v ->
+                v.locale.language == locale.language &&
+                    !v.isNetworkConnectionRequired &&
+                    v.features?.contains(TextToSpeech.Engine.KEY_FEATURE_NOT_INSTALLED) != true
+            }
+            .sortedWith(compareByDescending<Voice> { it.locale.country == locale.country }.thenByDescending { it.quality }.thenBy { it.latency })
+            .firstOrNull()
+    } catch (e: Exception) {
+        null
     }
 
     override suspend fun say(text: String) {

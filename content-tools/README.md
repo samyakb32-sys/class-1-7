@@ -45,3 +45,17 @@ Spec asks for 5–7 chapters × 10–15 questions per subject per class. Maths
 landed at 5 chapters × ~11 average per class, which is within spec range but
 at the lower end — extending `generate_maths_seed.py`'s per-chapter counts
 or adding 1–2 more chapters per class would close the gap if needed.
+
+## tvseed/ (TV edition English / Hindi / Marathi)
+
+`python3 content-tools/tvseed/build.py` writes `tv/src/main/assets/seed/{english,hindi,marathi}.json` with
+**class-specific chapters for Classes 2 to 7** (Class 1 is carried over from the phone bank). The word lists,
+proverbs, grammar facts and distractors are hand-written in `english.py`, `hindi.py` and `marathi.py`; `common.py`
+turns them into multiple-choice questions and checks them (one correct option, distinct options, lengths, no chapter
+title or question repeated across classes).
+
+The phone app's `app/src/main/assets/seed/{english,hindi,marathi}.json` still repeat the same five chapters in every
+class; `generate_language_seeds.py` is the source of that. Copying the TV banks over them would fix the phone app too.
+
+As with the other generators, the Hindi and Marathi text should be reviewed by a native-speaker teacher before it is
+relied on in a classroom.

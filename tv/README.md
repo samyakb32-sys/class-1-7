@@ -34,8 +34,11 @@ both can be installed on the same device.
 | 8 | Geometry Galaxy | Class 4 to 7 | 12 |
 | 9 | Algebra & Data Planet | Class 6 to 7 | 13 |
 
-*More Subjects* also plays the phone app's seed question banks (Hindi, Marathi, English,
-Maths...) as simple quizzes, so the TV edition covers everything the phone app's content does.
+*More Subjects* has English, Hindi and Marathi quizzes (plus the phone app's Maths bank) for **Classes 1 to 7**.
+Every class has its **own five chapters**: for example Hindi Class 2 is groups, plurals, gender and numbers, Class 5 is
+proverbs, one-word-for-many and punctuation, and Class 7 is alankar, harder idioms and tatsam/tadbhav words. Each
+question can be shown in English, Marathi or Hindi. The banks are generated from hand-written word lists by
+`content-tools/tvseed/` (see below) and bundled in `src/main/assets/seed/`.
 
 ## Installing on a TV
 
@@ -91,8 +94,13 @@ in the normal launcher too), so you can check it on a tablet first. Use a keyboa
 
 ## Good to know
 
-- **Voice:** uses the TV's own text-to-speech. If the TV has no voice installed, the app still
-  works; it just shows the words and paces the animation itself. *Settings* lets a parent turn
+- **Works fully offline.** The app has no internet permission at all and never makes a network call; every lesson,
+  picture, sound and question bank is inside the APK.
+- **Voice:** uses the TV's own text-to-speech, and prefers the best *offline* voice installed (Indian English first)
+  so it never waits for a connection. For the most natural sound, install the offline voice data once:
+  *TV Settings > Device Preferences > Accessibility (or Language) > Text-to-speech > Google Text-to-speech >
+  Install voice data*. If the TV has no voice installed, the app still works; it just shows the words and paces the
+  animation itself. *Settings* lets a parent turn
   the voice, the slow voice and the sound effects off.
 - **Progress** (stars) is saved on the TV in a tiny private file; "Erase all stars" in Settings
   clears it.
@@ -119,6 +127,14 @@ question generator with 60 random seeds** and checks: a valid answer key, distin
 no spoilers in the question picture, lengths that fit the screen, no duplicate question in a round,
 no zero or negative measurements, counting steps that really speak a number, and no emoji newer
 than Unicode 8 (older TV boxes draw those as empty squares).
+
+To rebuild the English / Hindi / Marathi quiz banks after editing `content-tools/tvseed/*.py`:
+
+```sh
+python3 content-tools/tvseed/build.py   # writes tv/src/main/assets/seed/*.json and fails on repeated topics or bad answer keys
+```
+
+`SeedTest` also fails the build if a chapter title or a question ever appears in two classes.
 
 ```sh
 ./gradlew :tv:testDebugUnitTest      # check the lessons
