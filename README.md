@@ -11,6 +11,15 @@ several places that haven't been resolved.
 
 ---
 
+## TV edition (no login, runs from a USB stick)
+
+`tv/` is a separate **Android TV / Fire TV app**: no login, no internet, remote-control friendly,
+with 127 very gentle Maths lessons from counting up to Class 7. It builds its own APK
+(`MathsAdventureTV-debug.apk`) next to the phone app. See [`tv/README.md`](tv/README.md) for how to
+download the APK from the Actions tab and install it from a USB stick or with adb.
+
+---
+
 ## What's in here
 
 | Area | Files | Notes |

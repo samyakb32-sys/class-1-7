@@ -116,7 +116,7 @@ val ratioShare = lesson(
 // ---- Unitary method --------------------------------------------------------------------------
 
 val unitary = lesson(
-    "unitary", "Unitary method", "Find the price of one first", "1️⃣",
+    "unitary", "Unitary method", "Find the price of one first", "☝️",
     teach = listOf(
         say("The unitary method has two steps. First find the cost of one. Then find the cost of many.", Board(listOf(line("step 1: find ONE"), line("step 2: find MANY")))),
         say("4 pencils cost 20 rupees. One pencil costs 20 divided by 4, which is 5 rupees.", Board(listOf(line("4 pencils = ${rs(20)}"), good("1 pencil = 20 ÷ 4 = ${rs(5)}")))),
@@ -332,7 +332,7 @@ val equations1 = lesson(
 }
 
 val equations2 = lesson(
-    "equations-2", "Two-step equations", "Undo one thing, then undo the next", "2️⃣",
+    "equations-2", "Two-step equations", "Undo one thing, then undo the next", "✌️",
     teach = listOf(
         say("Some equations need two steps. Here 2x plus 3 balances 11.", Balance("2x + 3", "11", 0)),
         say("Step one: take 3 away from both sides.", Balance("2x + 3 − 3", "11 − 3", 0)),
