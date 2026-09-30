@@ -11,6 +11,7 @@ object Curriculum {
         world6,
         world7,
         world8,
+        world9,
     )
 
     val lessons: List<Lesson> = worlds.flatMap { it.lessons }

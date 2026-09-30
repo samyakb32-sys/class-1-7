@@ -76,7 +76,7 @@ internal fun longDivSteps(a: Int, d: Int): List<Step> {
 // ---------------------------------------------------------------------------------------------
 
 val equalGroups = lesson(
-    "equal-groups", "Equal groups", "Same number in every group", "🧺",
+    "equal-groups", "Equal groups", "Same number in every group", "🎒",
     teach = listOf(
         say("Look! Three baskets, and every basket has two apples.", groupsOf(Things.apple, 3, 2)),
         say("Count all the apples. Two, four, six.", Strip(listOf("2", "4", "6")), counting = true),
@@ -205,7 +205,7 @@ val table10 = tableLesson(10)
 val tableMix = lesson(
     "table-mix", "Times table challenge", "All the tables mixed up", "🏔️",
     teach = listOf(
-        say("Time for a challenge! All the tables are mixed together.", BigText("2  3  4  5  6  7  8  9  10", emoji = "🏔️"), mood = Mood.CHEER),
+        say("Time for a challenge! All the tables are mixed together.", BigText("2  3  4  5  6  7  8  9  10", emoji = "🗻"), mood = Mood.CHEER),
         say("If you forget an answer, count in that number. Six times seven? Count in sixes.", Strip(listOf("6", "12", "18", "24", "30", "36", "42")), counting = true),
         show("Seven sixes make forty-two. You can always work it out!", eq("6", "×", "7", "=", "42"), Mood.CHEER),
     ),
@@ -279,7 +279,7 @@ val groupDiv = lesson(
 }
 
 val multDivFamily = lesson(
-    "mult-div-family", "Times and divide are friends", "One fact, four answers", "🤝",
+    "mult-div-family", "Times and divide are friends", "One fact, four answers", "👫",
     teach = listOf(
         say("Multiplying and dividing are friends. Look at 3, 4 and 12.", Strip(listOf("3", "4", "12"), arrows = false)),
         say("Two times facts.", Board(listOf(line("3 × 4 = 12"), line("4 × 3 = 12")))),
@@ -323,7 +323,7 @@ val divFacts = lesson(
 }
 
 val mult2digit = lesson(
-    "mult-2digit", "Multiply bigger numbers", "Times by one digit, column by column", "🧮",
+    "mult-2digit", "Multiply bigger numbers", "Times by one digit, column by column", "✖️",
     teach = listOf(
         say("Let's multiply a big number by one digit. Try 23 times 4.", ColumnMath(23, 4, 'x'), from = 0, to = 0),
         say("Ones: three times four makes twelve. Write 2 and carry 1.", ColumnMath(23, 4, 'x'), from = 0, to = 1),
@@ -398,7 +398,7 @@ val divRemainder = lesson(
 }
 
 val longDivision = lesson(
-    "long-division", "Long division", "Divide big numbers step by step", "🪜",
+    "long-division", "Long division", "Divide big numbers step by step", "🚧",
     teach = listOf(
         say("Long division shares a big number one digit at a time. Try 78 divided by 6.", Board(listOf(line("78 ÷ 6")))),
     ) + longDivSteps(78, 6),
@@ -414,7 +414,7 @@ val longDivision = lesson(
 }
 
 val world4 = World(
-    id = "w4", title = "Times-Table Mountain", tagline = "Multiply and divide with confidence", emoji = "⛰️",
+    id = "w4", title = "Times-Table Mountain", tagline = "Multiply and divide with confidence", emoji = "🗻",
     color = 0xFF8B5CF6, level = "Class 2 to 4",
     lessons = listOf(
         equalGroups, repeatAdd, arrays, table2, table5, table10, table3, table4, table6, table9, table7, table8, tableMix,

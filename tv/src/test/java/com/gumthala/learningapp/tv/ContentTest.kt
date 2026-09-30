@@ -140,6 +140,44 @@ class ContentTest {
         }
     }
 
+    /** Emoji added after Unicode 8 show as an empty box on the older Android TV boxes we support. */
+    private fun riskyEmoji(text: String): List<String> {
+        val ok8 = (0x1F910..0x1F918).toSet() + (0x1F980..0x1F984).toSet() + 0x1F9C0
+        val out = ArrayList<String>()
+        var i = 0
+        while (i < text.length) {
+            val cp = text.codePointAt(i)
+            i += Character.charCount(cp)
+            val newer = when {
+                cp == 0x200D -> true // joined emoji (families, people with jobs) fall apart on old fonts
+                cp in 0x1F900..0x1F9FF -> cp !in ok8
+                cp >= 0x1FA00 -> true
+                cp in 0x1F6D1..0x1F6D7 || cp in 0x1F6F4..0x1F6FF -> true
+                else -> false
+            }
+            if (newer) out.add("U+%X".format(cp))
+        }
+        return out
+    }
+
+    @Test
+    fun emoji_are_safe_on_old_tv_boxes() {
+        for (w in Curriculum.worlds) {
+            assertTrue("world ${w.id} emoji ${w.emoji}", riskyEmoji(w.emoji).isEmpty())
+            for (l in w.lessons) {
+                assertTrue("lesson ${l.id} icon ${l.icon}", riskyEmoji(l.icon).isEmpty())
+                l.teach.forEach { st -> assertTrue("lesson ${l.id} teach: ${riskyEmoji(st.toString())}", riskyEmoji(st.toString()).isEmpty()) }
+                for (seed in 0 until 12) {
+                    l.buildRound(Random(seed)).forEach { q ->
+                        val all = q.toString()
+                        assertTrue("lesson ${l.id} question \"${q.prompt}\": ${riskyEmoji(all)}", riskyEmoji(all).isEmpty())
+                    }
+                }
+            }
+        }
+        assertTrue(Things.all.all { riskyEmoji(it.emoji).isEmpty() })
+    }
+
     @Test
     fun rounds_get_easier_to_harder_not_identical() {
         // The same lesson asked twice must not always give the same round (practice is endless).

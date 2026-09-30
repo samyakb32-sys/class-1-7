@@ -62,9 +62,9 @@ internal fun colSubSteps(a: Int, b: Int): List<Step> {
 // ---------------------------------------------------------------------------------------------
 
 val tensOnes = lesson(
-    "tens-ones", "Tens and ones", "What the two digits mean", "🧱",
+    "tens-ones", "Tens and ones", "What the two digits mean", "🏠",
     teach = listOf(
-        say("Numbers bigger than nine use two digits. Let's build thirty-four.", BigText("34", emoji = "🧱")),
+        say("Numbers bigger than nine use two digits. Let's build thirty-four.", BigText("34", emoji = "🏠")),
         say("Ten ones can be packed into one long tens rod. Here are three tens.", Blocks(0, 3, 0)),
         say("And four single ones.", Blocks(0, 3, 4)),
         show("Three tens and four ones make thirty-four. The 3 is in the tens place, the 4 is in the ones place.", Stack(Blocks(0, 3, 4), eq("3 tens", "+", "4 ones", "=", "34"))),
@@ -110,7 +110,7 @@ val countBy10 = lesson(
 }
 
 val skipCount = lesson(
-    "skip-count", "Skip counting", "Count by 2s and 5s", "🦘",
+    "skip-count", "Skip counting", "Count by 2s and 5s", "🐇",
     teach = listOf(
         say("Skip counting means jumping over numbers. Count by twos!", Strip(listOf("2", "4", "6", "8", "10", "12")), counting = true),
         show("Each jump adds two. Even numbers: 2, 4, 6, 8, 10.", NumberLine(0, 12, start = 0, hops = listOf(2, 4, 6, 8, 10, 12)), Mood.CHEER),
@@ -376,7 +376,7 @@ val roundTens = lesson(
 }
 
 val world3 = World(
-    id = "w3", title = "Big Numbers Town", tagline = "Tens, hundreds and written sums", emoji = "🏘️",
+    id = "w3", title = "Big Numbers Town", tagline = "Tens, hundreds and written sums", emoji = "🏠",
     color = 0xFF3B82F6, level = "Class 2",
     lessons = listOf(tensOnes, countBy10, skipCount, oddEven, compare2, hundreds, digitValue, add2, addCarry, sub2, subBorrow, roundTens),
 )

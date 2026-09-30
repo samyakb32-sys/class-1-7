@@ -105,7 +105,7 @@ val roundBig = lesson(
 }
 
 val factors = lesson(
-    "factors", "Factors", "Numbers that divide exactly", "🧩",
+    "factors", "Factors", "Numbers that divide exactly", "🔑",
     teach = listOf(
         say("A factor is a number that divides another number exactly. Let's find the factors of twelve.", Board(listOf(line("12")))),
         say("One times twelve. Two times six. Three times four.", Board(listOf(line("1 × 12 = 12"), line("2 × 6 = 12"), line("3 × 4 = 12")))),
@@ -240,7 +240,7 @@ val lcmLesson = lesson(
 }
 
 val bodmas = lesson(
-    "bodmas", "Order of operations", "Brackets, then × ÷, then + −", "🎛️",
+    "bodmas", "Order of operations", "Brackets, then × ÷, then + −", "🚦",
     teach = listOf(
         say("What is 2 plus 3 times 4? The order we do things in matters!", Equation("2", "+", "3", "×", "4", "=", "?")),
         say("Multiply first: three times four is twelve.", Board(listOf(line("2 + 3 × 4"), hot("3 × 4 = 12")))),
@@ -284,7 +284,7 @@ val bodmas = lesson(
 }
 
 val negatives = lesson(
-    "negative-intro", "Negative numbers", "Numbers below zero", "🌡️",
+    "negative-intro", "Negative numbers", "Numbers below zero", "❄️",
     teach = listOf(
         say("Numbers can go below zero too. On a cold day the temperature can be minus three.", NumberLine(-5, 5, start = 0)),
         say("Start at zero and hop left. One, two, three steps left is minus three.", NumberLine(-5, 5, start = 0, hops = listOf(-1, -2, -3)), counting = true),
@@ -405,7 +405,7 @@ val exponents = lesson(
 }
 
 val romans = lesson(
-    "roman", "Roman numerals", "I, V, X, L and C", "🏛️",
+    "roman", "Roman numerals", "I, V, X, L and C", "⚔️",
     teach = listOf(
         say("The Romans wrote numbers with letters. I is one, V is five, X is ten, L is fifty and C is one hundred.", Board(listOf(line("I = 1"), line("V = 5"), line("X = 10"), line("L = 50"), line("C = 100")))),
         say("Small after big? Add. VI is five plus one, which is six.", Board(listOf(line("VI = 5 + 1 = 6"), line("XII = 10 + 2 = 12")))),

@@ -47,7 +47,7 @@ import kotlinx.coroutines.withContext
 private class SubjectInfo(val code: String, val label: String, val emoji: String, val tint: Color)
 
 private val subjects = listOf(
-    SubjectInfo("maths", "Maths", "🧮", Tv.OrangeSoft),
+    SubjectInfo("maths", "Maths", "🔢", Tv.OrangeSoft),
     SubjectInfo("english", "English", "🔤", Tv.BlueSoft),
     SubjectInfo("marathi", "मराठी", "📖", Tv.PinkSoft),
     SubjectInfo("hindi", "हिंदी", "📝", Tv.GreenSoft),

@@ -227,7 +227,7 @@ private val symShapes = listOf(
 )
 
 val symmetry = lesson(
-    "symmetry", "Lines of symmetry", "Fold it so both halves match", "🦋",
+    "symmetry", "Lines of symmetry", "Fold it so both halves match", "🐞",
     teach = listOf(
         say("A line of symmetry splits a shape into two halves that match exactly, like a mirror.", Shape(ShapeKind.SQUARE, "square", axes = 1)),
         say("A square has four lines of symmetry. Watch them appear.", Shape(ShapeKind.SQUARE, "4 lines", axes = 4), counting = false),
@@ -281,7 +281,7 @@ private val solidFacts = listOf(
 )
 
 val solidParts = lesson(
-    "solid-parts", "Faces, edges, corners", "The parts of solid shapes", "🧊",
+    "solid-parts", "Faces, edges, corners", "The parts of solid shapes", "🎁",
     teach = listOf(
         say("A face is a flat side. An edge is where two faces meet. A vertex is a corner.", Solid(SolidKind.CUBE, "cube")),
         say("A cube has six faces, twelve edges and eight vertices.", Board(listOf(line("faces: 6"), line("edges: 12"), line("vertices: 8")))),

@@ -246,7 +246,7 @@ val subLine = lesson(
 }
 
 val factFamily = lesson(
-    "fact-family", "Fact families", "Adding and taking away are friends", "👨‍👩‍👧",
+    "fact-family", "Fact families", "Adding and taking away are friends", "👪",
     teach = listOf(
         say("Three numbers can make a whole family of sums. Meet 3, 4 and 7.", Strip(listOf("3", "4", "7"), arrows = false)),
         say("Two adding facts first.", Board(listOf(line("3 + 4 = 7"), line("4 + 3 = 7")))),
@@ -271,7 +271,7 @@ val factFamily = lesson(
 }
 
 val add20 = lesson(
-    "add-20", "Add up to 20", "Make ten first, then add the rest", "🧩",
+    "add-20", "Add up to 20", "Make ten first, then add the rest", "🚂",
     teach = listOf(
         say("Big sums are easy if we make ten first. Try 8 plus 5.", Equation("8", "+", "5", "=", "?")),
         say("Eight needs two more to make ten.", TenFrame(8, frames = 2), counting = true),
@@ -296,7 +296,7 @@ val add20 = lesson(
 }
 
 val sub20 = lesson(
-    "sub-20", "Subtract up to 20", "Go back to ten, then the rest", "🧩",
+    "sub-20", "Subtract up to 20", "Go back to ten, then the rest", "🎢",
     teach = listOf(
         say("For bigger take-aways, go back to ten first. Try 13 minus 5.", Equation("13", "−", "5", "=", "?")),
         say("Thirteen take away three is ten.", NumberLine(0, 20, start = 13, hops = listOf(12, 11, 10)), counting = true),

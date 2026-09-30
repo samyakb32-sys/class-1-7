@@ -29,7 +29,7 @@ object Things {
     val cat = Thing("🐱", "kitten", "kittens")
     val car = Thing("🚗", "car", "cars")
     val ball = Thing("⚽", "ball", "balls")
-    val butterfly = Thing("🦋", "butterfly", "butterflies")
+    val caterpillar = Thing("🐛", "caterpillar", "caterpillars")
     val bee = Thing("🐝", "bee", "bees")
     val ladybird = Thing("🐞", "ladybird", "ladybirds")
     val pizza = Thing("🍕", "pizza", "pizzas")
@@ -41,7 +41,7 @@ object Things {
     /** Things that are safe on old Android emoji fonts. */
     val all: List<Thing> = listOf(
         apple, banana, grapes, strawberry, orange, cherry, balloon, star, cookie, candy, flower,
-        fish, bird, duck, dog, cat, car, ball, butterfly, bee, ladybird, pizza, iceCream, heart, cake, gift,
+        fish, bird, duck, dog, cat, car, ball, caterpillar, bee, ladybird, pizza, iceCream, heart, cake, gift,
     )
 
     /** Small, easy-to-tell-apart objects for early counting (they read well at small sizes). */

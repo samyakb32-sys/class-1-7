@@ -45,7 +45,7 @@ val countTo10 = lesson(
     "count-6-10", "Count 6 to 10", "Bigger groups, up to ten", "🎈",
     teach = listOf(
         say("We can count more now. Watch the flowers.", Counters("🌸", 6, showTotal = true), counting = true),
-        say("Seven butterflies. Count with me!", Counters("🦋", 7, showTotal = true), counting = true),
+        say("Seven ladybirds. Count with me!", Counters("🐞", 7, showTotal = true), counting = true),
         say("Eight fish in the pond.", Counters("🐟", 8, showTotal = true), counting = true),
         say("Nine cookies. Yum!", Counters("🍪", 9, showTotal = true), counting = true),
         say("Ten balloons! Five and five make ten.", Counters("🎈", 10, showTotal = true), counting = true),
@@ -322,7 +322,7 @@ val biggerSmaller = lesson(
 }
 
 val orderNumbers = lesson(
-    "order-numbers", "Put in order", "Smallest to biggest", "🪜",
+    "order-numbers", "Put in order", "Smallest to biggest", "📶",
     teach = listOf(
         say("Let's put numbers in order, from smallest to biggest.", Strip(listOf("5", "2", "8")), mood = Mood.THINK),
         say("Find the smallest first. It is two.", Strip(listOf("2", "?", "?"), blankAt = -1, arrows = false)),

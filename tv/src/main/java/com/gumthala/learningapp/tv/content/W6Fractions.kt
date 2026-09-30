@@ -188,7 +188,7 @@ val subFractions = lesson(
 }
 
 val fractionOfNumber = lesson(
-    "fraction-of-number", "Fraction of a number", "Find a quarter, a third...", "🧁",
+    "fraction-of-number", "Fraction of a number", "Find a quarter, a third...", "🍪",
     teach = listOf(
         say("What is a quarter of twelve? Share twelve into four equal groups.", Side(List(4) { Counters("🍪", 3, CounterMode.STATIC) })),
         say("Each group has three. One quarter of twelve is three.", Stack(Side(List(4) { Counters("🍪", 3, CounterMode.STATIC) }), eq("12", "÷", "4", "=", "3"))),
@@ -212,7 +212,7 @@ val fractionOfNumber = lesson(
 }
 
 val mixedNumbers = lesson(
-    "mixed-numbers", "Mixed numbers", "Whole numbers and fractions together", "🥧",
+    "mixed-numbers", "Mixed numbers", "Whole numbers and fractions together", "🍩",
     teach = listOf(
         say("Sometimes we have more than one whole. Here are seven quarters.", Side(listOf(Pie(4, 4), Pie(4, 3)))),
         say("Four quarters make one whole pie. Then three quarters are left.", Side(listOf(Pie(4, 4), Pie(4, 3)), listOf("+"))),
@@ -392,7 +392,7 @@ val compareDecimals = lesson(
 }
 
 val addDecimals = lesson(
-    "add-decimals", "Decimal sums", "Add and subtract: line up the points", "🧾",
+    "add-decimals", "Decimal sums", "Add and subtract: line up the points", "💵",
     teach = listOf(
         say("To add decimals, line up the decimal points. Try 2.50 plus 1.75.", Board(listOf(line("2.50 + 1.75")))),
         say("Ignore the points for a moment and add 250 plus 175.", ColumnMath(250, 175, '+')),
@@ -436,7 +436,7 @@ val percentBasics = lesson(
 }
 
 val percentOf = lesson(
-    "percent-of", "Percent of a number", "Find 10%, 25%, 50%", "🏷️",
+    "percent-of", "Percent of a number", "Find 10%, 25%, 50%", "🎫",
     teach = listOf(
         say("To find ten percent, divide by ten. Ten percent of fifty is five.", Board(listOf(line("10% of 50"), dim("50 ÷ 10"), good("= 5")))),
         say("Fifty percent is half. Fifty percent of eighty is forty.", Board(listOf(line("50% of 80"), dim("80 ÷ 2"), good("= 40")))),

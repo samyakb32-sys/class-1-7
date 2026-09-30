@@ -67,7 +67,7 @@ val sidesCorners = lesson(
 }
 
 val shapes3d = lesson(
-    "shapes-3d", "Solid shapes", "Shapes you can hold", "🧊",
+    "shapes-3d", "Solid shapes", "Shapes you can hold", "🏺",
     teach = listOf(
         say("Some shapes are solid. You can pick them up. This is a cube, like a dice.", Solid(SolidKind.CUBE, "cube")),
         say("A sphere is round like a ball.", Solid(SolidKind.SPHERE, "sphere")),
@@ -265,7 +265,7 @@ val money = lesson(
 }
 
 val moneyChange = lesson(
-    "money-change", "Buying and change", "How much do I get back?", "🛍️",
+    "money-change", "Buying and change", "How much do I get back?", "🏪",
     teach = listOf(
         say("You buy a pencil for seven rupees. You give a ten rupee note.", Stack(BigText("Pencil  ₹7"), Money(listOf(10)))),
         say("How much change? Count up from seven to ten.", NumberLine(0, 10, start = 7, hops = listOf(8, 9, 10)), counting = true),
