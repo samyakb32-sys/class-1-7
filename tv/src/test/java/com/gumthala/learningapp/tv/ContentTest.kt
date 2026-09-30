@@ -123,6 +123,24 @@ class ContentTest {
     }
 
     @Test
+    fun no_nonsense_answers_like_zero_degrees_or_negative_lengths() {
+        // A measurement of "0°" or "−5 cm" means a generator produced an impossible shape. Only the
+        // integers lessons may have negative answers.
+        val negativeOk = setOf("negative-intro", "integer-add", "integer-sub")
+        val zeroWithUnit = Regex("^0\\s?(°|[a-zA-Zμ²³]).*")
+        for (l in Curriculum.lessons) {
+            for (seed in 0 until seeds) {
+                l.buildRound(Random(seed)).forEachIndexed { i, q ->
+                    val a = q.choices[q.answer].text
+                    val where = "lesson ${l.id} seed $seed q$i (\"${q.prompt}\") answer \"$a\""
+                    if (zeroWithUnit.matches(a)) fail(where, "a zero measurement")
+                    if (l.id !in negativeOk && (a.startsWith("-") || a.startsWith("−"))) fail(where, "negative answer outside the integers lessons")
+                }
+            }
+        }
+    }
+
+    @Test
     fun rounds_get_easier_to_harder_not_identical() {
         // The same lesson asked twice must not always give the same round (practice is endless).
         for (l in Curriculum.lessons) {

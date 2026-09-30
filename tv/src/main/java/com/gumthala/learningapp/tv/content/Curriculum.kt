@@ -9,6 +9,8 @@ object Curriculum {
         world4,
         world5,
         world6,
+        world7,
+        world8,
     )
 
     val lessons: List<Lesson> = worlds.flatMap { it.lessons }

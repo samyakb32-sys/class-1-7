@@ -58,6 +58,8 @@ object Words {
             .replace("%", " percent")
             .replace("°", " degrees")
             .replace("²", " squared")
+            .replace("^", " to the power of ")
+            .replace("√", " square root of ")
             .replace("³", " cubed")
             .replace("≠", " is not equal to ")
             .replace("<", " is less than ")

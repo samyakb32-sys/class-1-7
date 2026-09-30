@@ -264,7 +264,7 @@ data class Step(
 /**
  * What the narrator says when reveal step [p] (1-based) of this visual lands, for a `counting` step.
  * Counters say 1, 2, 3 (restarting for each group); a Strip reads its items (skip counting);
- * a NumberLine reads each number it lands on; an array says the running total. Null = stay quiet.
+ * a NumberLine reads each number it lands on; arrays and area grids say the running total. Null = stay quiet.
  */
 fun Visual.spokenAt(p: Int): String? = when (this) {
     is Counters -> if (mode == CounterMode.COUNT && p in 1..count) Words.number(p) else null
@@ -281,6 +281,7 @@ fun Visual.spokenAt(p: Int): String? = when (this) {
             else -> null
         }
     }
+    is RectGrid -> if (mode == GridMode.AREA && p in 1..h) Words.number(p * w) else null
     is Money -> null
     is Side -> childSpoken(parts, p)
     is Stack -> childSpoken(parts, p)
@@ -327,21 +328,29 @@ class Lesson(
 ) {
     /**
      * A fresh round of practice: no question twice, and (where the generator allows) never the same
-     * answer twice in a row, so a child can't get by on "it's always seven".
+     * answer twice in a row and no answer more than twice in the round, so a child can't get by on
+     * "it's always seven" and a round of shapes shows a good mix of them.
      */
     fun buildRound(rnd: Random = Random.Default): List<Question> {
         val seen = HashSet<String>()
+        val answerCounts = HashMap<String, Int>()
         val out = ArrayList<Question>(questionCount)
         var previousAnswer: String? = null
         for (i in 0 until questionCount) {
             var q = quiz(rnd, i)
             var tries = 0
-            while ((q.fingerprint() in seen || q.choices[q.answer].text == previousAnswer) && tries < 16) {
+            while (tries < 24) {
+                val answer = q.choices[q.answer].text
+                val fresh = q.fingerprint() !in seen && answer != previousAnswer
+                // The "no more than twice" rule is a preference: give it up if the generator can't meet it.
+                if (fresh && (tries >= 12 || (answerCounts[answer] ?: 0) < 2)) break
                 q = quiz(rnd, i)
                 tries++
             }
+            val answer = q.choices[q.answer].text
             seen.add(q.fingerprint())
-            previousAnswer = q.choices[q.answer].text
+            answerCounts[answer] = (answerCounts[answer] ?: 0) + 1
+            previousAnswer = answer
             out.add(q)
         }
         return out
