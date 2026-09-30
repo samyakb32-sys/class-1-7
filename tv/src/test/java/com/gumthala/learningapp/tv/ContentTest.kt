@@ -67,8 +67,9 @@ class ContentTest {
         if (s.say.length > 150) fail(where, "narration too long for the caption (${s.say.length}): ${s.say}")
         walk(s.visual, inQuestion, where)
         if (s.from < 0) fail(where, "negative from")
+        if (s.to < s.from && s.from != Step.ALL) fail(where, "to < from")
         if (s.counting && s.visual.maxProgress == 0) fail(where, "counting step with nothing to count: ${s.say}")
-        if (s.counting && (s.from + 1..s.visual.maxProgress).none { s.visual.spokenAt(it) != null })
+        if (s.counting && (s.from + 1..minOf(s.to, s.visual.maxProgress)).none { s.visual.spokenAt(it) != null })
             fail(where, "counting step that would never speak a number: ${s.say}")
     }
 

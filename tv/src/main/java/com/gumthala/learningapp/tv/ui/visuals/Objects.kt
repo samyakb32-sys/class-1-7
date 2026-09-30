@@ -108,6 +108,8 @@ private fun CounterItem(emoji: String, size: Dp, counted: Boolean, number: Int?,
     val pad = size * 0.06f
     Box(Modifier.size(size).padding(pad), contentAlignment = Alignment.Center) {
         val bg = when {
+            counted && tint == groupA -> Color(0xFF9CC4FF)   // two groups stay two colours while counting
+            counted && tint == groupB -> Color(0xFFFFBE8A)
             counted -> Color(0xFFFFE08A)
             tint != null -> tint
             else -> Color.Transparent

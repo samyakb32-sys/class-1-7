@@ -58,7 +58,8 @@ import kotlinx.coroutines.launch
  * animates alongside the narration. With the voice off, the same pacing is kept using timers.
  */
 suspend fun runStep(step: Step, env: Env, onProgress: (Int) -> Unit) {
-    val max = step.visual.maxProgress
+    val full = step.visual.maxProgress
+    val max = minOf(step.to, full)
     val start = if (step.from >= max) max else step.from.coerceAtLeast(0)
     onProgress(start)
     val text = Words.speakable(step.say)

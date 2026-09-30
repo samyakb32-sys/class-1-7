@@ -168,11 +168,14 @@ fun band(i: Int): Int = when {
 
 // ---- Small authoring shorthands -------------------------------------------------------------
 
-fun say(text: String, visual: Visual, counting: Boolean = false, from: Int = 0, mood: Mood = Mood.HAPPY) =
-    Step(text, visual, counting, from, mood)
+/** Captions always start with a capital, even when a template begins with a number word. */
+internal fun String.capitalized(): String = replaceFirstChar { if (it.isLowerCase()) it.uppercase() else it.toString() }
+
+fun say(text: String, visual: Visual, counting: Boolean = false, from: Int = 0, mood: Mood = Mood.HAPPY, to: Int = Int.MAX_VALUE) =
+    Step(text.capitalized(), visual, counting, from, mood, to)
 
 /** A step whose visual is fully drawn straight away (no reveal animation). */
-fun show(text: String, visual: Visual, mood: Mood = Mood.HAPPY) = Step(text, visual, false, Step.ALL, mood)
+fun show(text: String, visual: Visual, mood: Mood = Mood.HAPPY) = Step(text.capitalized(), visual, false, Step.ALL, mood)
 
 fun board(vararg lines: String): Board = Board(lines.map { BoardLine(it) })
 

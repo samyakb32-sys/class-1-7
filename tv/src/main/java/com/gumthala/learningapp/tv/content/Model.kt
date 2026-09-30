@@ -245,7 +245,7 @@ enum class Mood { HAPPY, CHEER, THINK, OOPS }
 /**
  * One moment in a lesson: the narrator says [say] (it is also shown as the caption) while [visual]
  * animates. [counting] makes the narrator speak each number as items light up.
- * [from] is the progress the animation starts at: [ALL] means "already fully revealed".
+ * [from] is the progress the animation starts at ([ALL] means "already fully revealed") and [to] where it stops.
  */
 data class Step(
     val say: String,
@@ -253,6 +253,8 @@ data class Step(
     val counting: Boolean = false,
     val from: Int = 0,
     val mood: Mood = Mood.HAPPY,
+    /** Progress the animation stops at (default: the end). Lets one sum be taught column by column. */
+    val to: Int = Int.MAX_VALUE,
 ) {
     companion object {
         const val ALL = Int.MAX_VALUE
@@ -270,6 +272,15 @@ fun Visual.spokenAt(p: Int): String? = when (this) {
     is Strip -> items.getOrNull(p - 1)?.takeIf { it != "?" && it.isNotBlank() }
     is NumberLine -> hops.getOrNull(p - 1)?.let { Words.number(it) }
     is ArrayGrid -> if (p in 1..rows) Words.number(p * cols) else null
+    is Shape -> {
+        val sides = kind.sides
+        val cornerStep = p - (if (markSides) sides else 0)
+        when {
+            markSides && p in 1..sides -> Words.number(p)
+            markCorners && cornerStep in 1..sides -> Words.number(cornerStep)
+            else -> null
+        }
+    }
     is Money -> null
     is Side -> childSpoken(parts, p)
     is Stack -> childSpoken(parts, p)

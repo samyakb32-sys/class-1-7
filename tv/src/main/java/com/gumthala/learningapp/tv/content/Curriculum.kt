@@ -4,6 +4,11 @@ package com.gumthala.learningapp.tv.content
 object Curriculum {
     val worlds: List<World> = listOf(
         world1,
+        world2,
+        world3,
+        world4,
+        world5,
+        world6,
     )
 
     val lessons: List<Lesson> = worlds.flatMap { it.lessons }
